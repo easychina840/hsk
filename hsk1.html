@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#fff8f1">
-<title>신HSK 3.0 1급 단어 암기 · 300단어</title>
+<title>EasyChina · 신HSK 3.0 1급 단어 암기 · 300단어</title>
 <style>
   :root{
     --bg1:#fff9f2;
@@ -287,6 +287,58 @@
   }
   .toast.show{opacity:1;transform:translate(-50%,0)}
   [hidden]{display:none!important}
+  /* ── 2026-11-23 모바일 가독성 업그레이드 (5급과 동일 · 글씨 한 단계 크게 · 대비 강하게) ── */
+  :root{
+    --ink:#221913;
+    --ink-soft:#5d4a3e;
+    --line:#e5d2c1;
+  }
+  body{font-size:17px;line-height:1.55}
+  .app{
+    max-width:560px;
+    padding:calc(env(safe-area-inset-top,0px) + 18px) 18px calc(env(safe-area-inset-bottom,0px) + 88px);
+  }
+  h1{font-size:21.5px}
+  .sub{font-size:14.5px;color:#5d4a3e;font-weight:700}
+  .prog-txt{font-size:14px;color:#5d4a3e}
+  .tab{font-size:15.5px;padding:13px 3px}
+  .days{margin:0 -18px 14px;padding:2px 18px 6px}
+  .day-btn{font-size:15px;padding:10px 14px}
+  .day-btn small{font-size:12px}
+  .hint{font-size:15.5px;color:#6b574a}
+  .pinyin{font-size:25px}
+  .meaning{font-size:25px}
+  .ex-zh{font-size:21px}
+  .ex-py{font-size:15.5px;color:#5d4a3e}
+  .ex-ko{font-size:17.5px;color:#2f231b}
+  .btn{min-height:60px;font-size:18px}
+  .btn.small{min-height:48px;font-size:15px}
+  .tiny{font-size:14px;color:#6b574a}
+  .tiny.note{font-size:13px;color:#8a7663}
+  .q-label{font-size:14px}
+  .q-ko{font-size:27px}
+  .choice{font-size:18px;min-height:62px}
+  .fb-h{font-size:26px}
+  .fb-p{font-size:15.5px}
+  .fb-m{font-size:16.5px}
+  .fb-ex{font-size:15px;color:#5d4a3e}
+  .row-h{font-size:25px}
+  .row-p{font-size:15px}
+  .row-m{font-size:16.5px;color:#3b2c23}
+  .list-count{font-size:14px}
+  .legend .lg-row{font-size:12.5px;color:#7d6a5a}
+  .bdg{font-size:12.5px;padding:6px 10px}
+  .bdg.sm{font-size:11.5px;padding:5px 8px}
+  #search{height:52px;font-size:17px}
+  .chip{font-size:15px}
+  .toast{font-size:14.5px;bottom:calc(env(safe-area-inset-bottom,0px) + 78px)}
+  .done p{font-size:15.5px}
+  .quiz-intro p{font-size:15px}
+  .score-sub{font-size:15px}
+  .wrong-item{font-size:15px}
+  .wrong-item .w-h{font-size:21px}
+  .wrong-item .w-p{font-size:13.5px}
+  .wrong-item .w-m{font-size:14px}
 </style>
 </head>
 <body>
@@ -295,7 +347,7 @@
     <div class="brand">
       <span class="dot" aria-hidden="true"></span>
       <div>
-        <h1>신HSK 3.0 · 1급 단어</h1>
+        <h1>EasyChina · 신HSK 3.0 1급</h1>
         <p class="sub">1급 · 전체 300단어 · Day별 50단어</p>
       </div>
     </div>
@@ -604,7 +656,7 @@
     {"w": "现在", "p": "xiànzài", "m": "지금, 현재", "e": "现在八点。", "ep": "Xiànzài bā diǎn.", "em": "지금 8시예요.", "wr": "1~2급 공통: 现·在"},
     {"w": "想", "p": "xiǎng", "m": "~하고 싶다; 생각하다", "e": "我想去中国。", "ep": "Wǒ xiǎng qù Zhōngguó.", "em": "나는 중국에 가고 싶어요."},
     {"w": "小", "p": "xiǎo", "m": "작다, 어리다", "e": "我的房间很小。", "ep": "Wǒ de fángjiān hěn xiǎo.", "em": "내 방은 아주 작아요.", "wr": "1~2급 공통: 小"},
-    {"w": "小朋友", "p": "xiǎopéngyǒu", "m": "어린이, 꼬마", "e": "小朋友，你几岁了？", "ep": "Xiǎopéngyǒu, nǐ jǐ suì le?", "em": "어린이, 몇 살이에요?", "nt": "you", "wr": "1~2급 공통: 小"},
+    {"w": "小朋友", "p": "xiǎopéngyou", "m": "어린이, 꼬마", "e": "小朋友，你几岁了？", "ep": "Xiǎopéngyou, nǐ jǐ suì le?", "em": "어린이, 몇 살이에요?", "nt": "you", "wr": "1~2급 공통: 小"},
     {"w": "小时", "p": "xiǎoshí", "m": "시간 (60분)", "e": "我工作八小时。", "ep": "Wǒ gōngzuò bā xiǎoshí.", "em": "나는 8시간 일해요.", "wr": "1~2급 공통: 小·时"},
     {"w": "小学", "p": "xiǎoxué", "m": "초등학교", "e": "我儿子在小学学习。", "ep": "Wǒ érzi zài xiǎoxué xuéxí.", "em": "내 아들은 초등학교에서 공부해요.", "wr": "1~2급 공통: 小·学"},
     {"w": "小学生", "p": "xiǎoxuéshēng", "m": "초등학생", "e": "我妹妹是小学生。", "ep": "Wǒ mèimei shì xiǎoxuéshēng.", "em": "내 여동생은 초등학생이에요.", "nt": "sheng", "wr": "1~2급 공통: 小·学·生"},
