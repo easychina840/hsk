@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="차인아 중국어">
+<meta name="theme-color" content="#fff8f1">
+<meta name="description" content="신HSK 3.0 1~4급 단어장과 서사한자 쓰기 연습장. 아이폰·안드로이드에서 바로 열리는 무료 학습 페이지.">
+<meta property="og:title" content="차인아 중국어 · 신HSK 3.0 학습관">
+<meta property="og:description" content="신HSK 3.0 1~4급 단어장 + 서사한자 쓰기 연습장 바로가기">
+<meta property="og:type" content="website">
+<title>차인아 중국어 · 신HSK 3.0 학습관</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23c0392b'/%3E%3Ctext x='50' y='68' font-size='54' text-anchor='middle' fill='%23fff' font-family='sans-serif'%3E%E6%B1%89%3C/text%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg1:#fff9f2;
+    --bg2:#fbeadb;
+    --card:#ffffff;
+    --ink:#2b211c;
+    --ink-soft:#7a685c;
+    --line:#efe0d2;
+    --accent:#c0392b;
+    --accent-deep:#9c2a1f;
+    --accent-soft:#fbe4de;
+    --shadow:0 12px 32px rgba(122,84,55,.12), 0 2px 6px rgba(122,84,55,.06);
+    --hanzi:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Source Han Sans SC","Microsoft YaHei","Heiti SC",sans-serif;
+    --base:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--base);
+    color:var(--ink);
+    background:radial-gradient(120% 80% at 50% 0%, #fffdfa 0%, var(--bg1) 45%, var(--bg2) 100%);
+    background-attachment:fixed;
+    min-height:100vh;
+    -webkit-text-size-adjust:100%;
+    line-height:1.5;
+  }
+  .app{
+    max-width:540px;
+    margin:0 auto;
+    padding:calc(env(safe-area-inset-top,0px) + 22px) 16px calc(env(safe-area-inset-bottom,0px) + 30px);
+  }
+  h1,h2,p,ul,li{margin:0;padding:0}
+  ul{list-style:none}
+
+  /* ── 헤더 ── */
+  .brand{display:flex;align-items:center;gap:11px}
+  .dot{
+    width:38px;height:38px;border-radius:50%;flex:0 0 38px;
+    background:radial-gradient(circle at 32% 28%, #ff8b7e, var(--accent) 62%, var(--accent-deep));
+    box-shadow:0 4px 10px rgba(192,57,43,.28);
+  }
+  h1{font-size:20px;font-weight:800;letter-spacing:-.02em}
+  .sub{font-size:13px;color:var(--ink-soft);margin-top:3px}
+  .hello{
+    margin-top:18px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:16px 16px 15px;
+    box-shadow:var(--shadow);
+  }
+  .hello p{font-size:14px;color:var(--ink-soft)}
+  .hello p + p{margin-top:6px}
+  .hello b{color:var(--ink)}
+
+  /* ── 카드 목록 ── */
+  .sec{margin-top:22px;display:flex;align-items:center;gap:8px}
+  .sec h2{font-size:13px;font-weight:800;color:var(--ink-soft);letter-spacing:.02em}
+  .sec .bar{flex:1;height:1px;background:var(--line)}
+  .list{margin-top:11px;display:flex;flex-direction:column;gap:11px}
+
+  a.card{
+    display:flex;align-items:center;gap:14px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:15px 16px;
+    text-decoration:none;
+    color:var(--ink);
+    box-shadow:var(--shadow);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  a.card:active{transform:scale(.985);box-shadow:0 6px 16px rgba(122,84,55,.14)}
+  .ico{
+    width:46px;height:46px;flex:0 0 46px;border-radius:14px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:23px;line-height:1;
+    background:var(--accent-soft);
+  }
+  .lv-1 .ico{background:#e8f0fb}
+  .lv-2 .ico{background:#e6f4ec}
+  .lv-3 .ico{background:#fdf0dc}
+  .lv-4 .ico{background:#fbe4de}
+  .lv-w .ico{background:#efe8fa}
+  .txt{flex:1;min-width:0}
+  .name{font-size:15.5px;font-weight:800;letter-spacing:-.01em}
+  .meta{font-size:12.5px;color:var(--ink-soft);margin-top:3px}
+  .arrow{flex:0 0 auto;color:#c9b4a3;font-size:19px;font-weight:700}
+
+  /* ── 안내 ── */
+  .tip{
+    margin-top:20px;
+    border:1px dashed #e6cdb7;
+    background:#fffdfa;
+    border-radius:16px;
+    padding:13px 15px;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    line-height:1.65;
+  }
+  .tip b{color:var(--ink)}
+  .foot{
+    margin-top:22px;
+    text-align:center;
+    font-size:11.5px;
+    color:#a8968a;
+    line-height:1.7;
+  }
+  .foot .cherry{font-size:13px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="brand">
+    <div class="dot"></div>
+    <div>
+      <h1>차인아 중국어 · 신HSK 3.0 학습관</h1>
+      <div class="sub">1급부터 4급까지, 오늘의 단어를 바로 시작해요</div>
+    </div>
+  </div>
+
+  <div class="hello">
+    <p><b>아이폰도 안드로이드도 그냥 눌러서 열면 돼요.</b></p>
+    <p>설치할 것도, 회원가입도 없어요. 인터넷만 되면 언제든 다시 열 수 있어요 📚</p>
+  </div>
+
+  <div class="sec"><h2>단어장</h2><div class="bar"></div></div>
+  <ul class="list">
+    <li class="lv-1">
+      <a class="card" href="hsk1.html">
+        <div class="ico">📘</div>
+        <div class="txt">
+          <div class="name">신HSK 3.0 1급 단어장</div>
+          <div class="meta">300단어 · Day 1~6</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+    </li>
+    <li class="lv-2">
+      <a class="card" href="hsk2.html">
+        <div class="ico">📗</div>
+        <div class="txt">
+          <div class="name">신HSK 3.0 2급 단어장</div>
+          <div class="meta">200단어 · Day 1~4</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+    </li>
+    <li class="lv-3">
+      <a class="card" href="hsk3.html">
+        <div class="ico">📙</div>
+        <div class="txt">
+          <div class="name">신HSK 3.0 3급 단어장</div>
+          <div class="meta">500단어 · Day 1~10</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+    </li>
+    <li class="lv-4">
+      <a class="card" href="hsk4.html">
+        <div class="ico">📕</div>
+        <div class="txt">
+          <div class="name">신HSK 3.0 4급 단어장</div>
+          <div class="meta">1,000단어 · Day 1~40</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+    </li>
+  </ul>
+
+  <div class="sec"><h2>한자 쓰기</h2><div class="bar"></div></div>
+  <ul class="list">
+    <li class="lv-w">
+      <a class="card" href="write.html">
+        <div class="ico">✍️</div>
+        <div class="txt">
+          <div class="name">서사한자 쓰기 연습장</div>
+          <div class="meta">1~2급 100자 + 3급 150자</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+    </li>
+  </ul>
+
+  <div class="tip">
+    📲 <b>카톡에서 열리지 않을 땐</b> 오른쪽 아래 <b>⋯</b> → <b>Safari로 열기</b>를 눌러 주세요.
+  </div>
+
+  <div class="foot">
+    <div class="cherry">🍒</div>
+    매일 조금씩, 끝까지 해 봐요<br>
+    차인아 중국어
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,2055 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#fff8f1">
+<title>신HSK 3.0 4급 단어 암기</title>
+<style>
+  :root{
+    --bg1:#fff9f2;
+    --bg2:#fbeadb;
+    --card:#ffffff;
+    --ink:#2b211c;
+    --ink-soft:#7a685c;
+    --line:#efe0d2;
+    --accent:#c0392b;
+    --accent-deep:#9c2a1f;
+    --accent-soft:#fbe4de;
+    --ok:#1f7a4d;
+    --ok-soft:#e4f4ea;
+    --warn:#b3541e;
+    --shadow:0 12px 32px rgba(122,84,55,.12), 0 2px 6px rgba(122,84,55,.06);
+    --hanzi:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Source Han Sans SC","Microsoft YaHei","Heiti SC",sans-serif;
+    --base:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--base);
+    color:var(--ink);
+    background:
+      radial-gradient(120% 80% at 50% 0%, #fffdfa 0%, var(--bg1) 45%, var(--bg2) 100%);
+    background-attachment:fixed;
+    min-height:100vh;
+    -webkit-text-size-adjust:100%;
+    line-height:1.5;
+  }
+  .app{
+    max-width:540px;
+    margin:0 auto;
+    padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 28px);
+  }
+  h1,h2,h3,p,ul,li{margin:0;padding:0}
+  ul{list-style:none}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+
+  /* ── header ── */
+  .head{margin-bottom:12px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .dot{
+    width:34px;height:34px;border-radius:50%;flex:0 0 34px;
+    background:radial-gradient(circle at 32% 28%, #ff8b7e, var(--accent) 62%, var(--accent-deep));
+    box-shadow:0 4px 10px rgba(192,57,43,.28);
+  }
+  h1{font-size:19px;font-weight:800;letter-spacing:-.02em}
+  .sub{font-size:13px;color:var(--ink-soft);margin-top:2px}
+  .prog{margin-top:14px}
+  .prog-bar{height:9px;border-radius:99px;background:#f2e2d5;overflow:hidden}
+  .prog-bar i{display:block;height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,#e0685c,var(--accent));transition:width .35s ease}
+  .prog-txt{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-soft);margin-top:6px;font-weight:700}
+
+  /* ── tabs ── */
+  .tabs{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:5px;
+    background:#f4e6d8;padding:5px;border-radius:16px;margin:16px 0 12px;
+  }
+  .tab{
+    padding:12px 3px;border-radius:12px;font-size:14px;font-weight:700;color:#6f5b4b;
+    transition:background .18s,color .18s,box-shadow .18s;
+    font-family:var(--base);
+  }
+  .tab.active{background:#fff;color:var(--accent);box-shadow:0 2px 8px rgba(122,84,55,.12)}
+
+  /* ── Day 선택 바 ── */
+  .daybar{
+    display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;
+    padding:2px 2px 10px;margin:0 0 10px;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  }
+  .daybar::-webkit-scrollbar{display:none}
+  .daypill{
+    flex:0 0 auto;padding:9px 13px;border-radius:99px;
+    background:#fff;border:1.5px solid var(--line);
+    font-size:13.5px;font-weight:700;color:#6f5b4b;white-space:nowrap;
+    transition:background .16s,border-color .16s,color .16s,box-shadow .16s;
+  }
+  .daypill.active{
+    background:var(--accent);border-color:var(--accent);color:#fff;
+    box-shadow:0 4px 10px rgba(192,57,43,.2);
+  }
+  .daypill .dp-n{font-size:11px;font-weight:700;opacity:.7;margin-left:2px}
+  .daypill.active .dp-n{opacity:.9}
+
+  .view{display:none}
+  .view.active{display:block}
+
+  /* ── flashcard ── */
+  #cardArea{min-height:330px}
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:26px;
+    box-shadow:var(--shadow);
+    padding:22px 20px;
+    min-height:330px;
+    display:flex;flex-direction:column;justify-content:center;
+    position:relative;
+    cursor:pointer;
+    transition:transform .12s ease;
+  }
+  .card:active{transform:scale(.995)}
+  .front{text-align:center;padding:14px 0}
+  .hanzi-xl{
+    font-family:var(--hanzi);
+    font-size:clamp(76px,26vw,116px);
+    line-height:1.15;
+    font-weight:600;
+    letter-spacing:.04em;
+    color:var(--ink);
+  }
+  .hint{font-size:14px;color:#8b7666;margin-top:20px}
+  .spk{
+    width:46px;height:46px;border-radius:50%;
+    background:var(--accent-soft);color:var(--accent-deep);
+    font-size:19px;display:inline-flex;align-items:center;justify-content:center;
+    flex:0 0 46px;transition:transform .12s ease,background .12s;
+    border:1px solid #f6d3cb;
+  }
+  .spk:active{transform:scale(.92);background:#f8d7cf}
+  .spk.sm{width:38px;height:38px;flex-basis:38px;font-size:16px}
+  .card>.spk{position:absolute;top:16px;right:16px}
+  .back{width:100%;text-align:left;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .back .h-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .back .h{font-family:var(--hanzi);font-size:clamp(42px,13vw,54px);font-weight:600;line-height:1.2;letter-spacing:.03em}
+  .pinyin{font-size:23px;font-weight:700;color:var(--accent);margin-top:6px;letter-spacing:.01em}
+  .meaning{font-size:23px;font-weight:800;margin-top:8px;letter-spacing:-.01em}
+  .ex{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}
+  .ex-zh{font-family:var(--hanzi);font-size:19.5px;line-height:1.55}
+  .ex-py{font-size:14px;color:var(--ink-soft);margin-top:4px}
+  .ex-ko{font-size:16px;margin-top:7px;color:#4a3a30}
+
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .btn{
+    min-height:58px;border-radius:18px;font-size:16.5px;font-weight:800;
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    transition:transform .12s,filter .12s;
+    padding:8px 10px;
+  }
+  .btn:active{transform:scale(.975)}
+  .btn.primary{background:linear-gradient(180deg,#cf4437,var(--accent));color:#fff;box-shadow:0 8px 18px rgba(192,57,43,.24)}
+  .btn.ghost{background:#fff;color:var(--accent-deep);border:1.5px solid #f0cec6;box-shadow:0 2px 8px rgba(122,84,55,.06)}
+  .btn.soft{background:#f4e8dc;color:#6b5647;border:1px solid #ecdbcb}
+  .btn.small{min-height:46px;font-size:14px;border-radius:14px}
+  .btn[disabled]{opacity:.45}
+  .tiny{font-size:13px;color:#8b7666;text-align:center;margin-top:14px;line-height:1.65}
+  .tiny.note{font-size:12px;color:#a89584;margin-top:8px;line-height:1.55}
+
+  /* ── 딱지(경성 · 성조 변화 · 이합사 · 쓰기) ── */
+  .bdgs{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .bdg{
+    display:inline-flex;align-items:center;gap:2px;
+    font-size:11.5px;font-weight:800;line-height:1;letter-spacing:-.01em;
+    padding:5px 9px;border-radius:99px;border:1px solid transparent;white-space:nowrap;
+  }
+  .bdg.nt{background:#fdf2e2;color:#a2671c;border-color:#f0dcbe}
+  .bdg.ts{background:#ebf2fd;color:#2f5a94;border-color:#d5e3f7}
+  .bdg.lh{background:#e3f4ef;color:#186b57;border-color:#c6e7dc}
+  .bdg.wr{background:#f2ecfb;color:#5b4394;border-color:#e0d3f6}
+  .bdg.sm{font-size:10.5px;padding:4px 7px}
+  .row-top .bdg{align-self:center}
+  .legend{
+    display:flex;flex-direction:column;align-items:center;
+    gap:5px;margin-top:12px;line-height:1.5;
+  }
+  .legend .lg-row{display:flex;align-items:center;gap:6px;font-size:11.5px;color:#a89584}
+  .legend .bdg{pointer-events:none}
+  .legend.in-list{align-items:flex-start;margin:0 2px 10px}
+
+  .done{text-align:center;padding:34px 12px;background:var(--card);border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow);min-height:330px;display:flex;flex-direction:column;justify-content:center;gap:10px}
+  .done .emo{font-size:52px;line-height:1.1}
+  .done h2{font-size:21px;font-weight:800}
+  .done p{font-size:14.5px;color:var(--ink-soft)}
+  .done .actions{margin-top:8px}
+
+  /* ── quiz ── */
+  .quiz-top{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;color:var(--ink-soft);margin-bottom:10px}
+  .qcard{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:22px 18px;text-align:center;position:relative}
+  .q-label{font-size:13px;font-weight:700;color:#8b7666;letter-spacing:.02em}
+  .q-hanzi{font-family:var(--hanzi);font-size:clamp(56px,19vw,76px);font-weight:600;margin:10px 0 4px;letter-spacing:.04em}
+  .q-ko{font-size:25px;font-weight:800;margin:16px 0 8px;line-height:1.35}
+  .qcard .spk{position:absolute;top:14px;right:14px}
+  .choices{display:grid;gap:9px;margin-top:16px}
+  .choice{
+    background:#fff;border:1.5px solid var(--line);border-radius:16px;
+    padding:15px 14px;font-size:16.5px;font-weight:700;text-align:left;
+    display:flex;align-items:center;gap:10px;min-height:58px;
+    box-shadow:0 2px 6px rgba(122,84,55,.05);
+    transition:background .15s,border-color .15s,transform .12s;
+  }
+  .choice:active{transform:scale(.99)}
+  .choice .num{width:24px;height:24px;border-radius:50%;background:#f5ece2;color:#8a7361;font-size:12px;display:flex;align-items:center;justify-content:center;flex:0 0 24px;font-weight:800}
+  .choice.correct{background:var(--ok-soft);border-color:#8dc9a9;color:#125c39}
+  .choice.correct .num{background:#bfe6cd;color:#125c39}
+  .choice.wrong{background:#fdeae7;border-color:#e9a99f;color:#93271c}
+  .choice.wrong .num{background:#f6c9c1;color:#93271c}
+  .choice.dim{opacity:.55}
+  .feedback{margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 16px;text-align:left;animation:fade .2s}
+  .fb-head{font-size:15px;font-weight:800;margin-bottom:8px}
+  .fb-head.ok{color:var(--ok)}
+  .fb-head.no{color:var(--accent)}
+  .fb-row{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .fb-h{font-family:var(--hanzi);font-size:24px;font-weight:600}
+  .fb-p{font-size:14.5px;color:var(--accent);font-weight:700}
+  .fb-m{font-size:15px;font-weight:700}
+  .fb-ex{font-size:13.5px;color:var(--ink-soft);margin-top:7px;line-height:1.55}
+
+  .quiz-intro{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:26px 20px;text-align:center}
+  .quiz-intro h2{font-size:20px;font-weight:800;margin-bottom:6px}
+  .quiz-intro p{font-size:14px;color:var(--ink-soft);margin-bottom:18px;line-height:1.6}
+  .quiz-intro .btn{width:100%;margin-bottom:9px}
+
+  .result{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:26px 20px;text-align:center}
+  .score-big{font-size:44px;font-weight:900;color:var(--accent);line-height:1.1;margin:6px 0 2px}
+  .score-sub{font-size:14px;color:var(--ink-soft);font-weight:700}
+  .result h2{font-size:19px;font-weight:800;margin-bottom:4px}
+  .wrong-list{margin:16px 0;text-align:left;background:#fdf6ef;border-radius:14px;padding:10px 12px;border:1px solid #f2e3d3}
+  .wrong-list h3{font-size:12.5px;font-weight:800;color:var(--warn);margin-bottom:6px}
+  .wrong-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid #f4e6d8;font-size:14px}
+  .wrong-item:first-of-type{border-top:none}
+  .wrong-item .w-h{font-family:var(--hanzi);font-size:19px;font-weight:600}
+  .wrong-item .w-p{font-size:12.5px;color:var(--accent);font-weight:700}
+  .wrong-item .w-m{font-size:13px;color:var(--ink-soft);margin-left:auto;text-align:right}
+  .result .btn{width:100%;margin-top:8px}
+
+  /* ── list ── */
+  .search-wrap{position:relative;margin-bottom:10px}
+  #search{
+    width:100%;height:50px;border-radius:15px;border:1.5px solid var(--line);
+    background:#fff;padding:0 14px 0 42px;font-size:16px;font-family:var(--base);color:var(--ink);
+    outline:none;-webkit-appearance:none;appearance:none;
+  }
+  #search:focus{border-color:#e2a99c;box-shadow:0 0 0 3px rgba(192,57,43,.08)}
+  #search::placeholder{color:#b3a091}
+  .search-wrap::before{content:"🔍";position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;opacity:.7}
+  .chips{display:flex;gap:7px;margin-bottom:10px}
+  .chip{
+    padding:11px 12px;border-radius:99px;background:#fff;border:1.5px solid var(--line);
+    font-size:14px;font-weight:700;color:#6f5b4b;flex:1;
+  }
+  .chip.active{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 4px 10px rgba(192,57,43,.2)}
+  .list-count{font-size:13px;color:#8b7666;margin:2px 2px 8px;font-weight:600}
+  .rows{display:flex;flex-direction:column;gap:8px}
+  .row{
+    display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);
+    border-radius:16px;padding:11px 12px;box-shadow:0 2px 6px rgba(122,84,55,.04);
+  }
+  .row.done{background:#fbfdfb;border-color:#dcece2}
+  .row-main{flex:1;min-width:0}
+  .row-top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .row-h{font-family:var(--hanzi);font-size:23px;font-weight:600;line-height:1.25}
+  .row-p{font-size:13.5px;color:var(--accent);font-weight:700}
+  .row-m{font-size:15px;color:#54423a;margin-top:2px}
+  .row.done .row-m{color:#7d8f84}
+  .mark{
+    width:34px;height:34px;border-radius:50%;border:2px solid #e2cdbb;background:#fff;
+    flex:0 0 34px;display:flex;align-items:center;justify-content:center;
+    font-size:16px;font-weight:800;color:#fff;transition:background .15s,border-color .15s;
+  }
+  .mark.on{background:var(--ok);border-color:var(--ok)}
+  .row .spk{border-color:#f0d8d0}
+  .empty{text-align:center;color:var(--ink-soft);font-size:14px;padding:26px 0}
+  #resetBtn{width:100%;margin-top:16px}
+
+  /* ── toast ── */
+  .toast{
+    position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);
+    transform:translate(-50%,20px);max-width:84%;width:max-content;
+    background:rgba(43,33,28,.94);color:#fff;font-size:13.5px;line-height:1.5;
+    padding:11px 16px;border-radius:14px;opacity:0;pointer-events:none;
+    transition:opacity .22s,transform .22s;z-index:50;text-align:center;
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="head">
+    <div class="brand">
+      <span class="dot" aria-hidden="true"></span>
+      <div>
+        <h1>신HSK 3.0 · 4급 단어</h1>
+        <p class="sub">4급 · 전체 1,000단어</p>
+      </div>
+    </div>
+    <div class="prog">
+      <div class="prog-bar"><i id="progFill"></i></div>
+      <div class="prog-txt"><span id="progTxt">외운 단어 0 / 0</span><span id="progPct">0%</span></div>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="학습 모드">
+    <button class="tab active" data-view="card" role="tab" aria-selected="true">🃏 플래시카드</button>
+    <button class="tab" data-view="quiz" role="tab" aria-selected="false">✏️ 4지선다</button>
+    <button class="tab" data-view="list" role="tab" aria-selected="false">📖 단어장</button>
+  </nav>
+
+  <div class="daybar" id="dayBar" role="tablist" aria-label="Day 선택"></div>
+
+  <main>
+    <section id="view-card" class="view active" aria-label="플래시카드">
+      <div id="cardArea"></div>
+      <div class="actions" id="cardActions">
+        <button class="btn ghost" data-act="again">🔁 다시 볼래요</button>
+        <button class="btn primary" data-act="known">✅ 외웠어요</button>
+      </div>
+      <p class="tiny">카드를 누르면 병음 · 뜻 · 예문이 나와요.<br>🔊 를 누르면 중국어 발음을 들려줘요. ← → 키로도 넘길 수 있어요.</p>
+      <p class="legend">
+        <span class="lg-row"><span class="bdg nt">⚠️ 경성 주의</span>힘 빼고 가볍게</span>
+        <span class="lg-row"><span class="bdg ts">🔄 성조 변화</span>앞뒤 성조에 따라 달라짐</span>
+        <span class="lg-row"><span class="bdg lh">✂️ 이합사</span>동사+목적어 — 사이에 了·个·횟수를 넣어요</span>
+        <span class="lg-row"><span class="bdg wr">✍️ 쓰기</span>공식 서사한자(직접 써야 하는 한자)가 포함된 단어</span>
+      </p>
+      <p class="tiny note">기계 음성은 참고용이에요. 경성·얼화는 병음 표기를 기준으로 보세요.<br>一·不는 실제 발음대로(一个 yí ge), 3성+3성은 사전대로(你好 → 실제 ní hǎo) 적었어요.</p>
+    </section>
+
+    <section id="view-quiz" class="view" aria-label="4지선다 퀴즈">
+      <div id="quizArea"></div>
+    </section>
+
+    <section id="view-list" class="view" aria-label="단어장">
+      <div class="search-wrap">
+        <input id="search" type="search" placeholder="한자 · 병음 · 뜻으로 찾기" autocomplete="off" autocapitalize="off" spellcheck="false">
+      </div>
+      <div class="chips" id="chips">
+        <button class="chip active" data-filter="all">전체</button>
+        <button class="chip" data-filter="new">미암기</button>
+        <button class="chip" data-filter="known">암기완료</button>
+      </div>
+      <p class="list-count" id="listCount"></p>
+      <p class="legend in-list">
+        <span class="lg-row"><span class="bdg nt">⚠️ 경성 주의</span>힘 빼고 가볍게</span>
+        <span class="lg-row"><span class="bdg ts">🔄 성조 변화</span>앞뒤 성조에 따라 달라짐</span>
+        <span class="lg-row"><span class="bdg lh">✂️ 이합사</span>동사+목적어 — 사이에 了·个·횟수를 넣어요</span>
+        <span class="lg-row"><span class="bdg wr">✍️ 쓰기</span>공식 서사한자(직접 써야 하는 한자)가 포함된 단어</span>
+      </p>
+      <ul class="rows" id="listRows"></ul>
+      <button class="btn soft small" id="resetBtn">학습 기록 초기화</button>
+      <p class="tiny" id="storageNote">이 앱은 인터넷 없이도 열립니다. 학습 기록은 이 브라우저에만 저장돼요.</p>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ───────────────────────────────────────────
+     신HSK 3.0 4급 어휘 1,000 (《HSK考试大纲》 2025-11 발표 · 2026-07 시행, 1001~2000번)
+     · 한자·병음은 요강 원문 표기 그대로
+       (이합사만 매뉴얼 규칙대로 최소 의미 단위 띄어쓰기, 个은 경성 ge)
+     · 예문은 1~4급 어휘·문형으로 구성
+     · nt = 경성 주의 / ts = 성조 변화 / lh = 이합사 / wr = 공식 서사한자 포함
+     ─────────────────────────────────────────── */
+  var WORDS = [
+    {no:1001,h:"啊",p:"ā",m:"아, 어 (놀람·깨달음의 감탄사)",ex:"啊，原来是你！",ep:"A, yuánlái shì nǐ!",em:"아, 알고 보니 너였구나!"},
+    {no:1002,h:"爱情",p:"àiqíng",m:"사랑, 애정 (남녀 간의)",ex:"他们的爱情故事很感人。",ep:"Tāmen de àiqíng gùshi hěn gǎnrén.",em:"그들의 사랑 이야기는 아주 감동적이에요.",wr:"1~3급: 爱"},
+    {no:1003,h:"爱心",p:"àixīn",m:"사랑하는 마음, 자애심",ex:"她很有爱心，常常帮助老人。",ep:"Tā hěn yǒu àixīn, chángcháng bāngzhù lǎorén.",em:"그녀는 마음이 따뜻해서 늘 노인을 도와요.",wr:"1~3급: 爱·心"},
+    {no:1004,h:"按",p:"àn",m:"누르다 · ~에 따라, ~대로 (介)",ex:"你按一下这里，门就开了。",ep:"Nǐ àn yíxià zhèli, mén jiù kāi le.",em:"여기를 누르면 문이 열려요."},
+    {no:1005,h:"安检",p:"ānjiǎn",m:"보안 검사(를 하다)",ex:"进机场以前要过安检。",ep:"Jìn jīchǎng yǐqián yào guò ānjiǎn.",em:"공항에 들어가기 전에 보안 검사를 받아야 해요.",wr:"1~3급: 安"},
+    {no:1006,h:"安排",p:"ānpái",m:"안배하다, 준비하다, 계획하다",ex:"明天的会议已经安排好了。",ep:"Míngtiān de huìyì yǐjīng ānpái hǎo le.",em:"내일 회의는 이미 준비가 다 됐어요.",wr:"4급 신규: 排 · 1~3급: 安"},
+    {no:1007,h:"按时",p:"ànshí",m:"제시간에, 시간을 지켜",ex:"上课要按时到。",ep:"Shàng kè yào ànshí dào.",em:"수업에는 제시간에 도착해야 해요.",wr:"1~3급: 时"},
+    {no:1008,h:"按照",p:"ànzhào",m:"~에 따라, ~대로 (介)",ex:"请按照老师说的做。",ep:"Qǐng ànzhào lǎoshī shuō de zuò.",em:"선생님이 말한 대로 하세요."},
+    {no:1009,h:"白酒",p:"báijiǔ",m:"백주, 고량주 (중국식 독한 술)",ex:"爷爷喜欢喝一点儿白酒。",ep:"Yéye xǐhuan hē yìdiǎnr báijiǔ.",em:"할아버지는 백주를 조금 마시는 걸 좋아하세요."},
+    {no:1010,h:"棒",p:"bàng",m:"훌륭하다, 굉장하다 · 막대기 (名)",ex:"你这次考得真棒！",ep:"Nǐ zhè cì kǎo de zhēn bàng!",em:"이번 시험 정말 잘 봤네요!"},
+    {no:1011,h:"办公",p:"bàngōng",m:"사무를 보다, 사무실에서 일하다",ex:"经理正在办公室办公。",ep:"Jīnglǐ zhèngzài bàngōngshì bàngōng.",em:"부장님은 지금 사무실에서 일하고 계세요.",wr:"1~3급: 办"},
+    {no:1012,h:"办理",p:"bànlǐ",m:"처리하다, 수속하다",ex:"护照要去那里办理。",ep:"Hùzhào yào qù nàli bànlǐ.",em:"여권은 저기 가서 처리해야 해요.",wr:"1~3급: 办"},
+    {no:1013,h:"办事",p:"bànshì",m:"일을 처리하다, 볼일을 보다",ex:"他今天去银行办事。",ep:"Tā jīntiān qù yínháng bànshì.",em:"그는 오늘 은행에 볼일을 보러 갔어요.",wr:"1~3급: 办"},
+    {no:1014,h:"抱",p:"bào",m:"안다, 껴안다",ex:"妈妈抱着孩子。",ep:"Māma bào zhe háizi.",em:"엄마가 아이를 안고 있어요.",wr:"4급 신규: 抱"},
+    {no:1015,h:"保护",p:"bǎohù",m:"보호하다",ex:"我们要保护环境。",ep:"Wǒmen yào bǎohù huánjìng.",em:"우리는 환경을 보호해야 해요.",wr:"4급 신규: 保 · 1~3급: 护"},
+    {no:1016,h:"报考",p:"bàokǎo",m:"지원하여 시험을 보다",ex:"他想报考这所大学。",ep:"Tā xiǎng bàokǎo zhè suǒ dàxué.",em:"그는 이 대학에 지원하려고 해요.",wr:"1~3급: 报"},
+    {no:1017,h:"报名",p:"bào míng",m:"등록하다, 참가 신청하다",ex:"我已经报名参加比赛了。",ep:"Wǒ yǐjīng bào míng cānjiā bǐsài le.",em:"저는 이미 시합 참가 신청을 했어요.",lh:"동사+목적어 — 报了名, 报过名, 报不了名",wr:"1~3급: 报·名"},
+    {no:1018,h:"抱歉",p:"bàoqiàn",m:"미안하다, 죄송하다",ex:"让你等了这么久，真抱歉。",ep:"Ràng nǐ děng le zhème jiǔ, zhēn bàoqiàn.",em:"이렇게 오래 기다리게 해서 정말 미안해요.",wr:"4급 신규: 抱"},
+    {no:1019,h:"保证",p:"bǎozhèng",m:"보증하다, 장담하다 · 보증 (名)",ex:"我保证明天不会迟到。",ep:"Wǒ bǎozhèng míngtiān bú huì chídào.",em:"내일은 절대 지각하지 않을게요.",wr:"4급 신규: 保"},
+    {no:1020,h:"倍",p:"bèi",m:"배, 곱절 (양사)",ex:"这台电脑比那台贵一倍。",ep:"Zhè tái diànnǎo bǐ nà tái guì yí bèi.",em:"이 컴퓨터는 저것보다 두 배 비싸요."},
+    {no:1021,h:"背",p:"bēi",m:"(등에) 지다, 메다 — 背 bèi '등'도 있어요",ex:"他背着一个大包。",ep:"Tā bēi zhe yí ge dà bāo.",em:"그는 큰 가방을 메고 있어요.",wr:"4급 신규: 背"},
+    {no:1022,h:"背包",p:"bēibāo",m:"배낭, 백팩",ex:"我的背包里有地图。",ep:"Wǒ de bēibāo li yǒu dìtú.",em:"제 배낭 안에 지도가 있어요.",wr:"4급 신규: 背"},
+    {no:1023,h:"北部",p:"běibù",m:"북부",ex:"这个国家的北部很冷。",ep:"Zhè ge guójiā de běibù hěn lěng.",em:"이 나라 북부는 아주 추워요.",wr:"4급 신규: 部 · 1~3급: 北"},
+    {no:1024,h:"笨",p:"bèn",m:"머리가 나쁘다, 둔하다 · 서투르다",ex:"我不笨，只是有点儿慢。",ep:"Wǒ bú bèn, zhǐshì yǒudiǎnr màn.",em:"저는 머리가 나쁜 게 아니라 그냥 좀 느려요."},
+    {no:1025,h:"本科",p:"běnkē",m:"학부 (대학 과정)",ex:"我本科是学中文的。",ep:"Wǒ běnkē shì xué Zhōngwén de.",em:"저는 학부에서 중국어를 전공했어요.",wr:"4급 신규: 科"},
+    {no:1026,h:"本来",p:"běnlái",m:"본래, 원래 · 원래는 (副)",ex:"我本来不想去，后来还是去了。",ep:"Wǒ běnlái bù xiǎng qù, hòulái háishì qù le.",em:"원래는 가고 싶지 않았는데 결국 갔어요.",wr:"1~3급: 来"},
+    {no:1027,h:"便于",p:"biànyú",m:"~하기에 편리하다, ~하기 쉽다",ex:"这样写便于记忆。",ep:"Zhèyàng xiě biànyú jìyì.",em:"이렇게 쓰면 기억하기에 편해요.",wr:"1~3급: 于"},
+    {no:1028,h:"表",p:"biǎo",m:"표, 서식 · 시계 · 나타내다 (动)",ex:"这张表请填一下。",ep:"Zhè zhāng biǎo qǐng tián yíxià.",em:"이 표를 작성해 주세요."},
+    {no:1029,h:"表格",p:"biǎogé",m:"표, 서식",ex:"请在表格上写名字。",ep:"Qǐng zài biǎogé shang xiě míngzi.",em:"표에 이름을 써 주세요."},
+    {no:1030,h:"表示",p:"biǎoshì",m:"나타내다, 표시하다",ex:"他点头表示同意。",ep:"Tā diǎn tóu biǎoshì tóngyì.",em:"그는 고개를 끄덕여 동의를 나타냈어요.",wr:"4급 신규: 示"},
+    {no:1031,h:"表现",p:"biǎoxiàn",m:"(능력·태도를) 나타내다, 보이다 · 표현 (名)",ex:"他今天的表现很好。",ep:"Tā jīntiān de biǎoxiàn hěn hǎo.",em:"그는 오늘 태도가 아주 좋았어요.",wr:"1~3급: 现"},
+    {no:1032,h:"表扬",p:"biǎoyáng",m:"칭찬하다",ex:"老师表扬了我们的成绩。",ep:"Lǎoshī biǎoyáng le wǒmen de chéngjì.",em:"선생님이 우리 성적을 칭찬하셨어요."},
+    {no:1033,h:"标准",p:"biāozhǔn",m:"기준, 표준 · 표준적인 (形)",ex:"他的汉语很标准。",ep:"Tā de Hànyǔ hěn biāozhǔn.",em:"그의 중국어는 아주 표준적이에요.",wr:"4급 신규: 标"},
+    {no:1034,h:"并",p:"bìng",m:"결코 (…하지 않다) · 그리고 (서면)",ex:"他并不认识我。",ep:"Tā bìng bú rènshi wǒ.",em:"그는 저를 전혀 몰라요.",wr:"4급 신규: 并"},
+    {no:1035,h:"饼干",p:"bǐnggān",m:"비스킷, 과자",ex:"孩子喜欢吃饼干。",ep:"Háizi xǐhuan chī bǐnggān.",em:"아이는 비스킷 먹는 걸 좋아해요.",wr:"1~3급: 干"},
+    {no:1036,h:"并且",p:"bìngqiě",m:"게다가, 뿐만 아니라",ex:"他会说汉语，并且说得很好。",ep:"Tā huì shuō Hànyǔ, bìngqiě shuō de hěn hǎo.",em:"그는 중국어를 할 줄 알고, 게다가 아주 잘해요.",wr:"4급 신규: 并 · 1~3급: 且"},
+    {no:1037,h:"笔试",p:"bǐshì",m:"필기시험(을 보다)",ex:"这次考试有笔试和面试。",ep:"Zhè cì kǎoshì yǒu bǐshì hé miànshì.",em:"이번 시험은 필기시험과 면접이 있어요."},
+    {no:1038,h:"毕业",p:"bì yè",m:"졸업하다",ex:"我明年六月毕业。",ep:"Wǒ míngnián liùyuè bì yè.",em:"저는 내년 6월에 졸업해요.",lh:"동사+목적어 — 毕了业, 毕业以后",wr:"1~3급: 业"},
+    {no:1039,h:"毕业生",p:"bìyèshēng",m:"졸업생",ex:"今年有一百万毕业生。",ep:"Jīnnián yǒu yì bǎi wàn bìyèshēng.",em:"올해 졸업생이 백만 명이에요.",wr:"1~3급: 业·生"},
+    {no:1040,h:"鼻子",p:"bízi",m:"코",ex:"我的鼻子有点儿不舒服。",ep:"Wǒ de bízi yǒudiǎnr bù shūfu.",em:"코가 조금 불편해요.",nt:"zi",ntNote:"‘zi’는 경성 — bízi. 원성조 zǐ로 읽지 않아요",wr:"1~3급: 子"},
+    {no:1041,h:"播放",p:"bōfàng",m:"방송하다, (음악·영상을) 틀다",ex:"请播放这首歌。",ep:"Qǐng bōfàng zhè shǒu gē.",em:"이 노래를 틀어 주세요.",wr:"1~3급: 放"},
+    {no:1042,h:"博士",p:"bóshì",m:"박사",ex:"他姐姐是博士。",ep:"Tā jiějie shì bóshì.",em:"그의 누나는 박사예요."},
+    {no:1043,h:"步",p:"bù",m:"걸음",ex:"向前走三步就到了。",ep:"Xiàng qián zǒu sān bù jiù dào le.",em:"앞으로 세 걸음만 가면 돼요."},
+    {no:1044,h:"部",p:"bù",m:"부분 · 부 (작품·차량의 양사)",ex:"我看过那部电影。",ep:"Wǒ kànguo nà bù diànyǐng.",em:"저는 그 영화를 본 적이 있어요.",wr:"4급 신규: 部"},
+    {no:1045,h:"不必",p:"búbì",m:"~할 필요 없다",ex:"你不必担心。",ep:"Nǐ búbì dānxīn.",em:"걱정할 필요 없어요.",ts:"不 + 4성(bì) → bú: búbì",wr:"1~3급: 不·必"},
+    {no:1046,h:"不便",p:"búbiàn",m:"불편하다 · 불편하게 하다 (动)",ex:"这里没有电梯，老人很不便。",ep:"Zhèli méi yǒu diàntī, lǎorén hěn búbiàn.",em:"여기는 엘리베이터가 없어서 노인에게 아주 불편해요.",ts:"不 + 4성(biàn) → bú: búbiàn",wr:"1~3급: 不"},
+    {no:1047,h:"不得不",p:"bùdébù",m:"하지 않을 수 없다, 어쩔 수 없이",ex:"下大雨了，我不得不回家。",ep:"Xià dà yǔ le, wǒ bùdébù huí jiā.",em:"비가 많이 와서 어쩔 수 없이 집에 가야 했어요.",wr:"1~3급: 不"},
+    {no:1048,h:"不断",p:"búduàn",m:"끊임없이, 계속 · 끊이지 않다 (动)",ex:"这几年城市在不断变化。",ep:"Zhè jǐ nián chéngshì zài búduàn biànhuà.",em:"요즘 도시가 끊임없이 변하고 있어요.",ts:"不 + 4성(duàn) → bú: búduàn",wr:"4급 신규: 断 · 1~3급: 不"},
+    {no:1049,h:"部分",p:"bùfen",m:"부분",ex:"这本书我只看了第一部分。",ep:"Zhè běn shū wǒ zhǐ kàn le dì yī bùfen.",em:"이 책은 첫 부분만 봤어요.",nt:"fen",ntNote:"‘fen’은 경성 — bùfen. 원성조 fēn으로 읽지 않아요",wr:"4급 신규: 部 · 1~3급: 分"},
+    {no:1050,h:"不够",p:"búgòu",m:"충분하지 않다, 모자라다",ex:"时间不够，我们快一点儿吧。",ep:"Shíjiān búgòu, wǒmen kuài yìdiǎnr ba.",em:"시간이 모자라니 좀 서두릅시다.",ts:"不 + 4성(gòu) → bú: búgòu",wr:"4급 신규: 够 · 1~3급: 不"},
+    {no:1051,h:"不管",p:"bùguǎn",m:"~와 관계없이, ~이든 (…해도)",ex:"不管下雨还是下雪，他每天都跑步。",ep:"Bùguǎn xià yǔ háishì xià xuě, tā měitiān dōu pǎobù.",em:"비가 오든 눈이 오든 그는 매일 달리기를 해요.",wr:"4급 신규: 管 · 1~3급: 不"},
+    {no:1052,h:"不光",p:"bùguāng",m:"~뿐만 아니라, 단지 ~만이 아니다",ex:"他不光学习好，还喜欢运动。",ep:"Tā bùguāng xuéxí hǎo, hái xǐhuan yùndòng.",em:"그는 공부만 잘하는 게 아니라 운동도 좋아해요.",wr:"1~3급: 不"},
+    {no:1053,h:"不过",p:"búguò",m:"그러나, 그런데 · 다만",ex:"这件衣服很好看，不过太贵了。",ep:"Zhè jiàn yīfu hěn hǎokàn, búguò tài guì le.",em:"이 옷은 예쁘지만 너무 비싸요.",ts:"不 + 4성(guò) → bú: búguò",wr:"1~3급: 不·过"},
+    {no:1054,h:"不仅",p:"bùjǐn",m:"~뿐만 아니라",ex:"他不仅会说汉语，还会写汉字。",ep:"Tā bùjǐn huì shuō Hànyǔ, hái huì xiě Hànzì.",em:"그는 중국어를 말할 줄 알 뿐만 아니라 한자도 쓸 줄 알아요.",wr:"1~3급: 不"},
+    {no:1055,h:"不论",p:"búlùn",m:"~에 관계없이, ~이든지",ex:"不论多晚，他都会等我。",ep:"Búlùn duō wǎn, tā dōu huì děng wǒ.",em:"아무리 늦어도 그는 저를 기다려 줘요.",ts:"不 + 4성(lùn) → bú: búlùn",wr:"4급 신규: 论 · 1~3급: 不"},
+    {no:1056,h:"不满",p:"bùmǎn",m:"불만스럽다, 못마땅하다 · 불만 (名)",ex:"他对这个结果很不满。",ep:"Tā duì zhè ge jiéguǒ hěn bùmǎn.",em:"그는 이 결과에 아주 불만이에요.",wr:"1~3급: 不"},
+    {no:1057,h:"部门",p:"bùmén",m:"부서, 부문",ex:"我在这个部门工作。",ep:"Wǒ zài zhè ge bùmén gōngzuò.",em:"저는 이 부서에서 일해요.",wr:"4급 신규: 部"},
+    {no:1058,h:"不如",p:"bùrú",m:"~만 못하다, ~하는 편이 낫다",ex:"今天不如昨天暖和。",ep:"Jīntiān bùrú zuótiān nuǎnhuo.",em:"오늘은 어제만큼 따뜻하지 않아요.",wr:"1~3급: 不·如"},
+    {no:1059,h:"擦",p:"cā",m:"닦다, 문지르다",ex:"请把桌子擦干净。",ep:"Qǐng bǎ zhuōzi cā gānjìng.",em:"탁자를 깨끗이 닦아 주세요."},
+    {no:1060,h:"猜",p:"cāi",m:"추측하다, 짐작하다",ex:"你猜猜这是谁？",ep:"Nǐ cāicai zhè shì shéi?",em:"이게 누구인지 한번 맞혀 봐요."},
+    {no:1061,h:"材料",p:"cáiliào",m:"재료, 자료",ex:"写作文要准备好材料。",ep:"Xiě zuòwén yào zhǔnbèi hǎo cáiliào.",em:"작문을 쓰려면 자료를 준비해야 해요."},
+    {no:1062,h:"参观",p:"cānguān",m:"참관하다, 견학하다",ex:"我们明天去参观博物馆。",ep:"Wǒmen míngtiān qù cānguān bówùguǎn.",em:"우리는 내일 박물관을 견학하러 가요.",wr:"4급 신규: 观 · 1~3급: 参"},
+    {no:1063,h:"参赛",p:"cānsài",m:"시합에 참가하다",ex:"这次有三十个人参赛。",ep:"Zhè cì yǒu sānshí ge rén cānsài.",em:"이번에는 서른 명이 시합에 참가해요.",wr:"1~3급: 参"},
+    {no:1064,h:"餐厅",p:"cāntīng",m:"식당, 레스토랑",ex:"这家餐厅的菜很好吃。",ep:"Zhè jiā cāntīng de cài hěn hǎochī.",em:"이 식당 음식은 아주 맛있어요.",wr:"4급 신규: 餐"},
+    {no:1065,h:"操场",p:"cāochǎng",m:"운동장",ex:"学生们在操场上打球。",ep:"Xuéshengmen zài cāochǎng shang dǎ qiú.",em:"학생들이 운동장에서 공놀이를 해요."},
+    {no:1066,h:"厕所",p:"cèsuǒ",m:"화장실",ex:"请问厕所在哪儿？",ep:"Qǐngwèn cèsuǒ zài nǎr?",em:"실례합니다, 화장실이 어디예요?"},
+    {no:1067,h:"查看",p:"chákàn",m:"살펴보다, 확인해 보다",ex:"请查看一下邮件。",ep:"Qǐng chákàn yíxià yóujiàn.",em:"메일을 한번 확인해 보세요.",wr:"1~3급: 查"},
+    {no:1068,h:"厂",p:"chǎng",m:"공장 (한 글자로 단독 사용)",ex:"我爸爸在那个厂工作。",ep:"Wǒ bàba zài nà ge chǎng gōngzuò.",em:"아버지는 그 공장에서 일하세요.",wr:"4급 신규: 厂"},
+    {no:1069,h:"场",p:"chǎng",m:"…차례, …판 (경기·공연의 양사)",ex:"昨晚有一场精彩的比赛。",ep:"Zuówǎn yǒu yì chǎng jīngcǎi de bǐsài.",em:"어젯밤 멋진 경기가 한 차례 있었어요."},
+    {no:1070,h:"产生",p:"chǎnshēng",m:"생기다, 발생하다, 낳다",ex:"这个问题是怎么产生的？",ep:"Zhè ge wèntí shì zěnme chǎnshēng de?",em:"이 문제는 어떻게 생긴 거예요?",wr:"4급 신규: 产 · 1~3급: 生"},
+    {no:1071,h:"超过",p:"chāoguò",m:"넘다, 초과하다, 능가하다",ex:"这本书超过五百页。",ep:"Zhè běn shū chāoguò wǔ bǎi yè.",em:"이 책은 500쪽이 넘어요.",wr:"1~3급: 过"},
+    {no:1072,h:"茶叶",p:"cháyè",m:"찻잎, 차",ex:"这是从南方带来的茶叶。",ep:"Zhè shì cóng nánfāng dài lái de cháyè.",em:"이건 남쪽에서 가져온 찻잎이에요.",wr:"1~3급: 茶"},
+    {no:1073,h:"差点儿",p:"chàdiǎnr",m:"하마터면 ~할 뻔하다 (= 差一点儿)",ex:"我差点儿迟到。",ep:"Wǒ chàdiǎnr chídào.",em:"하마터면 지각할 뻔했어요.",wr:"1~3급: 差·点·儿"},
+    {no:1074,h:"查找",p:"cházhǎo",m:"(자료 등을) 찾다, 검색하다",ex:"我在网上查找资料。",ep:"Wǒ zài wǎng shang cházhǎo zīliào.",em:"저는 인터넷에서 자료를 찾고 있어요.",wr:"1~3급: 查"},
+    {no:1075,h:"城",p:"chéng",m:"성, 도시",ex:"这座城有一千年的历史。",ep:"Zhè zuò chéng yǒu yì qiān nián de lìshǐ.",em:"이 도시는 천 년의 역사가 있어요.",wr:"1~3급: 城"},
+    {no:1076,h:"乘",p:"chéng",m:"타다, (교통수단을) 이용하다",ex:"我们乘飞机去上海。",ep:"Wǒmen chéng fēijī qù Shànghǎi.",em:"우리는 비행기를 타고 상하이에 가요."},
+    {no:1077,h:"成功",p:"chénggōng",m:"성공하다 · 성공한 (形)",ex:"这次活动很成功。",ep:"Zhè cì huódòng hěn chénggōng.",em:"이번 행사는 아주 성공적이었어요.",wr:"1~3급: 成"},
+    {no:1078,h:"乘客",p:"chéngkè",m:"승객",ex:"车上乘客很多。",ep:"Chē shang chéngkè hěn duō.",em:"차에 승객이 아주 많아요."},
+    {no:1079,h:"诚实",p:"chéngshí",m:"정직하다, 성실하다",ex:"他是个诚实的孩子。",ep:"Tā shì ge chéngshí de háizi.",em:"그는 정직한 아이예요.",wr:"1~3급: 实"},
+    {no:1080,h:"成为",p:"chéngwéi",m:"~이 되다",ex:"他成为了一名律师。",ep:"Tā chéngwéi le yì míng lǜshī.",em:"그는 변호사가 되었어요.",wr:"1~3급: 成·为"},
+    {no:1081,h:"乘坐",p:"chéngzuò",m:"(교통수단을) 이용하다, 타다",ex:"请乘坐电梯上楼。",ep:"Qǐng chéngzuò diàntī shàng lóu.",em:"엘리베이터를 타고 올라가세요."},
+    {no:1082,h:"车速",p:"chēsù",m:"차 속도",ex:"这里的车速不能超过六十公里。",ep:"Zhèli de chēsù bù néng chāoguò liùshí gōnglǐ.",em:"여기서는 차 속도가 시속 60킬로를 넘으면 안 돼요."},
+    {no:1083,h:"车位",p:"chēwèi",m:"주차 자리",ex:"这个停车场没有车位了。",ep:"Zhè ge tíngchēchǎng méi yǒu chēwèi le.",em:"이 주차장은 자리가 다 찼어요."},
+    {no:1084,h:"迟",p:"chí",m:"늦다, 늦은",ex:"他今天来迟了。",ep:"Tā jīntiān lái chí le.",em:"그는 오늘 늦게 왔어요."},
+    {no:1085,h:"吃惊",p:"chī jīng",m:"놀라다",ex:"听到这个消息，我很吃惊。",ep:"Tīngdào zhè ge xiāoxi, wǒ hěn chījīng.",em:"이 소식을 듣고 저는 아주 놀랐어요.",lh:"동사+목적어 — 吃了一惊, 吃过惊"},
+    {no:1086,h:"重",p:"chóng",m:"다시, 거듭 (chóng) — 重 zhòng '무겁다'",ex:"这个字请重写一遍。",ep:"Zhè ge zì qǐng chóng xiě yí biàn.",em:"이 글자를 다시 한 번 써 주세요.",wr:"1~3급: 重"},
+    {no:1087,h:"重新",p:"chóngxīn",m:"다시, 새로",ex:"请重新说一遍。",ep:"Qǐng chóngxīn shuō yí biàn.",em:"다시 한 번 말해 주세요.",wr:"1~3급: 重"},
+    {no:1088,h:"窗",p:"chuāng",m:"창",ex:"窗开着，有点儿冷。",ep:"Chuāng kāi zhe, yǒudiǎnr lěng.",em:"창문이 열려 있어서 좀 추워요."},
+    {no:1089,h:"窗户",p:"chuānghu",m:"창문",ex:"请把窗户关上。",ep:"Qǐng bǎ chuānghu guān shàng.",em:"창문을 닫아 주세요.",nt:"hu",ntNote:"‘hu’는 경성 — chuānghu. 원성조 hù로 읽지 않아요"},
+    {no:1090,h:"出差",p:"chū chāi",m:"출장 가다",ex:"爸爸下周要去北京出差。",ep:"Bàba xià zhōu yào qù Běijīng chū chāi.",em:"아버지가 다음 주에 베이징으로 출장 가세요.",lh:"동사+목적어 — 出了差, 出过差",wr:"1~3급: 差"},
+    {no:1091,h:"厨房",p:"chúfáng",m:"부엌",ex:"妈妈在厨房做饭。",ep:"Māma zài chúfáng zuò fàn.",em:"엄마가 부엌에서 밥을 해요."},
+    {no:1092,h:"吹",p:"chuī",m:"(바람이) 불다 · (악기를) 불다",ex:"今天风很大，吹得我眼睛疼。",ep:"Jīntiān fēng hěn dà, chuī de wǒ yǎnjing téng.",em:"오늘 바람이 세서 눈이 아파요.",wr:"4급 신규: 吹"},
+    {no:1093,h:"出口",p:"chūkǒu",m:"출구 · 수출하다 (动)",ex:"出口在那边。",ep:"Chūkǒu zài nàbian.",em:"출구는 저쪽에 있어요.",wr:"1~3급: 口"},
+    {no:1094,h:"厨师",p:"chúshī",m:"요리사",ex:"这家餐厅的厨师很有名。",ep:"Zhè jiā cāntīng de chúshī hěn yǒumíng.",em:"이 식당 요리사는 아주 유명해요."},
+    {no:1095,h:"出现",p:"chūxiàn",m:"나타나다, 생기다",ex:"路上出现了堵车。",ep:"Lù shang chūxiàn le dǔchē.",em:"길에 차가 막히기 시작했어요.",wr:"1~3급: 现"},
+    {no:1096,h:"出行",p:"chūxíng",m:"외출하다, (먼 길을) 다니다",ex:"明天天气好，适合出行。",ep:"Míngtiān tiānqì hǎo, shìhé chūxíng.",em:"내일 날씨가 좋아서 나들이하기 좋아요.",wr:"1~3급: 行"},
+    {no:1097,h:"出租",p:"chūzū",m:"세놓다, 임대하다 · (택시) 영업용의",ex:"这间房子要出租。",ep:"Zhè jiān fángzi yào chūzū.",em:"이 집은 세놓으려고 해요."},
+    {no:1098,h:"此",p:"cǐ",m:"이, 이것 (서면)",ex:"此事我们明天再谈。",ep:"Cǐ shì wǒmen míngtiān zài tán.",em:"이 일은 내일 다시 이야기해요.",wr:"4급 신규: 此"},
+    {no:1099,h:"此次",p:"cǐ cì",m:"이번 (서면)",ex:"此次会议很重要。",ep:"Cǐ cì huìyì hěn zhòngyào.",em:"이번 회의는 아주 중요해요.",wr:"4급 신규: 此"},
+    {no:1100,h:"此外",p:"cǐwài",m:"이 외에, 그 밖에",ex:"此外，我还有两个问题。",ep:"Cǐwài, wǒ hái yǒu liǎng ge wèntí.",em:"이 외에 질문이 두 개 더 있어요.",wr:"4급 신규: 此"},
+    {no:1101,h:"词语",p:"cíyǔ",m:"단어, 어구",ex:"学习新词语要常常用它。",ep:"Xuéxí xīn cíyǔ yào chángcháng yòng tā.",em:"새 단어는 자주 써 봐야 해요.",wr:"1~3급: 语"},
+    {no:1102,h:"从此",p:"cóngcǐ",m:"이때부터, 그 후로",ex:"他从此再也不喝酒了。",ep:"Tā cóngcǐ zài yě bù hē jiǔ le.",em:"그는 그 후로 다시는 술을 마시지 않아요.",wr:"4급 신규: 此"},
+    {no:1103,h:"从来",p:"cónglái",m:"지금까지 (한 번도), 여태",ex:"我从来没去过中国。",ep:"Wǒ cónglái méi qùguo Zhōngguó.",em:"저는 지금까지 중국에 가 본 적이 없어요.",wr:"1~3급: 来"},
+    {no:1104,h:"从中",p:"cóngzhōng",m:"그중에서, 그 가운데서",ex:"我们要从中找到最好的办法。",ep:"Wǒmen yào cóngzhōng zhǎodào zuì hǎo de bànfǎ.",em:"우리는 그중에서 가장 좋은 방법을 찾아야 해요.",wr:"1~3급: 中"},
+    {no:1105,h:"粗",p:"cū",m:"굵다 · 거칠다, 세밀하지 않다",ex:"这根线太粗了。",ep:"Zhè gēn xiàn tài cū le.",em:"이 실은 너무 굵어요."},
+    {no:1106,h:"存",p:"cún",m:"저축하다, 보관하다",ex:"他把钱存在银行里。",ep:"Tā bǎ qián cún zài yínháng li.",em:"그는 돈을 은행에 저축해요."},
+    {no:1107,h:"村",p:"cūn",m:"마을",ex:"这个小村只有一百个人。",ep:"Zhè ge xiǎo cūn zhǐ yǒu yì bǎi ge rén.",em:"이 작은 마을에는 백 명밖에 없어요.",wr:"4급 신규: 村"},
+    {no:1108,h:"错过",p:"cuòguò",m:"놓치다 (기회·시간을)",ex:"别错过这个机会。",ep:"Bié cuòguò zhè ge jīhuì.",em:"이 기회를 놓치지 마세요.",wr:"1~3급: 过"},
+    {no:1109,h:"错误",p:"cuòwù",m:"틀리다, 잘못되다 · 잘못, 오류 (名)",ex:"这个答案错误。",ep:"Zhè ge dá'àn cuòwù.",em:"이 답은 틀렸어요.",wr:"4급 신규: 误"},
+    {no:1110,h:"粗心",p:"cūxīn",m:"부주의하다, 덤벙대다",ex:"他太粗心，常常丢东西。",ep:"Tā tài cūxīn, chángcháng diū dōngxi.",em:"그는 너무 덤벙대서 자주 물건을 잃어버려요.",wr:"1~3급: 心"},
+    {no:1111,h:"答",p:"dá",m:"대답하다",ex:"这个问题你来答。",ep:"Zhè ge wèntí nǐ lái dá.",em:"이 문제는 네가 대답해 봐요.",wr:"1~3급: 答"},
+    {no:1112,h:"打招呼",p:"dǎ zhāohu",m:"인사하다",ex:"见面的时候要打招呼。",ep:"Jiàn miàn de shíhou yào dǎ zhāohu.",em:"만나면 인사를 해야 해요.",nt:"hu",ntNote:"‘hu’는 경성 — dǎ zhāohu. 원성조 hū로 읽지 않아요",lh:"동사+목적어 — 打了个招呼, 打过招呼",wr:"1~3급: 打"},
+    {no:1113,h:"答案",p:"dá'àn",m:"답, 정답",ex:"我知道这个问题的答案。",ep:"Wǒ zhīdào zhè ge wèntí de dá'àn.",em:"이 문제의 답을 알아요.",wr:"1~3급: 答"},
+    {no:1114,h:"大巴",p:"dàbā",m:"대형버스",ex:"我们坐大巴去机场。",ep:"Wǒmen zuò dàbā qù jīchǎng.",em:"우리는 버스를 타고 공항에 가요.",wr:"4급 신규: 巴 · 1~3급: 大"},
+    {no:1115,h:"打败",p:"dǎbài",m:"이기다, 물리치다",ex:"我们队打败了他们。",ep:"Wǒmen duì dǎbài le tāmen.",em:"우리 팀이 그들을 이겼어요.",wr:"1~3급: 打"},
+    {no:1116,h:"大大",p:"dàdà",m:"크게, 대폭",ex:"这大大地改变了我们的生活。",ep:"Zhè dàdà de gǎibiàn le wǒmen de shēnghuó.",em:"이것은 우리 생활을 크게 바꿔 놓았어요.",wr:"1~3급: 大"},
+    {no:1117,h:"达到",p:"dádào",m:"달성하다, 도달하다",ex:"他达到了自己的目标。",ep:"Tā dádào le zìjǐ de mùbiāo.",em:"그는 자기 목표를 달성했어요.",wr:"4급 신규: 达"},
+    {no:1118,h:"打工",p:"dǎ gōng",m:"(아르바이트로) 일하다",ex:"暑假我在餐厅打工。",ep:"Shǔjià wǒ zài cāntīng dǎ gōng.",em:"방학에 저는 식당에서 아르바이트를 해요.",lh:"동사+목적어 — 打了一年工, 打过工",wr:"1~3급: 打·工"},
+    {no:1119,h:"戴",p:"dài",m:"(모자·안경·시계를) 쓰다, 차다",ex:"他戴着新眼镜。",ep:"Tā dài zhe xīn yǎnjìng.",em:"그는 새 안경을 쓰고 있어요."},
+    {no:1120,h:"待",p:"dāi",m:"머무르다, 있다 (dāi) — 待 dài '대하다'도 있어요",ex:"我在家待了一天。",ep:"Wǒ zài jiā dāi le yì tiān.",em:"저는 집에서 하루 종일 있었어요."},
+    {no:1121,h:"大夫",p:"dàifu",m:"의사",ex:"李大夫今天不上班。",ep:"Lǐ dàifu jīntiān bú shàng bān.",em:"리 의사 선생님은 오늘 진료를 안 해요.",nt:"fu",ntNote:"‘fu’는 경성 — dàifu. 원성조 fū로 읽지 않아요",wr:"1~3급: 大"},
+    {no:1122,h:"袋子",p:"dàizi",m:"봉지, 자루",ex:"请把苹果放在袋子里。",ep:"Qǐng bǎ píngguǒ fàng zài dàizi li.",em:"사과를 봉지에 넣어 주세요.",nt:"zi",ntNote:"‘zi’는 경성 — dàizi. 원성조 zǐ로 읽지 않아요",wr:"1~3급: 子"},
+    {no:1123,h:"大量",p:"dàliàng",m:"대량의, 많은",ex:"这里需要大量工人。",ep:"Zhèli xūyào dàliàng gōngrén.",em:"여기에는 많은 인력이 필요해요.",wr:"4급 신규: 量 · 1~3급: 大"},
+    {no:1124,h:"当",p:"dāng",m:"~이 되다 · ~할 때 · ~로서 (介)",ex:"我想当一名教师。",ep:"Wǒ xiǎng dāng yì míng jiàoshī.",em:"저는 교사가 되고 싶어요.",wr:"1~3급: 当"},
+    {no:1125,h:"当时",p:"dāngshí",m:"그때, 당시",ex:"当时我还很小。",ep:"Dāngshí wǒ hái hěn xiǎo.",em:"그때 저는 아직 어렸어요.",wr:"1~3급: 当·时"},
+    {no:1126,h:"单位",p:"dānwèi",m:"단위 · (직장) 기관, 회사",ex:"你在哪个单位工作？",ep:"Nǐ zài nǎ ge dānwèi gōngzuò?",em:"어느 기관에서 일하세요?",wr:"1~3급: 单"},
+    {no:1127,h:"倒",p:"dào",m:"따르다, 쏟다 · 오히려 (副 dào) — 倒 dǎo '넘어지다'",ex:"请给我倒一杯茶。",ep:"Qǐng gěi wǒ dào yì bēi chá.",em:"차 한 잔 따라 주세요.",wr:"4급 신규: 倒"},
+    {no:1128,h:"道",p:"dào",m:"길 · (문제·문의 양사) 개, 가지",ex:"这道题有点儿难。",ep:"Zhè dào tí yǒudiǎnr nán.",em:"이 문제는 좀 어려워요."},
+    {no:1129,h:"刀",p:"dāo",m:"칼",ex:"这把刀很快。",ep:"Zhè bǎ dāo hěn kuài.",em:"이 칼은 아주 잘 들어요.",wr:"4급 신규: 刀"},
+    {no:1130,h:"到底",p:"dàodǐ",m:"도대체 · 끝까지, 결국",ex:"你到底想说什么？",ep:"Nǐ dàodǐ xiǎng shuō shénme?",em:"도대체 무슨 말을 하고 싶은 거예요?"},
+    {no:1131,h:"到来",p:"dàolái",m:"(시기·일이) 다가오다, 오다",ex:"新年的到来让大家很高兴。",ep:"Xīnnián de dàolái ràng dàjiā hěn gāoxìng.",em:"새해가 다가와 모두 기뻐해요.",wr:"1~3급: 来"},
+    {no:1132,h:"道路",p:"dàolù",m:"도로, 길",ex:"这条道路很长。",ep:"Zhè tiáo dàolù hěn cháng.",em:"이 도로는 아주 길어요."},
+    {no:1133,h:"道歉",p:"dào qiàn",m:"사과하다",ex:"昨天的事我向你道歉。",ep:"Zuótiān de shì wǒ xiàng nǐ dào qiàn.",em:"어제 일은 제가 사과할게요.",lh:"동사+목적어 — 道了歉, 道过歉"},
+    {no:1134,h:"导游",p:"dǎoyóu",m:"가이드, 관광 안내원 (하다)",ex:"她是一名导游。",ep:"Tā shì yì míng dǎoyóu.",em:"그녀는 가이드예요.",wr:"4급 신규: 导"},
+    {no:1135,h:"打扰",p:"dǎrǎo",m:"방해하다, 폐를 끼치다",ex:"对不起，打扰您了。",ep:"Duìbuqǐ, dǎrǎo nín le.",em:"실례합니다, 폐를 끼쳤네요.",ts:"3성+3성 → 앞 음절이 2성: dǎrǎo → dárǎo",wr:"1~3급: 打"},
+    {no:1136,h:"大赛",p:"dàsài",m:"큰 대회, 콘테스트",ex:"他参加了汉语大赛。",ep:"Tā cānjiā le Hànyǔ dàsài.",em:"그는 중국어 대회에 참가했어요.",wr:"1~3급: 大"},
+    {no:1137,h:"大厅",p:"dàtīng",m:"홀, 로비",ex:"我们在酒店大厅等你。",ep:"Wǒmen zài jiǔdiàn dàtīng děng nǐ.",em:"우리는 호텔 로비에서 기다릴게요.",wr:"1~3급: 大"},
+    {no:1138,h:"打印",p:"dǎyìn",m:"인쇄하다, 프린트하다",ex:"请把这些文件打印一下。",ep:"Qǐng bǎ zhèxiē wénjiàn dǎyìn yíxià.",em:"이 서류들을 인쇄해 주세요.",wr:"4급 신규: 印 · 1~3급: 打"},
+    {no:1139,h:"答应",p:"dāying",m:"대답하다 · 승낙하다",ex:"他答应帮我。",ep:"Tā dāying bāng wǒ.",em:"그는 저를 돕겠다고 했어요.",nt:"ying",ntNote:"‘ying’은 경성 — dāying. 원성조 yīng으로 읽지 않아요",wr:"1~3급: 答·应"},
+    {no:1140,h:"打印机",p:"dǎyìnjī",m:"프린터",ex:"打印机坏了。",ep:"Dǎyìnjī huài le.",em:"프린터가 고장 났어요.",wr:"4급 신규: 印 · 1~3급: 打"},
+    {no:1141,h:"大约",p:"dàyuē",m:"대략, 약",ex:"会议大约一个小时。",ep:"Huìyì dàyuē yí ge xiǎoshí.",em:"회의는 대략 한 시간이에요.",wr:"4급 신규: 约 · 1~3급: 大"},
+    {no:1142,h:"打折",p:"dǎ zhé",m:"할인하다",ex:"这些衣服都打折。",ep:"Zhèxiē yīfu dōu dǎ zhé.",em:"이 옷들은 다 할인이에요.",lh:"동사+목적어 — 打了折, 打过折",wr:"1~3급: 打"},
+    {no:1143,h:"打针",p:"dǎ zhēn",m:"주사를 맞다 (놓다)",ex:"孩子今天去医院打针。",ep:"Háizi jīntiān qù yīyuàn dǎ zhēn.",em:"아이는 오늘 병원에 주사 맞으러 가요.",lh:"동사+목적어 — 打了一针, 打过针",wr:"1~3급: 打"},
+    {no:1144,h:"大自然",p:"dàzìrán",m:"대자연",ex:"我喜欢大自然。",ep:"Wǒ xǐhuan dàzìrán.",em:"저는 대자연을 좋아해요.",wr:"1~3급: 大"},
+    {no:1145,h:"等",p:"děng",m:"…등 (열거) · 기다리다 (动) · (양사) 등급",ex:"我喜欢苹果、葡萄等水果。",ep:"Wǒ xǐhuan píngguǒ, pútao děng shuǐguǒ.",em:"저는 사과, 포도 같은 과일을 좋아해요."},
+    {no:1146,h:"等到",p:"děngdào",m:"…할 때까지 기다려, …에 이르러",ex:"等到春天，花就都开了。",ep:"Děngdào chūntiān, huā jiù dōu kāi le.",em:"봄이 되면 꽃이 다 피어요."},
+    {no:1147,h:"登机",p:"dēngjī",m:"탑승하다",ex:"飞机马上要登机了。",ep:"Fēijī mǎshàng yào dēngjī le.",em:"비행기 탑승이 곧 시작돼요."},
+    {no:1148,h:"得意",p:"déyì",m:"우쭐하다, 득의양양하다",ex:"他考了第一，很得意。",ep:"Tā kǎo le dì yī, hěn déyì.",em:"그는 일등을 해서 아주 우쭐해요."},
+    {no:1149,h:"底",p:"dǐ",m:"밑, 바닥",ex:"杯子底下有水。",ep:"Bēizi dǐxia yǒu shuǐ.",em:"컵 밑에 물이 있어요."},
+    {no:1150,h:"低",p:"dī",m:"낮다 · (머리를) 숙이다",ex:"今天的气温很低。",ep:"Jīntiān de qìwēn hěn dī.",em:"오늘 기온이 아주 낮아요.",wr:"4급 신규: 低"},
+    {no:1151,h:"电动车",p:"diàndòngchē",m:"전기자전거, 전동차",ex:"他骑电动车上班。",ep:"Tā qí diàndòngchē shàng bān.",em:"그는 전기자전거를 타고 출근해요."},
+    {no:1152,h:"点名",p:"diǎn míng",m:"출석을 부르다 · 지명하다",ex:"老师开始点名了。",ep:"Lǎoshī kāishǐ diǎn míng le.",em:"선생님이 출석을 부르기 시작했어요.",lh:"동사+목적어 — 点了名, 点过名",wr:"1~3급: 点·名"},
+    {no:1153,h:"电视剧",p:"diànshìjù",m:"드라마",ex:"妈妈每天晚上看电视剧。",ep:"Māma měitiān wǎnshang kàn diànshìjù.",em:"엄마는 매일 저녁 드라마를 봐요."},
+    {no:1154,h:"点头",p:"diǎn tóu",m:"고개를 끄덕이다",ex:"他点头同意了。",ep:"Tā diǎn tóu tóngyì le.",em:"그는 고개를 끄덕이며 동의했어요.",lh:"동사+목적어 — 点了点头, 点了一下头",wr:"1~3급: 点"},
+    {no:1155,h:"掉",p:"diào",m:"떨어지다 · 잃어버리다 · (동작의 완료)…버리다",ex:"我的手机掉在地上了。",ep:"Wǒ de shǒujī diào zài dì shang le.",em:"제 휴대폰이 바닥에 떨어졌어요.",wr:"4급 신규: 掉"},
+    {no:1156,h:"调查",p:"diàochá",m:"조사하다",ex:"警察正在调查这件事。",ep:"Jǐngchá zhèngzài diàochá zhè jiàn shì.",em:"경찰이 이 일을 조사하고 있어요.",wr:"1~3급: 调·查"},
+    {no:1157,h:"低价",p:"dījià",m:"낮은 가격, 저가",ex:"这家店的东西都是低价。",ep:"Zhè jiā diàn de dōngxi dōu shì dījià.",em:"이 가게 물건은 다 싼 가격이에요.",wr:"4급 신규: 低"},
+    {no:1158,h:"订",p:"dìng",m:"주문하다 · 예약하다",ex:"我在网上订了两张票。",ep:"Wǒ zài wǎng shang dìng le liǎng zhāng piào.",em:"저는 인터넷으로 표 두 장을 예약했어요."},
+    {no:1159,h:"定",p:"dìng",m:"정하다, 결정하다",ex:"出发的时间已经定了。",ep:"Chūfā de shíjiān yǐjīng dìng le.",em:"출발 시간은 이미 정해졌어요.",wr:"1~3급: 定"},
+    {no:1160,h:"地球",p:"dìqiú",m:"지구",ex:"地球是我们共同的家。",ep:"Dìqiú shì wǒmen gòngtóng de jiā.",em:"지구는 우리 모두의 집이에요.",wr:"1~3급: 地"},
+    {no:1161,h:"低温",p:"dīwēn",m:"저온",ex:"这几天是低温天气。",ep:"Zhè jǐ tiān shì dīwēn tiānqì.",em:"요즘은 저온 날씨예요.",wr:"4급 신규: 低·温"},
+    {no:1162,h:"底下",p:"dǐxia",m:"아래, 밑",ex:"桌子底下有一只猫。",ep:"Zhuōzi dǐxia yǒu yì zhī māo.",em:"탁자 밑에 고양이가 한 마리 있어요.",nt:"xia",ntNote:"‘xia’는 경성 — dǐxia. 원성조 xià로 읽지 않아요",wr:"1~3급: 下"},
+    {no:1163,h:"低于",p:"dīyú",m:"~보다 낮다",ex:"今年冬天的气温低于去年。",ep:"Jīnnián dōngtiān de qìwēn dīyú qùnián.",em:"올겨울 기온은 작년보다 낮아요.",wr:"4급 신규: 低 · 1~3급: 于"},
+    {no:1164,h:"地址",p:"dìzhǐ",m:"주소",ex:"请写下你的地址。",ep:"Qǐng xiě xià nǐ de dìzhǐ.",em:"주소를 적어 주세요.",wr:"1~3급: 地"},
+    {no:1165,h:"东部",p:"dōngbù",m:"동부",ex:"这个国家的东部有很多山。",ep:"Zhè ge guójiā de dōngbù yǒu hěn duō shān.",em:"이 나라 동부에는 산이 많아요.",wr:"4급 신규: 部"},
+    {no:1166,h:"动车",p:"dòngchē",m:"고속철도 (D 열차)",ex:"坐动车去南京只要一个小时。",ep:"Zuò dòngchē qù Nánjīng zhǐ yào yí ge xiǎoshí.",em:"고속철도로 난징까지 한 시간밖에 안 걸려요."},
+    {no:1167,h:"动作",p:"dòngzuò",m:"동작",ex:"他的动作很快。",ep:"Tā de dòngzuò hěn kuài.",em:"그의 동작은 아주 빨라요.",wr:"1~3급: 作"},
+    {no:1168,h:"短信",p:"duǎnxìn",m:"문자 메시지",ex:"他给我发了一条短信。",ep:"Tā gěi wǒ fā le yì tiáo duǎnxìn.",em:"그가 저에게 문자를 하나 보냈어요.",wr:"1~3급: 信"},
+    {no:1169,h:"堵车",p:"dǔ chē",m:"차가 막히다",ex:"早上上班的时候常常堵车。",ep:"Zǎoshang shàng bān de shíhou chángcháng dǔ chē.",em:"아침 출근길에 자주 차가 막혀요.",lh:"동사+목적어 — 堵了车, 堵过一次车"},
+    {no:1170,h:"队",p:"duì",m:"팀, 대열 · 떼 (양사)",ex:"我们队赢了比赛。",ep:"Wǒmen duì yíng le bǐsài.",em:"우리 팀이 시합에서 이겼어요.",wr:"4급 신규: 队"},
+    {no:1171,h:"对方",p:"duìfāng",m:"상대방",ex:"对方还没有回答。",ep:"Duìfāng hái méi yǒu huídá.",em:"상대방은 아직 대답이 없어요.",wr:"1~3급: 对·方"},
+    {no:1172,h:"对面",p:"duìmiàn",m:"맞은편",ex:"银行在公园对面。",ep:"Yínháng zài gōngyuán duìmiàn.",em:"은행은 공원 맞은편에 있어요.",wr:"1~3급: 对"},
+    {no:1173,h:"对于",p:"duìyú",m:"~에 대하여, ~에 대해서 (介)",ex:"对于这个问题，我有自己的想法。",ep:"Duìyú zhè ge wèntí, wǒ yǒu zìjǐ de xiǎngfǎ.",em:"이 문제에 대해 저는 제 생각이 있어요.",wr:"1~3급: 对·于"},
+    {no:1174,h:"队员",p:"duìyuán",m:"팀원",ex:"每个队员都很努力。",ep:"Měi ge duìyuán dōu hěn nǔlì.",em:"팀원 모두가 아주 열심히 해요.",wr:"4급 신규: 队"},
+    {no:1175,h:"队长",p:"duìzhǎng",m:"팀장, 주장",ex:"他是我们队的队长。",ep:"Tā shì wǒmen duì de duìzhǎng.",em:"그는 우리 팀의 주장이에요.",wr:"4급 신규: 队 · 1~3급: 长"},
+    {no:1176,h:"度假",p:"dù jià",m:"휴가를 보내다",ex:"夏天我们去南方度假。",ep:"Xiàtiān wǒmen qù nánfāng dù jià.",em:"여름에 우리는 남쪽으로 휴가를 가요.",lh:"동사+목적어 — 度了假, 度过假",wr:"4급 신규: 度 · 1~3급: 假"},
+    {no:1177,h:"顿",p:"dùn",m:"…끼 (식사의 양사) · 멈추다 (动)",ex:"我们一天吃三顿饭。",ep:"Wǒmen yì tiān chī sān dùn fàn.",em:"우리는 하루에 세 끼를 먹어요."},
+    {no:1178,h:"多么",p:"duōme",m:"얼마나, 정말 (감탄)",ex:"这里的风景多么美啊！",ep:"Zhèli de fēngjǐng duōme měi a!",em:"이곳 풍경은 정말 아름답네요!",nt:"me",ntNote:"‘me’는 경성 — duōme",wr:"1~3급: 多·么"},
+    {no:1179,h:"多数",p:"duōshù",m:"대다수",ex:"多数学生都同意。",ep:"Duōshù xuésheng dōu tóngyì.",em:"대다수 학생이 동의해요.",wr:"1~3급: 多"},
+    {no:1180,h:"多样",p:"duōyàng",m:"다양하다",ex:"这个城市的文化很多样。",ep:"Zhè ge chéngshì de wénhuà hěn duōyàng.",em:"이 도시의 문화는 아주 다양해요.",wr:"1~3급: 多"},
+    {no:1181,h:"读者",p:"dúzhě",m:"독자",ex:"这本书有很多读者。",ep:"Zhè běn shū yǒu hěn duō dúzhě.",em:"이 책은 독자가 아주 많아요.",wr:"1~3급: 者"},
+    {no:1182,h:"肚子",p:"dùzi",m:"배 (신체)",ex:"我肚子有点儿疼。",ep:"Wǒ dùzi yǒudiǎnr téng.",em:"배가 좀 아파요.",nt:"zi",ntNote:"‘zi’는 경성 — dùzi. 원성조 zǐ로 읽지 않아요",wr:"1~3급: 子"},
+    {no:1183,h:"而",p:"ér",m:"그러나 · 그리고 (서면)",ex:"这里夏天不热，而冬天很冷。",ep:"Zhèli xiàtiān bú rè, ér dōngtiān hěn lěng.",em:"이곳은 여름은 덥지 않고 겨울은 아주 추워요.",wr:"1~3급: 而"},
+    {no:1184,h:"儿童",p:"értóng",m:"어린이, 아동",ex:"这本书是给儿童看的。",ep:"Zhè běn shū shì gěi értóng kàn de.",em:"이 책은 어린이용이에요.",wr:"1~3급: 儿"},
+    {no:1185,h:"法",p:"fǎ",m:"법, 방법 (法律·方法의 준말)",ex:"我们得想法解决这个问题。",ep:"Wǒmen děi xiǎng fǎ jiějué zhè ge wèntí.",em:"우리는 방법을 생각해 이 문제를 해결해야 해요.",wr:"1~3급: 法"},
+    {no:1186,h:"发出",p:"fāchū",m:"내다, 발하다 (소리·빛·신호를)",ex:"房间里发出奇怪的声音。",ep:"Fángjiān li fāchū qíguài de shēngyīn.",em:"방에서 이상한 소리가 나요.",wr:"1~3급: 发"},
+    {no:1187,h:"法律",p:"fǎlǜ",m:"법률",ex:"这是法律规定的。",ep:"Zhè shì fǎlǜ guīdìng de.",em:"이것은 법률로 정해진 거예요.",wr:"1~3급: 法"},
+    {no:1188,h:"烦",p:"fán",m:"귀찮다, 짜증나다 · 괴롭히다",ex:"这件事真让人烦。",ep:"Zhè jiàn shì zhēn ràng rén fán.",em:"이 일은 정말 짜증나요.",wr:"4급 신규: 烦"},
+    {no:1189,h:"反对",p:"fǎnduì",m:"반대하다",ex:"我反对这个计划。",ep:"Wǒ fǎnduì zhè ge jìhuà.",em:"저는 이 계획에 반대해요.",wr:"4급 신규: 反 · 1~3급: 对"},
+    {no:1190,h:"房东",p:"fángdōng",m:"집주인 (세놓는)",ex:"房东说要提前交房租。",ep:"Fángdōng shuō yào tíqián jiāo fángzū.",em:"집주인이 집세를 미리 내라고 했어요."},
+    {no:1191,h:"方面",p:"fāngmiàn",m:"방면, 면",ex:"在学习方面，他很有办法。",ep:"Zài xuéxí fāngmiàn, tā hěn yǒu bànfǎ.",em:"공부 면에서는 그는 방법이 많아요.",wr:"1~3급: 方"},
+    {no:1192,h:"放弃",p:"fàngqì",m:"포기하다",ex:"别放弃，还有机会。",ep:"Bié fàngqì, hái yǒu jīhuì.",em:"포기하지 마세요, 아직 기회가 있어요.",wr:"1~3급: 放"},
+    {no:1193,h:"方式",p:"fāngshì",m:"방식",ex:"我喜欢这种生活方式。",ep:"Wǒ xǐhuan zhè zhǒng shēnghuó fāngshì.",em:"저는 이런 생활 방식을 좋아해요.",wr:"4급 신규: 式 · 1~3급: 方"},
+    {no:1194,h:"放松",p:"fàngsōng",m:"긴장을 풀다, 편안히 하다",ex:"周末好好放松一下吧。",ep:"Zhōumò hǎohǎo fàngsōng yíxià ba.",em:"주말에는 푹 쉬며 긴장을 풀어요.",wr:"1~3급: 放"},
+    {no:1195,h:"房租",p:"fángzū",m:"집세, 임대료",ex:"这里的房租很贵。",ep:"Zhèli de fángzū hěn guì.",em:"여기 집세는 아주 비싸요."},
+    {no:1196,h:"烦恼",p:"fánnǎo",m:"고민스럽다 · 고민 (名)",ex:"每个人都有烦恼。",ep:"Měi ge rén dōu yǒu fánnǎo.",em:"누구에게나 고민이 있어요.",wr:"4급 신규: 烦"},
+    {no:1197,h:"翻译",p:"fānyì",m:"번역하다 · 번역(가)",ex:"请把这句话翻译成汉语。",ep:"Qǐng bǎ zhè jù huà fānyì chéng Hànyǔ.",em:"이 말을 중국어로 번역해 주세요."},
+    {no:1198,h:"发送",p:"fāsòng",m:"발송하다, 보내다",ex:"请把文件发送给我。",ep:"Qǐng bǎ wénjiàn fāsòng gěi wǒ.",em:"파일을 저에게 보내 주세요.",wr:"1~3급: 发"},
+    {no:1199,h:"费",p:"fèi",m:"요금, 비용 · 쓰다, 소비하다 (动)",ex:"这个月的电费很高。",ep:"Zhè ge yuè de diànfèi hěn gāo.",em:"이번 달 전기요금이 아주 높아요."},
+    {no:1200,h:"费用",p:"fèiyong",m:"비용",ex:"这次旅行的费用不高。",ep:"Zhè cì lǚxíng de fèiyong bù gāo.",em:"이번 여행 비용은 높지 않아요.",nt:"yong",ntNote:"‘yong’은 경성 — fèiyong. 원성조 yòng으로 읽지 않아요",wr:"1~3급: 用"},
+    {no:1201,h:"份",p:"fèn",m:"…부, …인분 (양사)",ex:"我点了两份饭。",ep:"Wǒ diǎn le liǎng fèn fàn.",em:"저는 밥 두 인분을 시켰어요.",wr:"4급 신규: 份"},
+    {no:1202,h:"丰富",p:"fēngfù",m:"풍부하다, 다양하다",ex:"这家餐厅的菜很丰富。",ep:"Zhè jiā cāntīng de cài hěn fēngfù.",em:"이 식당은 음식이 아주 다양해요."},
+    {no:1203,h:"风景",p:"fēngjǐng",m:"풍경",ex:"这里的风景真美。",ep:"Zhèli de fēngjǐng zhēn měi.",em:"이곳 풍경은 정말 아름다워요.",wr:"1~3급: 风"},
+    {no:1204,h:"分数",p:"fēnshù",m:"점수, 성적",ex:"他这次的分数很高。",ep:"Tā zhè cì de fēnshù hěn gāo.",em:"그는 이번에 점수가 아주 높아요.",wr:"1~3급: 分"},
+    {no:1205,h:"分为",p:"fēnwéi",m:"~으로 나뉘다, 구분되다",ex:"一年分为四个季节。",ep:"Yì nián fēnwéi sì ge jìjié.",em:"일 년은 네 계절로 나뉘어요.",wr:"1~3급: 分·为"},
+    {no:1206,h:"否则",p:"fǒuzé",m:"그렇지 않으면, 아니면",ex:"快走吧，否则要迟到了。",ep:"Kuài zǒu ba, fǒuzé yào chídào le.",em:"빨리 가요, 안 그러면 지각해요.",wr:"4급 신규: 否"},
+    {no:1207,h:"幅",p:"fú",m:"폭 (그림·천의 양사)",ex:"他画了一幅画。",ep:"Tā huà le yì fú huà.",em:"그는 그림을 한 폭 그렸어요."},
+    {no:1208,h:"付",p:"fù",m:"지불하다, 내다",ex:"可以用手机付钱吗？",ep:"Kěyǐ yòng shǒujī fù qián ma?",em:"휴대폰으로 결제할 수 있어요?"},
+    {no:1209,h:"符合",p:"fúhé",m:"부합하다, 맞다",ex:"这个答案不符合要求。",ep:"Zhè ge dá'àn bù fúhé yāoqiú.",em:"이 답은 요구에 맞지 않아요.",wr:"1~3급: 合"},
+    {no:1210,h:"父母",p:"fùmǔ",m:"부모(님)",ex:"我和父母住在一起。",ep:"Wǒ hé fùmǔ zhù zài yìqǐ.",em:"저는 부모님과 함께 살아요.",wr:"4급 신규: 父"},
+    {no:1211,h:"父女",p:"fùnǚ",m:"부녀 (아버지와 딸)",ex:"他们父女长得很像。",ep:"Tāmen fùnǚ zhǎng de hěn xiàng.",em:"그 부녀는 많이 닮았어요.",wr:"4급 신규: 父 · 1~3급: 女"},
+    {no:1212,h:"父亲",p:"fùqīn",m:"아버지",ex:"我父亲是老师。",ep:"Wǒ fùqīn shì lǎoshī.",em:"아버지는 교사예요.",wr:"4급 신규: 父"},
+    {no:1213,h:"复印",p:"fùyìn",m:"복사하다",ex:"请帮我复印这份材料。",ep:"Qǐng bāng wǒ fùyìn zhè fèn cáiliào.",em:"이 자료를 복사해 주세요.",wr:"4급 신규: 印 · 1~3급: 复"},
+    {no:1214,h:"复杂",p:"fùzá",m:"복잡하다",ex:"这个问题很复杂。",ep:"Zhè ge wèntí hěn fùzá.",em:"이 문제는 아주 복잡해요.",wr:"1~3급: 复"},
+    {no:1215,h:"负责",p:"fùzé",m:"책임지다 · 책임감 있는 (形)",ex:"这件事由他负责。",ep:"Zhè jiàn shì yóu tā fùzé.",em:"이 일은 그가 책임져요."},
+    {no:1216,h:"负责人",p:"fùzérén",m:"책임자",ex:"请问负责人是谁？",ep:"Qǐngwèn fùzérén shì shéi?",em:"책임자가 누구예요?",wr:"1~3급: 人"},
+    {no:1217,h:"父子",p:"fùzǐ",m:"부자 (아버지와 아들)",ex:"这对父子都很高。",ep:"Zhè duì fùzǐ dōu hěn gāo.",em:"이 부자는 둘 다 키가 커요.",wr:"4급 신규: 父 · 1~3급: 子"},
+    {no:1218,h:"改",p:"gǎi",m:"고치다, 바꾸다",ex:"请把时间改到明天。",ep:"Qǐng bǎ shíjiān gǎi dào míngtiān.",em:"시간을 내일로 바꿔 주세요.",wr:"4급 신규: 改"},
+    {no:1219,h:"改变",p:"gǎibiàn",m:"변화시키다, 바꾸다",ex:"他改变了自己的想法。",ep:"Tā gǎibiàn le zìjǐ de xiǎngfǎ.",em:"그는 자기 생각을 바꿨어요.",wr:"4급 신규: 改 · 1~3급: 变"},
+    {no:1220,h:"赶",p:"gǎn",m:"서두르다 · 따라잡다 · (시간에) 맞추다",ex:"他赶上了最后一班车。",ep:"Tā gǎn shàng le zuìhòu yì bān chē.",em:"그는 마지막 차를 탔어요."},
+    {no:1221,h:"敢",p:"gǎn",m:"감히 ~하다, ~할 용기가 있다",ex:"我不敢晚上一个人出去。",ep:"Wǒ bù gǎn wǎnshang yí ge rén chūqu.",em:"저는 밤에 혼자 나갈 용기가 없어요.",wr:"4급 신규: 敢"},
+    {no:1222,h:"感",p:"gǎn",m:"(접미사) …감, …느낌 (感冒·感觉처럼 합성어에 쓰여요)",ex:"他得了感冒，今天没来上课。",ep:"Tā dé le gǎnmào, jīntiān méi lái shàng kè.",em:"그는 감기에 걸려서 오늘 수업에 안 왔어요."},
+    {no:1223,h:"干",p:"gān",m:"마르다 · (명) 줄기, 몸체 — 干 gàn '하다'",ex:"衣服干了。",ep:"Yīfu gān le.",em:"옷이 말랐어요.",wr:"1~3급: 干"},
+    {no:1224,h:"干杯",p:"gān bēi",m:"건배하다",ex:"来，我们干杯！",ep:"Lái, wǒmen gān bēi!",em:"자, 우리 건배해요!",lh:"동사+목적어 — 干了杯, 干过杯",wr:"1~3급: 干"},
+    {no:1225,h:"感动",p:"gǎndòng",m:"감동하다, 감동시키다",ex:"这个故事让我很感动。",ep:"Zhè ge gùshi ràng wǒ hěn gǎndòng.",em:"이 이야기는 저를 아주 감동시켰어요."},
+    {no:1226,h:"钢琴",p:"gāngqín",m:"피아노",ex:"她每天弹钢琴。",ep:"Tā měitiān tán gāngqín.",em:"그녀는 매일 피아노를 쳐요."},
+    {no:1227,h:"干活儿",p:"gàn huór",m:"일하다 (육체노동을)",ex:"他在工厂干活儿。",ep:"Tā zài gōngchǎng gàn huór.",em:"그는 공장에서 일해요.",lh:"동사+목적어 — 干了半天活儿, 干过活儿",wr:"1~3급: 干·活·儿"},
+    {no:1228,h:"赶紧",p:"gǎnjǐn",m:"얼른, 서둘러",ex:"赶紧走吧，要下雨了。",ep:"Gǎnjǐn zǒu ba, yào xià yǔ le.",em:"얼른 가요, 비가 오려고 해요.",ts:"3성+3성 → 앞 음절이 2성: gǎnjǐn → gánjǐn"},
+    {no:1229,h:"感觉",p:"gǎnjué",m:"느낌 · 느끼다",ex:"我感觉有点儿累。",ep:"Wǒ gǎnjué yǒudiǎnr lèi.",em:"저는 좀 피곤한 느낌이에요."},
+    {no:1230,h:"赶快",p:"gǎnkuài",m:"서둘러, 빨리",ex:"赶快上车吧。",ep:"Gǎnkuài shàng chē ba.",em:"빨리 차에 타세요."},
+    {no:1231,h:"感情",p:"gǎnqíng",m:"감정, 정",ex:"他们的感情很好。",ep:"Tāmen de gǎnqíng hěn hǎo.",em:"그들의 사이는 아주 좋아요."},
+    {no:1232,h:"感人",p:"gǎnrén",m:"감동적이다",ex:"这个电影很感人。",ep:"Zhè ge diànyǐng hěn gǎnrén.",em:"이 영화는 아주 감동적이에요.",wr:"1~3급: 人"},
+    {no:1233,h:"赶上",p:"gǎnshàng",m:"따라잡다, (시간에) 맞추다",ex:"我赶上了今天的会议。",ep:"Wǒ gǎn shàng le jīntiān de huìyì.",em:"저는 오늘 회의 시간에 맞춰 갔어요.",wr:"1~3급: 上"},
+    {no:1234,h:"感受",p:"gǎnshòu",m:"느끼다 · 느낌 (名)",ex:"我想感受一下这里的生活。",ep:"Wǒ xiǎng gǎnshòu yíxià zhèli de shēnghuó.",em:"이곳 생활을 좀 느껴 보고 싶어요.",wr:"1~3급: 受"},
+    {no:1235,h:"感谢",p:"gǎnxiè",m:"감사하다",ex:"非常感谢你的帮助。",ep:"Fēicháng gǎnxiè nǐ de bāngzhù.",em:"도와주셔서 정말 감사해요."},
+    {no:1236,h:"高价",p:"gāojià",m:"높은 가격, 고가",ex:"他高价买了这辆车。",ep:"Tā gāojià mǎi le zhè liàng chē.",em:"그는 비싼 값에 이 차를 샀어요."},
+    {no:1237,h:"高考",p:"gāokǎo",m:"대학입학시험",ex:"他明年参加高考。",ep:"Tā míngnián cānjiā gāokǎo.",em:"그는 내년에 대학입학시험을 봐요."},
+    {no:1238,h:"高速",p:"gāosù",m:"고속의 · 고속도로",ex:"我们走高速吧。",ep:"Wǒmen zǒu gāosù ba.",em:"우리 고속도로로 가요."},
+    {no:1239,h:"高温",p:"gāowēn",m:"고온",ex:"这几天是高温天气。",ep:"Zhè jǐ tiān shì gāowēn tiānqì.",em:"요즘은 고온 날씨예요.",wr:"4급 신규: 温"},
+    {no:1240,h:"高于",p:"gāoyú",m:"~보다 높다",ex:"今年的收入高于去年。",ep:"Jīnnián de shōurù gāoyú qùnián.",em:"올해 수입은 작년보다 높아요.",wr:"1~3급: 于"},
+    {no:1241,h:"各",p:"gè",m:"각각의, 각 … · 각기 (副)",ex:"各国都有自己的文化。",ep:"Gè guó dōu yǒu zìjǐ de wénhuà.",em:"각 나라에는 자기 문화가 있어요.",wr:"4급 신규: 各"},
+    {no:1242,h:"胳膊",p:"gēbo",m:"팔 (어깨부터 손목까지)",ex:"我的胳膊有点儿疼。",ep:"Wǒ de gēbo yǒudiǎnr téng.",em:"팔이 좀 아파요.",nt:"bo",ntNote:"‘bo’는 경성 — gēbo. 원성조 bó로 읽지 않아요"},
+    {no:1243,h:"各地",p:"gèdì",m:"각지, 여러 곳",ex:"各地的人都来北京玩。",ep:"Gèdì de rén dōu lái Běijīng wán.",em:"각지에서 사람들이 베이징에 놀러 와요.",wr:"4급 신규: 各 · 1~3급: 地"},
+    {no:1244,h:"各个",p:"gègè",m:"각각, 모든",ex:"各个部门都要参加。",ep:"Gègè bùmén dōu yào cānjiā.",em:"모든 부서가 참가해야 해요.",wr:"4급 신규: 各 · 1~3급: 个"},
+    {no:1245,h:"更加",p:"gèngjiā",m:"더욱, 한층",ex:"他比以前更加努力了。",ep:"Tā bǐ yǐqián gèngjiā nǔlì le.",em:"그는 예전보다 더욱 열심히 해요.",wr:"1~3급: 更·加"},
+    {no:1246,h:"歌声",p:"gēshēng",m:"노랫소리",ex:"我喜欢她的歌声。",ep:"Wǒ xǐhuan tā de gēshēng.",em:"저는 그녀의 노랫소리를 좋아해요.",wr:"1~3급: 声"},
+    {no:1247,h:"歌手",p:"gēshǒu",m:"가수",ex:"她是我最喜欢的歌手。",ep:"Tā shì wǒ zuì xǐhuan de gēshǒu.",em:"그녀는 제가 가장 좋아하는 가수예요."},
+    {no:1248,h:"各位",p:"gèwèi",m:"여러분, 각위",ex:"各位同学，请安静！",ep:"Gèwèi tóngxué, qǐng ānjìng!",em:"학생 여러분, 조용히 해 주세요!",wr:"4급 신규: 各"},
+    {no:1249,h:"各种",p:"gèzhǒng",m:"각종의, 여러 가지",ex:"这里有各种水果。",ep:"Zhèli yǒu gèzhǒng shuǐguǒ.",em:"여기에는 여러 가지 과일이 있어요.",wr:"4급 신규: 各 · 1~3급: 种"},
+    {no:1250,h:"共",p:"gòng",m:"모두, 합계 · 함께",ex:"我们班共有三十人。",ep:"Wǒmen bān gòng yǒu sānshí rén.",em:"우리 반은 모두 서른 명이에요.",wr:"1~3급: 共"},
+    {no:1251,h:"工厂",p:"gōngchǎng",m:"공장",ex:"这个工厂很大。",ep:"Zhè ge gōngchǎng hěn dà.",em:"이 공장은 아주 커요.",wr:"4급 신규: 厂 · 1~3급: 工"},
+    {no:1252,h:"功夫",p:"gōngfu",m:"실력, 공력 · (무술) 쿵푸",ex:"他的中国功夫很好。",ep:"Tā de Zhōngguó gōngfu hěn hǎo.",em:"그의 중국 무술 실력은 아주 좋아요.",nt:"fu",ntNote:"‘fu’는 경성 — gōngfu. 원성조 fū로 읽지 않아요"},
+    {no:1253,h:"公共",p:"gōnggòng",m:"공공의",ex:"请不要在公共场所大声说话。",ep:"Qǐng bú yào zài gōnggòng chǎngsuǒ dàshēng shuōhuà.",em:"공공장소에서 큰 소리로 말하지 마세요.",wr:"1~3급: 共"},
+    {no:1254,h:"功课",p:"gōngkè",m:"학업, 숙제",ex:"他每天的功课都很多。",ep:"Tā měitiān de gōngkè dōu hěn duō.",em:"그는 매일 숙제가 아주 많아요."},
+    {no:1255,h:"公里",p:"gōnglǐ",m:"킬로미터",ex:"从家到学校有三公里。",ep:"Cóng jiā dào xuéxiào yǒu sān gōnglǐ.",em:"집에서 학교까지 3킬로미터예요."},
+    {no:1256,h:"公路",p:"gōnglù",m:"도로 (자동차 도로)",ex:"这条公路一直通到海边。",ep:"Zhè tiáo gōnglù yìzhí tōng dào hǎibiān.",em:"이 도로는 바닷가까지 이어져 있어요."},
+    {no:1257,h:"工人",p:"gōngrén",m:"노동자, 일꾼",ex:"他爸爸是工人。",ep:"Tā bàba shì gōngrén.",em:"그의 아버지는 노동자예요.",wr:"1~3급: 工·人"},
+    {no:1258,h:"共同",p:"gòngtóng",m:"공동의, 함께",ex:"我们有共同的目标。",ep:"Wǒmen yǒu gòngtóng de mùbiāo.",em:"우리는 공동의 목표가 있어요.",wr:"1~3급: 共·同"},
+    {no:1259,h:"工资",p:"gōngzī",m:"임금, 월급",ex:"这个月的工资已经发了。",ep:"Zhè ge yuè de gōngzī yǐjīng fā le.",em:"이번 달 월급은 이미 나왔어요.",wr:"4급 신규: 资 · 1~3급: 工"},
+    {no:1260,h:"够",p:"gòu",m:"충분하다 · 꽤, 상당히 (副)",ex:"这些钱够不够？",ep:"Zhèxiē qián gòu bu gòu?",em:"이 돈으로 충분해요?",wr:"4급 신규: 够"},
+    {no:1261,h:"购买",p:"gòumǎi",m:"구입하다",ex:"可以在网上购买。",ep:"Kěyǐ zài wǎng shang gòumǎi.",em:"인터넷으로 구입할 수 있어요."},
+    {no:1262,h:"购物",p:"gòuwù",m:"쇼핑하다, 물건을 사다",ex:"她喜欢在网上购物。",ep:"Tā xǐhuan zài wǎng shang gòuwù.",em:"그녀는 인터넷 쇼핑을 좋아해요.",wr:"1~3급: 物"},
+    {no:1263,h:"挂",p:"guà",m:"걸다, 매다",ex:"请把照片挂在这里。",ep:"Qǐng bǎ zhàopiàn guà zài zhèli.",em:"사진을 여기에 걸어 주세요.",wr:"4급 신규: 挂"},
+    {no:1264,h:"管",p:"guǎn",m:"관리하다 · (명) 관, 파이프",ex:"他管着三个部门。",ep:"Tā guǎn zhe sān ge bùmén.",em:"그는 세 부서를 관리하고 있어요.",wr:"4급 신규: 管"},
+    {no:1265,h:"逛",p:"guàng",m:"거닐다, 구경하며 다니다",ex:"周末我们去逛街吧。",ep:"Zhōumò wǒmen qù guàng jiē ba.",em:"주말에 우리 쇼핑하러 가요."},
+    {no:1266,h:"光",p:"guāng",m:"빛 · 다, 오직 (副) · 벗은",ex:"房间里一点儿光都没有。",ep:"Fángjiān li yìdiǎnr guāng dōu méi yǒu.",em:"방 안에는 빛이 하나도 없어요."},
+    {no:1267,h:"广播",p:"guǎngbō",m:"방송(하다)",ex:"我每天早上听广播。",ep:"Wǒ měitiān zǎoshang tīng guǎngbō.",em:"저는 매일 아침 방송을 들어요.",wr:"4급 신규: 广"},
+    {no:1268,h:"广告",p:"guǎnggào",m:"광고",ex:"电视里的广告太多了。",ep:"Diànshì li de guǎnggào tài duō le.",em:"TV 광고가 너무 많아요.",wr:"4급 신규: 广"},
+    {no:1269,h:"关键",p:"guānjiàn",m:"관건, 열쇠 · 관건적인 (形)",ex:"这是成功的关键。",ep:"Zhè shì chénggōng de guānjiàn.",em:"이것이 성공의 열쇠예요."},
+    {no:1270,h:"观看",p:"guānkàn",m:"관람하다, 시청하다",ex:"很多人观看这场比赛。",ep:"Hěn duō rén guānkàn zhè chǎng bǐsài.",em:"많은 사람이 이 경기를 관람해요.",wr:"4급 신규: 观"},
+    {no:1271,h:"管理",p:"guǎnlǐ",m:"관리하다",ex:"他管理着一家大公司。",ep:"Tā guǎnlǐ zhe yì jiā dà gōngsī.",em:"그는 큰 회사를 관리하고 있어요.",ts:"3성+3성 → 앞 음절이 2성: guǎnlǐ → guánlǐ",wr:"4급 신규: 管"},
+    {no:1272,h:"观众",p:"guānzhòng",m:"관객, 시청자",ex:"观众们都站了起来。",ep:"Guānzhòngmen dōu zhàn le qǐlai.",em:"관객들이 모두 일어섰어요.",wr:"4급 신규: 观·众"},
+    {no:1273,h:"规定",p:"guīdìng",m:"규정(하다)",ex:"学校有规定，不能迟到。",ep:"Xuéxiào yǒu guīdìng, bù néng chídào.",em:"학교에는 지각하면 안 된다는 규정이 있어요.",wr:"1~3급: 定"},
+    {no:1274,h:"估计",p:"gūjì",m:"추정하다, 짐작하다",ex:"我估计他明天会来。",ep:"Wǒ gūjì tā míngtiān huì lái.",em:"내일 그가 올 것 같아요.",wr:"4급 신규: 计"},
+    {no:1275,h:"顾客",p:"gùkè",m:"손님, 고객",ex:"这家店的顾客很多。",ep:"Zhè jiā diàn de gùkè hěn duō.",em:"이 가게는 손님이 아주 많아요."},
+    {no:1276,h:"鼓励",p:"gǔlì",m:"격려하다, 장려하다",ex:"老师鼓励我们多说汉语。",ep:"Lǎoshī gǔlì wǒmen duō shuō Hànyǔ.",em:"선생님이 우리에게 중국어를 많이 말하라고 격려하세요."},
+    {no:1277,h:"姑娘",p:"gūniang",m:"처녀, 아가씨",ex:"这个姑娘很爱笑。",ep:"Zhè ge gūniang hěn ài xiào.",em:"이 아가씨는 웃기를 아주 좋아해요.",nt:"niang",ntNote:"‘niang’은 경성 — gūniang. 원성조 niáng으로 읽지 않아요"},
+    {no:1278,h:"过程",p:"guòchéng",m:"과정",ex:"学习的过程很重要。",ep:"Xuéxí de guòchéng hěn zhòngyào.",em:"배우는 과정이 아주 중요해요.",wr:"4급 신규: 程 · 1~3급: 过"},
+    {no:1279,h:"国籍",p:"guójí",m:"국적",ex:"你的国籍是哪儿？",ep:"Nǐ de guójí shì nǎr?",em:"국적이 어디예요?",wr:"1~3급: 国"},
+    {no:1280,h:"国际",p:"guójì",m:"국제(의)",ex:"这是一个国际会议。",ep:"Zhè shì yí ge guójì huìyì.",em:"이것은 국제 회의예요.",wr:"4급 신규: 际 · 1~3급: 国"},
+    {no:1281,h:"果汁",p:"guǒzhī",m:"과일 주스",ex:"我要一杯果汁。",ep:"Wǒ yào yì bēi guǒzhī.",em:"주스 한 잔 주세요."},
+    {no:1282,h:"故意",p:"gùyì",m:"일부러, 고의로",ex:"他不是故意迟到的。",ep:"Tā bú shì gùyì chídào de.",em:"그는 일부러 지각한 게 아니에요.",wr:"1~3급: 故"},
+    {no:1283,h:"害羞",p:"hàixiū",m:"수줍어하다, 부끄러워하다",ex:"她有点儿害羞。",ep:"Tā yǒudiǎnr hàixiū.",em:"그녀는 좀 수줍어해요."},
+    {no:1284,h:"海洋",p:"hǎiyáng",m:"해양, 바다",ex:"我喜欢看海洋里的动物。",ep:"Wǒ xǐhuan kàn hǎiyáng li de dòngwù.",em:"저는 바다 동물 보는 걸 좋아해요.",wr:"1~3급: 海"},
+    {no:1285,h:"汗",p:"hàn",m:"땀",ex:"他跑得满头大汗。",ep:"Tā pǎo de mǎn tóu dà hàn.",em:"그는 뛰어서 머리에 땀이 났어요."},
+    {no:1286,h:"喊",p:"hǎn",m:"외치다, 부르다, 소리치다",ex:"有人在门外喊你。",ep:"Yǒu rén zài mén wài hǎn nǐ.",em:"밖에서 누가 너를 불러요.",wr:"4급 신규: 喊"},
+    {no:1287,h:"航班",p:"hángbān",m:"항공편",ex:"这个航班晚了一个小时。",ep:"Zhè ge hángbān wǎn le yí ge xiǎoshí.",em:"이 항공편은 한 시간 늦어졌어요."},
+    {no:1288,h:"寒假",p:"hánjià",m:"겨울방학",ex:"寒假你有什么计划？",ep:"Hánjià nǐ yǒu shénme jìhuà?",em:"겨울방학에 무슨 계획이 있어요?",wr:"1~3급: 假"},
+    {no:1289,h:"寒冷",p:"hánlěng",m:"춥다, 몹시 추운",ex:"北方的冬天很寒冷。",ep:"Běifāng de dōngtiān hěn hánlěng.",em:"북쪽 지방 겨울은 아주 추워요."},
+    {no:1290,h:"好处",p:"hǎochù",m:"좋은 점, 이익",ex:"多运动对身体有好处。",ep:"Duō yùndòng duì shēntǐ yǒu hǎochù.",em:"운동을 많이 하면 몸에 좋아요.",wr:"1~3급: 好·处"},
+    {no:1291,h:"好好",p:"hǎohǎo",m:"잘, 제대로 · 좋은 (形)",ex:"你要好好学习。",ep:"Nǐ yào hǎohǎo xuéxí.",em:"공부를 열심히 해야 해요.",ts:"3성+3성 → 앞 음절이 2성: hǎohǎo → háohǎo",wr:"1~3급: 好"},
+    {no:1292,h:"好笑",p:"hǎoxiào",m:"우습다, 재미있다",ex:"他说的话很好笑。",ep:"Tā shuō de huà hěn hǎoxiào.",em:"그가 한 말이 아주 우스워요.",wr:"1~3급: 好"},
+    {no:1293,h:"合格",p:"hégé",m:"합격하다, 기준에 맞다",ex:"他的成绩合格了。",ep:"Tā de chéngjì hégé le.",em:"그는 성적이 합격선에 들었어요.",wr:"1~3급: 合"},
+    {no:1294,h:"盒子",p:"hézi",m:"상자, 갑",ex:"盒子里有一块蛋糕。",ep:"Hézi li yǒu yí kuài dàngāo.",em:"상자 안에 케이크가 하나 있어요.",nt:"zi",ntNote:"‘zi’는 경성 — hézi. 원성조 zǐ로 읽지 않아요",wr:"1~3급: 子"},
+    {no:1295,h:"红包",p:"hóngbāo",m:"세뱃돈, 돈 봉투",ex:"过年的时候孩子会收到红包。",ep:"Guònián de shíhou háizi huì shōudào hóngbāo.",em:"설날에 아이들은 세뱃돈을 받아요."},
+    {no:1296,h:"厚",p:"hòu",m:"두껍다, 두텁다",ex:"这件衣服很厚。",ep:"Zhè jiàn yīfu hěn hòu.",em:"이 옷은 아주 두꺼워요."},
+    {no:1297,h:"后悔",p:"hòuhuǐ",m:"후회하다",ex:"我后悔没有早点儿来。",ep:"Wǒ hòuhuǐ méi yǒu zǎo diǎnr lái.",em:"더 일찍 오지 않은 게 후회돼요.",wr:"1~3급: 后"},
+    {no:1298,h:"坏处",p:"huàichù",m:"나쁜 점, 폐해",ex:"睡得太晚有很多坏处。",ep:"Shuì de tài wǎn yǒu hěn duō huàichù.",em:"너무 늦게 자면 나쁜 점이 많아요.",wr:"1~3급: 处"},
+    {no:1299,h:"怀疑",p:"huáiyí",m:"의심하다, 의심이 들다",ex:"我怀疑他忘了这件事。",ep:"Wǒ huáiyí tā wàng le zhè jiàn shì.",em:"그가 이 일을 잊은 것 같아요."},
+    {no:1300,h:"话剧",p:"huàjù",m:"연극 (대사극)",ex:"我们昨晚看了一场话剧。",ep:"Wǒmen zuówǎn kàn le yì chǎng huàjù.",em:"우리는 어젯밤 연극을 한 편 봤어요."},
+    {no:1301,h:"环保",p:"huánbǎo",m:"환경 보호(의)",ex:"我们要注意环保。",ep:"Wǒmen yào zhùyì huánbǎo.",em:"우리는 환경 보호에 신경 써야 해요.",wr:"4급 신규: 保"},
+    {no:1302,h:"换乘",p:"huànchéng",m:"환승하다, 갈아타다",ex:"在下一站换乘地铁。",ep:"Zài xià yí zhàn huànchéng dìtiě.",em:"다음 역에서 지하철로 갈아타세요.",wr:"1~3급: 换"},
+    {no:1303,h:"回复",p:"huífù",m:"회신하다, 답장하다",ex:"请回复我的邮件。",ep:"Qǐng huífù wǒ de yóujiàn.",em:"제 메일에 회신해 주세요.",wr:"1~3급: 复"},
+    {no:1304,h:"回信",p:"huí xìn",m:"답장하다 · 답장 (名)",ex:"他还没有给我回信。",ep:"Tā hái méi yǒu gěi wǒ huí xìn.",em:"그는 아직 제게 답장을 안 했어요.",lh:"동사+목적어 — 回了信, 回了一封信",wr:"1~3급: 信"},
+    {no:1305,h:"回忆",p:"huíyì",m:"회상하다, 떠올리다 · 추억",ex:"这些照片让我回忆起童年。",ep:"Zhèxiē zhàopiàn ràng wǒ huíyì qǐ tóngnián.",em:"이 사진들은 어린 시절을 떠올리게 해요."},
+    {no:1306,h:"会员",p:"huìyuán",m:"회원",ex:"我是这家店的会员。",ep:"Wǒ shì zhè jiā diàn de huìyuán.",em:"저는 이 가게 회원이에요.",wr:"1~3급: 会"},
+    {no:1307,h:"互联网",p:"hùliánwǎng",m:"인터넷",ex:"互联网改变了我们的生活。",ep:"Hùliánwǎng gǎibiàn le wǒmen de shēnghuó.",em:"인터넷은 우리 생활을 바꿨어요.",wr:"4급 신규: 联"},
+    {no:1308,h:"活",p:"huó",m:"살다 · 살아 있는 (形) · 일 (名)",ex:"他活了一百岁。",ep:"Tā huó le yì bǎi suì.",em:"그는 백 살까지 살았어요.",wr:"1~3급: 活"},
+    {no:1309,h:"货",p:"huò",m:"화물, 물건",ex:"这些货明天送到。",ep:"Zhèxiē huò míngtiān sòng dào.",em:"이 물건들은 내일 배달돼요."},
+    {no:1310,h:"火",p:"huǒ",m:"불 · 인기 있는 (形)",ex:"这个饭馆很火。",ep:"Zhè ge fànguǎn hěn huǒ.",em:"이 식당은 아주 인기예요."},
+    {no:1311,h:"获得",p:"huòdé",m:"얻다, 획득하다",ex:"他获得了好成绩。",ep:"Tā huòdé le hǎo chéngjì.",em:"그는 좋은 성적을 얻었어요."},
+    {no:1312,h:"活动",p:"huódòng",m:"활동(하다) · 행사, 이벤트",ex:"周末学校有活动。",ep:"Zhōumò xuéxiào yǒu huódòng.",em:"주말에 학교에 행사가 있어요.",wr:"1~3급: 活"},
+    {no:1313,h:"获奖",p:"huòjiǎng",m:"상을 받다, 수상하다",ex:"这部电影获奖了。",ep:"Zhè bù diànyǐng huò jiǎng le.",em:"이 영화가 상을 받았어요."},
+    {no:1314,h:"活泼",p:"huópō",m:"활발하다, 활기차다",ex:"这个孩子很活泼。",ep:"Zhè ge háizi hěn huópō.",em:"이 아이는 아주 활발해요.",wr:"1~3급: 活"},
+    {no:1315,h:"获取",p:"huòqǔ",m:"획득하다, 얻다 (정보를)",ex:"我们可以从网上获取信息。",ep:"Wǒmen kěyǐ cóng wǎng shang huòqǔ xìnxī.",em:"우리는 인터넷에서 정보를 얻을 수 있어요.",wr:"4급 신규: 取"},
+    {no:1316,h:"忽然",p:"hūrán",m:"갑자기, 문득",ex:"天忽然下起雨来了。",ep:"Tiān hūrán xià qǐ yǔ lái le.",em:"갑자기 비가 내리기 시작했어요.",wr:"4급 신규: 忽"},
+    {no:1317,h:"护士",p:"hùshi",m:"간호사",ex:"她在医院当护士。",ep:"Tā zài yīyuàn dāng hùshi.",em:"그녀는 병원에서 간호사로 일해요.",nt:"shi",ntNote:"‘shi’는 경성 — hùshi. 원성조 shì로 읽지 않아요",wr:"1~3급: 护"},
+    {no:1318,h:"互相",p:"hùxiāng",m:"서로",ex:"我们要互相帮助。",ep:"Wǒmen yào hùxiāng bāngzhù.",em:"우리는 서로 도와야 해요.",wr:"1~3급: 相"},
+    {no:1319,h:"既",p:"jì",m:"이미 · …하면서 또한 (既…又…)",ex:"这个房间既干净又安静。",ep:"Zhè ge fángjiān jì gānjìng yòu ānjìng.",em:"이 방은 깨끗하면서도 조용해요."},
+    {no:1320,h:"寄",p:"jì",m:"부치다, 보내다 (우편으로)",ex:"我给妈妈寄了一封信。",ep:"Wǒ gěi māma jì le yì fēng xìn.",em:"저는 엄마에게 편지를 한 통 부쳤어요.",wr:"4급 신규: 寄"},
+    {no:1321,h:"假",p:"jiǎ",m:"가짜의, 거짓의 (jiǎ) — 假 jià '휴가'",ex:"这是假酒，不能喝。",ep:"Zhè shì jiǎ jiǔ, bù néng hē.",em:"이건 가짜 술이라 마시면 안 돼요.",wr:"1~3급: 假"},
+    {no:1322,h:"加班",p:"jiā bān",m:"잔업하다, 초과근무하다",ex:"他昨天加班到很晚。",ep:"Tā zuótiān jiā bān dào hěn wǎn.",em:"그는 어제 늦게까지 야근했어요.",lh:"동사+목적어 — 加了班, 加过班",wr:"1~3급: 加"},
+    {no:1323,h:"价格",p:"jiàgé",m:"가격",ex:"这个价格很合适。",ep:"Zhè ge jiàgé hěn héshì.",em:"이 가격은 아주 적당해요."},
+    {no:1324,h:"家具",p:"jiājù",m:"가구",ex:"我们买了新的家具。",ep:"Wǒmen mǎi le xīn de jiājù.",em:"우리는 새 가구를 샀어요.",wr:"1~3급: 家"},
+    {no:1325,h:"加快",p:"jiākuài",m:"가속하다, 빠르게 하다",ex:"我们要加快速度。",ep:"Wǒmen yào jiākuài sùdù.",em:"우리는 속도를 높여야 해요.",wr:"1~3급: 加"},
+    {no:1326,h:"减",p:"jiǎn",m:"줄이다, 빼다",ex:"医生让我减一点儿体重。",ep:"Yīshēng ràng wǒ jiǎn yìdiǎnr tǐzhòng.",em:"의사가 체중을 좀 줄이라고 했어요."},
+    {no:1327,h:"降",p:"jiàng",m:"내리다, 떨어지다",ex:"气温降了很多。",ep:"Qìwēn jiàng le hěn duō.",em:"기온이 많이 떨어졌어요."},
+    {no:1328,h:"奖",p:"jiǎng",m:"상 · 상을 주다 (动)",ex:"他得了一个大奖。",ep:"Tā dé le yí ge dà jiǎng.",em:"그는 큰상을 탔어요."},
+    {no:1329,h:"江",p:"jiāng",m:"강 (큰 강)",ex:"这条江很长。",ep:"Zhè tiáo jiāng hěn cháng.",em:"이 강은 아주 길어요.",wr:"4급 신규: 江"},
+    {no:1330,h:"将",p:"jiāng",m:"곧 …할 것이다 · ~을 (목적어 표지, 서면)",ex:"他将要去上海。",ep:"Tā jiāng yào qù Shànghǎi.",em:"그는 곧 상하이에 갈 거예요.",wr:"4급 신규: 将"},
+    {no:1331,h:"降低",p:"jiàngdī",m:"낮추다, 떨어뜨리다",ex:"这家店降低了价格。",ep:"Zhè jiā diàn jiàngdī le jiàgé.",em:"이 가게는 가격을 낮췄어요.",wr:"4급 신규: 低"},
+    {no:1332,h:"降价",p:"jiàngjià",m:"가격을 내리다",ex:"这些水果降价了。",ep:"Zhèxiē shuǐguǒ jiàng jià le.",em:"이 과일들은 값이 내렸어요."},
+    {no:1333,h:"奖金",p:"jiǎngjīn",m:"보너스, 상금",ex:"今年他拿到了奖金。",ep:"Jīnnián tā ná dào le jiǎngjīn.",em:"올해 그는 보너스를 받았어요.",wr:"4급 신규: 金"},
+    {no:1334,h:"将来",p:"jiānglái",m:"장래, 앞으로",ex:"你将来想做什么？",ep:"Nǐ jiānglái xiǎng zuò shénme?",em:"앞으로 뭐가 되고 싶어요?",wr:"4급 신규: 将 · 1~3급: 来"},
+    {no:1335,h:"降落",p:"jiàngluò",m:"착륙하다, 내려앉다",ex:"飞机已经降落了。",ep:"Fēijī yǐjīng jiàngluò le.",em:"비행기가 이미 착륙했어요."},
+    {no:1336,h:"降温",p:"jiàngwēn",m:"기온이 내려가다 · 냉방하다",ex:"明天要降温，多穿点儿。",ep:"Míngtiān yào jiàng wēn, duō chuān diǎnr.",em:"내일 기온이 내려가니 옷을 더 입으세요.",wr:"4급 신규: 温"},
+    {no:1337,h:"奖学金",p:"jiǎngxuéjīn",m:"장학금",ex:"他拿到了奖学金。",ep:"Tā ná dào le jiǎngxuéjīn.",em:"그는 장학금을 받았어요.",wr:"4급 신규: 金 · 1~3급: 学"},
+    {no:1338,h:"将要",p:"jiāngyào",m:"곧 …하려고 하다",ex:"会议将要开始了。",ep:"Huìyì jiāngyào kāishǐ le.",em:"회의가 곧 시작하려고 해요.",wr:"4급 신규: 将 · 1~3급: 要"},
+    {no:1339,h:"减轻",p:"jiǎnqīng",m:"경감하다, 덜다",ex:"运动可以减轻压力。",ep:"Yùndòng kěyǐ jiǎnqīng yālì.",em:"운동은 스트레스를 줄여 줘요.",wr:"1~3급: 轻"},
+    {no:1340,h:"减少",p:"jiǎnshǎo",m:"줄어들다, 줄이다",ex:"今年的雨水减少了。",ep:"Jīnnián de yǔshuǐ jiǎnshǎo le.",em:"올해는 비가 줄었어요.",ts:"3성+3성 → 앞 음절이 2성: jiǎnshǎo → jiánshǎo",wr:"1~3급: 少"},
+    {no:1341,h:"健身",p:"jiànshēn",m:"몸을 단련하다, 피트니스",ex:"他每天去健身。",ep:"Tā měitiān qù jiànshēn.",em:"그는 매일 헬스를 해요."},
+    {no:1342,h:"健身房",p:"jiànshēnfáng",m:"헬스장",ex:"我家附近有一个健身房。",ep:"Wǒ jiā fùjìn yǒu yí ge jiànshēnfáng.",em:"우리 집 근처에 헬스장이 있어요."},
+    {no:1343,h:"建议",p:"jiànyì",m:"건의하다, 제안하다 · 건의, 제안",ex:"我建议你早点儿睡。",ep:"Wǒ jiànyì nǐ zǎo diǎnr shuì.",em:"일찍 자라고 권하고 싶어요.",wr:"4급 신규: 建"},
+    {no:1344,h:"交",p:"jiāo",m:"건네다, 사귀다 · 사귐 (名)",ex:"我交了一个新朋友。",ep:"Wǒ jiāo le yí ge xīn péngyou.",em:"저는 새 친구를 사귀었어요."},
+    {no:1345,h:"骄傲",p:"jiāo'ào",m:"자랑스럽다 · 교만하다 · 자랑 (名)",ex:"我为你感到骄傲。",ep:"Wǒ wèi nǐ gǎndào jiāo'ào.",em:"당신이 자랑스러워요."},
+    {no:1346,h:"交警",p:"jiāojǐng",m:"교통경찰",ex:"交警在路口站着。",ep:"Jiāojǐng zài lùkǒu zhàn zhe.",em:"교통경찰이 교차로에 서 있어요."},
+    {no:1347,h:"教练",p:"jiàoliàn",m:"코치, 감독",ex:"我们的教练很严格。",ep:"Wǒmen de jiàoliàn hěn yángé.",em:"우리 코치는 아주 엄격해요.",wr:"1~3급: 练"},
+    {no:1348,h:"交流",p:"jiāoliú",m:"교류하다, 나누다",ex:"我们互相交流了想法。",ep:"Wǒmen hùxiāng jiāoliú le xiǎngfǎ.",em:"우리는 서로 생각을 나눴어요.",wr:"4급 신규: 流"},
+    {no:1349,h:"郊区",p:"jiāoqū",m:"교외",ex:"他住在北京的郊区。",ep:"Tā zhù zài Běijīng de jiāoqū.",em:"그는 베이징 교외에 살아요.",wr:"1~3급: 区"},
+    {no:1350,h:"教师",p:"jiàoshī",m:"교사, 선생님",ex:"她是一名教师。",ep:"Tā shì yì míng jiàoshī.",em:"그녀는 교사예요."},
+    {no:1351,h:"教授",p:"jiàoshòu",m:"교수",ex:"这位教授很有名。",ep:"Zhè wèi jiàoshòu hěn yǒumíng.",em:"이 교수님은 아주 유명해요."},
+    {no:1352,h:"交通",p:"jiāotōng",m:"교통",ex:"这里的交通很方便。",ep:"Zhèli de jiāotōng hěn fāngbiàn.",em:"여기 교통은 아주 편리해요.",wr:"4급 신규: 通"},
+    {no:1353,h:"教学",p:"jiàoxué",m:"교수(법), 수업, 가르침",ex:"他的教学方法很好。",ep:"Tā de jiàoxué fāngfǎ hěn hǎo.",em:"그의 교수법은 아주 좋아요.",wr:"1~3급: 学"},
+    {no:1354,h:"教育",p:"jiàoyù",m:"교육(하다)",ex:"教育对每个孩子都很重要。",ep:"Jiàoyù duì měi ge háizi dōu hěn zhòngyào.",em:"교육은 모든 아이에게 아주 중요해요.",wr:"1~3급: 育"},
+    {no:1355,h:"叫作",p:"jiàozuò",m:"…라고 부르다",ex:"这个东西叫作什么？",ep:"Zhè ge dōngxi jiàozuò shénme?",em:"이것은 뭐라고 불러요?",wr:"1~3급: 叫·作"},
+    {no:1356,h:"价钱",p:"jiàqián",m:"값, 가격",ex:"这个价钱可以吗？",ep:"Zhè ge jiàqián kěyǐ ma?",em:"이 가격 괜찮아요?"},
+    {no:1357,h:"加强",p:"jiāqiáng",m:"강화하다",ex:"学校加强了管理。",ep:"Xuéxiào jiāqiáng le guǎnlǐ.",em:"학교가 관리를 강화했어요.",wr:"4급 신규: 强 · 1~3급: 加"},
+    {no:1358,h:"假日",p:"jiàrì",m:"휴일, 휴가일",ex:"假日公园里人很多。",ep:"Jiàrì gōngyuán li rén hěn duō.",em:"휴일에는 공원에 사람이 많아요.",wr:"1~3급: 假·日"},
+    {no:1359,h:"加入",p:"jiārù",m:"가입하다, 참가하다 · 넣다",ex:"我想加入你们队。",ep:"Wǒ xiǎng jiārù nǐmen duì.",em:"너희 팀에 들어가고 싶어요.",wr:"4급 신규: 入 · 1~3급: 加"},
+    {no:1360,h:"加上",p:"jiāshàng",m:"게다가, 더하기",ex:"加上今天的，一共三百块。",ep:"Jiāshàng jīntiān de, yígòng sān bǎi kuài.",em:"오늘 것을 더하면 모두 300위안이에요.",wr:"1~3급: 加·上"},
+    {no:1361,h:"家庭",p:"jiātíng",m:"가정",ex:"他有一个幸福的家庭。",ep:"Tā yǒu yí ge xìngfú de jiātíng.",em:"그는 행복한 가정을 꾸렸어요.",wr:"4급 신규: 庭 · 1~3급: 家"},
+    {no:1362,h:"家乡",p:"jiāxiāng",m:"고향",ex:"我的家乡在海边。",ep:"Wǒ de jiāxiāng zài hǎibiān.",em:"제 고향은 바닷가예요.",wr:"1~3급: 家"},
+    {no:1363,h:"加油",p:"jiā yóu",m:"힘내다 · 기름을 넣다",ex:"加油，你一定能成功！",ep:"Jiā yóu, nǐ yídìng néng chénggōng!",em:"힘내요, 분명 성공할 거예요!",lh:"동사+목적어 — 加了油, 加过油",wr:"4급 신규: 油 · 1~3급: 加"},
+    {no:1364,h:"加油站",p:"jiāyóuzhàn",m:"주유소",ex:"前面的加油站可以加油。",ep:"Qiánmiàn de jiāyóuzhàn kěyǐ jiā yóu.",em:"앞 주유소에서 기름을 넣을 수 있어요.",wr:"4급 신규: 油 · 1~3급: 加"},
+    {no:1365,h:"家长",p:"jiāzhǎng",m:"학부모, 가장",ex:"明天请家长来学校。",ep:"Míngtiān qǐng jiāzhǎng lái xuéxiào.",em:"내일 학부모님이 학교에 오세요.",wr:"1~3급: 家·长"},
+    {no:1366,h:"基本",p:"jīběn",m:"기본의 · 기본적으로 (副)",ex:"这是基本的要求。",ep:"Zhè shì jīběn de yāoqiú.",em:"이것은 기본적인 요구예요.",wr:"4급 신규: 基"},
+    {no:1367,h:"基本上",p:"jīběnshàng",m:"기본적으로, 대체로",ex:"这件事基本上解决了。",ep:"Zhè jiàn shì jīběnshàng jiějué le.",em:"이 일은 대체로 해결됐어요.",wr:"4급 신규: 基 · 1~3급: 上"},
+    {no:1368,h:"基础",p:"jīchǔ",m:"기초",ex:"他的汉语基础很好。",ep:"Tā de Hànyǔ jīchǔ hěn hǎo.",em:"그의 중국어 기초는 아주 좋아요.",wr:"4급 신규: 基"},
+    {no:1369,h:"激动",p:"jīdòng",m:"흥분하다, 감격하다",ex:"听到这个消息，他很激动。",ep:"Tīngdào zhè ge xiāoxi, tā hěn jīdòng.",em:"이 소식을 듣고 그는 아주 감격했어요."},
+    {no:1370,h:"街道",p:"jiēdào",m:"거리, 가로",ex:"这条街道很干净。",ep:"Zhè tiáo jiēdào hěn gānjìng.",em:"이 거리는 아주 깨끗해요."},
+    {no:1371,h:"结果",p:"jiéguǒ",m:"결과 · 결국 (连)",ex:"考试的结果出来了。",ep:"Kǎoshì de jiéguǒ chūlai le.",em:"시험 결과가 나왔어요.",wr:"1~3급: 结"},
+    {no:1372,h:"节假日",p:"jiéjiàrì",m:"공휴일, 휴일과 명절",ex:"节假日这里人很多。",ep:"Jiéjiàrì zhèli rén hěn duō.",em:"공휴일에는 이곳에 사람이 많아요.",wr:"1~3급: 节·假·日"},
+    {no:1373,h:"解释",p:"jiěshì",m:"설명하다, 해석하다",ex:"请你解释一下这个词。",ep:"Qǐng nǐ jiěshì yíxià zhè ge cí.",em:"이 단어를 설명해 주세요."},
+    {no:1374,h:"接受",p:"jiēshòu",m:"받아들이다, 수락하다",ex:"他接受了我的建议。",ep:"Tā jiēshòu le wǒ de jiànyì.",em:"그는 제 제안을 받아들였어요.",wr:"1~3급: 受"},
+    {no:1375,h:"节约",p:"jiéyuē",m:"절약하다",ex:"我们要节约用水。",ep:"Wǒmen yào jiéyuē yòng shuǐ.",em:"우리는 물을 절약해야 해요.",wr:"4급 신규: 约 · 1~3급: 节"},
+    {no:1376,h:"结账",p:"jié zhàng",m:"계산하다, 값을 치르다",ex:"服务员，请结账。",ep:"Fúwùyuán, qǐng jié zhàng.",em:"종업원, 계산해 주세요.",lh:"동사+목적어 — 结了账, 结过账",wr:"1~3급: 结"},
+    {no:1377,h:"接着",p:"jiēzhe",m:"이어서, 계속 · 받다 (动)",ex:"他先说，你接着说。",ep:"Tā xiān shuō, nǐ jiēzhe shuō.",em:"그가 먼저 말하고, 네가 이어서 말해요.",nt:"zhe",ntNote:"‘zhe’는 경성 — jiēzhe"},
+    {no:1378,h:"计划",p:"jìhuà",m:"계획(하다)",ex:"我们的计划改了。",ep:"Wǒmen de jìhuà gǎi le.",em:"우리 계획이 바뀌었어요.",wr:"4급 신규: 计·划"},
+    {no:1379,h:"积极",p:"jījí",m:"적극적이다",ex:"他工作很积极。",ep:"Tā gōngzuò hěn jījí.",em:"그는 일할 때 아주 적극적이에요."},
+    {no:1380,h:"积累",p:"jīlěi",m:"축적하다, 쌓다",ex:"他在积累工作经验。",ep:"Tā zài jīlěi gōngzuò jīngyàn.",em:"그는 업무 경험을 쌓고 있어요."},
+    {no:1381,h:"仅",p:"jǐn",m:"겨우, 단지",ex:"我仅用了一天就做完了。",ep:"Wǒ jǐn yòng le yì tiān jiù zuò wán le.",em:"저는 하루 만에 다 끝냈어요."},
+    {no:1382,h:"精彩",p:"jīngcǎi",m:"훌륭하다, 멋지다",ex:"今天的比赛很精彩。",ep:"Jīntiān de bǐsài hěn jīngcǎi.",em:"오늘 경기는 아주 멋졌어요."},
+    {no:1383,h:"警察",p:"jǐngchá",m:"경찰",ex:"警察来了。",ep:"Jǐngchá lái le.",em:"경찰이 왔어요."},
+    {no:1384,h:"景点",p:"jǐngdiǎn",m:"관광지, 명소",ex:"这个景点很受欢迎。",ep:"Zhè ge jǐngdiǎn hěn shòu huānyíng.",em:"이 명소는 인기가 아주 많아요.",ts:"3성+3성 → 앞 음절이 2성: jǐngdiǎn → jíngdiǎn",wr:"1~3급: 点"},
+    {no:1385,h:"经济",p:"jīngjì",m:"경제(의)",ex:"这些年经济发展很快。",ep:"Zhèxiē nián jīngjì fāzhǎn hěn kuài.",em:"요즘 경제가 빠르게 발전해요.",wr:"4급 신규: 济"},
+    {no:1386,h:"京剧",p:"jīngjù",m:"경극",ex:"我很喜欢看京剧。",ep:"Wǒ hěn xǐhuan kàn jīngjù.",em:"저는 경극 보는 걸 아주 좋아해요.",wr:"4급 신규: 京"},
+    {no:1387,h:"经历",p:"jīnglì",m:"경험하다 · 경력, 체험 (名)",ex:"他经历了很多困难。",ep:"Tā jīnglì le hěn duō kùnnan.",em:"그는 많은 어려움을 겪었어요."},
+    {no:1388,h:"景区",p:"jǐngqū",m:"관광지 구역",ex:"景区里不能吸烟。",ep:"Jǐngqū li bù néng xī yān.",em:"관광지 안에서는 담배를 피울 수 없어요.",wr:"1~3급: 区"},
+    {no:1389,h:"竟然",p:"jìngrán",m:"뜻밖에도, 의외로",ex:"他竟然不知道这件事。",ep:"Tā jìngrán bù zhīdào zhè jiàn shì.",em:"그는 뜻밖에도 이 일을 몰라요."},
+    {no:1390,h:"景色",p:"jǐngsè",m:"경치",ex:"从山上看到的景色很美。",ep:"Cóng shān shang kàn dào de jǐngsè hěn měi.",em:"산에서 보는 경치가 아주 아름다워요."},
+    {no:1391,h:"尽管",p:"jǐnguǎn",m:"비록 …지만 · 마음껏 (副)",ex:"尽管下雨，他还是去了。",ep:"Jǐnguǎn xià yǔ, tā háishì qù le.",em:"비가 왔지만 그는 그래도 갔어요.",ts:"3성+3성 → 앞 음절이 2성: jǐnguǎn → jínguǎn",wr:"4급 신규: 管"},
+    {no:1392,h:"经验",p:"jīngyàn",m:"경험",ex:"他有十年的教学经验。",ep:"Tā yǒu shí nián de jiàoxué jīngyàn.",em:"그는 십 년의 교수 경험이 있어요.",wr:"4급 신규: 验"},
+    {no:1393,h:"竞争",p:"jìngzhēng",m:"경쟁(하다)",ex:"这次考试的竞争很大。",ep:"Zhè cì kǎoshì de jìngzhēng hěn dà.",em:"이번 시험은 경쟁이 아주 치열해요."},
+    {no:1394,h:"镜子",p:"jìngzi",m:"거울",ex:"镜子里的人是我吗？",ep:"Jìngzi li de rén shì wǒ ma?",em:"거울 속 사람이 나인가요?",nt:"zi",ntNote:"‘zi’는 경성 — jìngzi. 원성조 zǐ로 읽지 않아요",wr:"1~3급: 子"},
+    {no:1395,h:"今后",p:"jīnhòu",m:"앞으로, 금후",ex:"今后我们要更加努力。",ep:"Jīnhòu wǒmen yào gèngjiā nǔlì.",em:"앞으로 우리는 더 열심히 해야 해요.",wr:"1~3급: 今·后"},
+    {no:1396,h:"仅仅",p:"jǐnjǐn",m:"단지, 겨우",ex:"这仅仅是一个开始。",ep:"Zhè jǐnjǐn shì yí ge kāishǐ.",em:"이것은 단지 시작일 뿐이에요.",ts:"3성+3성 → 앞 음절이 2성: jǐnjǐn → jínjǐn"},
+    {no:1397,h:"进入",p:"jìnrù",m:"들어가다, 진입하다",ex:"请进入教室。",ep:"Qǐng jìnrù jiàoshì.",em:"교실로 들어오세요.",wr:"4급 신규: 入"},
+    {no:1398,h:"进行",p:"jìnxíng",m:"진행하다, 하다",ex:"会议正在进行。",ep:"Huìyì zhèngzài jìnxíng.",em:"회의가 진행 중이에요.",wr:"1~3급: 行"},
+    {no:1399,h:"紧张",p:"jǐnzhāng",m:"긴장되다 · 빠듯하다",ex:"考试以前我有点儿紧张。",ep:"Kǎoshì yǐqián wǒ yǒudiǎnr jǐnzhāng.",em:"시험 전에 저는 좀 긴장돼요.",wr:"1~3급: 张"},
+    {no:1400,h:"禁止",p:"jìnzhǐ",m:"금지하다",ex:"这里禁止拍照。",ep:"Zhèli jìnzhǐ pāi zhào.",em:"여기서는 사진 촬영이 금지돼요.",wr:"4급 신규: 止"},
+    {no:1401,h:"既然",p:"jìrán",m:"…인 이상, …했으니",ex:"既然你不舒服，就早点儿回家吧。",ep:"Jìrán nǐ bù shūfu, jiù zǎo diǎnr huí jiā ba.",em:"몸이 안 좋으니 일찍 집에 가요."},
+    {no:1402,h:"及时",p:"jíshí",m:"제때의, 시기적절한 · 제때에 (副)",ex:"有问题要及时解决。",ep:"Yǒu wèntí yào jíshí jiějué.",em:"문제가 있으면 제때 해결해야 해요.",wr:"4급 신규: 及 · 1~3급: 时"},
+    {no:1403,h:"即使",p:"jíshǐ",m:"설령 …하더라도",ex:"即使下雨，我也要去。",ep:"Jíshǐ xià yǔ, wǒ yě yào qù.",em:"설령 비가 와도 저는 갈 거예요.",wr:"4급 신규: 使"},
+    {no:1404,h:"技术",p:"jìshù",m:"기술",ex:"他的技术很好。",ep:"Tā de jìshù hěn hǎo.",em:"그의 기술은 아주 좋아요.",wr:"4급 신규: 技·术"},
+    {no:1405,h:"究竟",p:"jiūjìng",m:"도대체, 결국 · 전말 (名)",ex:"你究竟是什么意思？",ep:"Nǐ jiūjìng shì shénme yìsi?",em:"도대체 무슨 뜻이에요?",wr:"4급 신규: 究"},
+    {no:1406,h:"就是",p:"jiùshì",m:"바로 …이다 · 다만 · …하긴 하지만",ex:"我就是那个老师。",ep:"Wǒ jiùshì nà ge lǎoshī.",em:"제가 바로 그 선생님이에요.",wr:"1~3급: 是"},
+    {no:1407,h:"继续",p:"jìxù",m:"계속하다, 계속되다",ex:"请继续说吧。",ep:"Qǐng jìxù shuō ba.",em:"계속 말해 주세요."},
+    {no:1408,h:"记者",p:"jìzhě",m:"기자",ex:"他是一名记者。",ep:"Tā shì yì míng jìzhě.",em:"그는 기자예요.",wr:"1~3급: 者"},
+    {no:1409,h:"聚",p:"jù",m:"모이다, 모으다",ex:"过年的时候家人会聚在一起。",ep:"Guònián de shíhou jiārén huì jù zài yìqǐ.",em:"설날에는 가족이 모여요."},
+    {no:1410,h:"举",p:"jǔ",m:"들다, 들어 올리다 · (예를) 들다",ex:"他举着一把伞。",ep:"Tā jǔ zhe yì bǎ sǎn.",em:"그는 우산을 들고 있어요.",wr:"4급 신규: 举"},
+    {no:1411,h:"举办",p:"jǔbàn",m:"개최하다, 열다",ex:"这次比赛由我们学校举办。",ep:"Zhè cì bǐsài yóu wǒmen xuéxiào jǔbàn.",em:"이번 시합은 우리 학교가 주최해요.",wr:"4급 신규: 举 · 1~3급: 办"},
+    {no:1412,h:"聚餐",p:"jùcān",m:"함께 식사하다, 회식하다",ex:"周末我们班要聚餐。",ep:"Zhōumò wǒmen bān yào jùcān.",em:"주말에 우리 반이 회식을 해요.",wr:"4급 신규: 餐"},
+    {no:1413,h:"聚会",p:"jùhuì",m:"모임(을 갖다)",ex:"今晚有一个朋友聚会。",ep:"Jīnwǎn yǒu yí ge péngyou jùhuì.",em:"오늘 저녁에 친구 모임이 있어요.",wr:"1~3급: 会"},
+    {no:1414,h:"拒绝",p:"jùjué",m:"거절하다",ex:"他拒绝了我的要求。",ep:"Tā jùjué le wǒ de yāoqiú.",em:"그는 제 요구를 거절했어요."},
+    {no:1415,h:"距离",p:"jùlí",m:"거리 · ~에서 (떨어져) (动)",ex:"学校距离我家很近。",ep:"Xuéxiào jùlí wǒ jiā hěn jìn.",em:"학교는 우리 집에서 아주 가까워요."},
+    {no:1416,h:"举例",p:"jǔ lì",m:"예를 들다",ex:"老师给我们举了一个例子。",ep:"Lǎoshī gěi wǒmen jǔ le yí ge lìzi.",em:"선생님이 우리에게 예를 하나 들어 주셨어요.",lh:"동사+목적어 — 举了一个例子, 举个例子",wr:"4급 신규: 举·例"},
+    {no:1417,h:"举行",p:"jǔxíng",m:"거행하다, 열다",ex:"会议在二楼举行。",ep:"Huìyì zài èr lóu jǔxíng.",em:"회의는 2층에서 열려요.",wr:"4급 신규: 举 · 1~3급: 行"},
+    {no:1418,h:"剧院",p:"jùyuàn",m:"극장",ex:"这个剧院很大。",ep:"Zhè ge jùyuàn hěn dà.",em:"이 극장은 아주 커요."},
+    {no:1419,h:"开玩笑",p:"kāi wánxiào",m:"농담하다",ex:"他在跟你开玩笑。",ep:"Tā zài gēn nǐ kāi wánxiào.",em:"그는 너에게 농담하는 거예요.",lh:"동사+목적어 — 开了个玩笑, 开过玩笑"},
+    {no:1420,h:"看法",p:"kànfǎ",m:"견해, 보는 방식",ex:"我想听听你的看法。",ep:"Wǒ xiǎng tīngting nǐ de kànfǎ.",em:"당신 생각을 듣고 싶어요.",wr:"1~3급: 法"},
+    {no:1421,h:"烤",p:"kǎo",m:"굽다, (불에) 쬐다",ex:"妈妈在烤面包。",ep:"Māma zài kǎo miànbāo.",em:"엄마가 빵을 굽고 있어요."},
+    {no:1422,h:"考虑",p:"kǎolǜ",m:"고려하다, 생각하다",ex:"让我考虑一下。",ep:"Ràng wǒ kǎolǜ yíxià.",em:"좀 생각해 볼게요."},
+    {no:1423,h:"考生",p:"kǎoshēng",m:"수험생, 응시자",ex:"今年的考生很多。",ep:"Jīnnián de kǎoshēng hěn duō.",em:"올해 수험생이 아주 많아요.",wr:"1~3급: 生"},
+    {no:1424,h:"咳",p:"ké",m:"기침하다, (마른)기침",ex:"他咳了一天。",ep:"Tā ké le yì tiān.",em:"그는 하루 종일 기침을 했어요."},
+    {no:1425,h:"克",p:"kè",m:"그램 (g) · 이기다",ex:"这个只有一百克。",ep:"Zhè ge zhǐ yǒu yì bǎi kè.",em:"이건 백 그램밖에 안 돼요.",wr:"4급 신규: 克"},
+    {no:1426,h:"棵",p:"kē",m:"그루 (나무·풀의 양사)",ex:"院子里有两棵树。",ep:"Yuànzi li yǒu liǎng kē shù.",em:"마당에 나무가 두 그루 있어요."},
+    {no:1427,h:"课程",p:"kèchéng",m:"과정, 교과 과정",ex:"这门课程很有意思。",ep:"Zhè mén kèchéng hěn yǒu yìsi.",em:"이 과목은 아주 재미있어요.",wr:"4급 신규: 程"},
+    {no:1428,h:"科技",p:"kējì",m:"과학 기술",ex:"科技发展得很快。",ep:"Kējì fāzhǎn de hěn kuài.",em:"과학 기술이 아주 빠르게 발전해요.",wr:"4급 신규: 科·技"},
+    {no:1429,h:"肯定",p:"kěndìng",m:"긍정하다, 단언하다 · 분명한 (形) · 반드시 (副)",ex:"他肯定会来。",ep:"Tā kěndìng huì lái.",em:"그는 반드시 올 거예요.",wr:"1~3급: 定"},
+    {no:1430,h:"客气",p:"kèqi",m:"예의 바르다, 겸손하다 · 사양하다",ex:"别客气，像在自己家一样。",ep:"Bié kèqi, xiàng zài zìjǐ jiā yíyàng.",em:"사양하지 말고 자기 집처럼 편하게 하세요.",nt:"qi",ntNote:"‘qi’는 경성 — kèqi. 원성조 qì로 읽지 않아요"},
+    {no:1431,h:"咳嗽",p:"késou",m:"기침(하다)",ex:"孩子有点儿咳嗽。",ep:"Háizi yǒudiǎnr késou.",em:"아이가 좀 기침을 해요.",nt:"sou",ntNote:"‘sou’는 경성 — késou. 원성조 sòu로 읽지 않아요"},
+    {no:1432,h:"课堂",p:"kètáng",m:"수업 시간, 교실 안",ex:"课堂上请说汉语。",ep:"Kètáng shang qǐng shuō Hànyǔ.",em:"수업 시간에는 중국어로 말하세요.",wr:"4급 신규: 堂"},
+    {no:1433,h:"客厅",p:"kètīng",m:"거실",ex:"爸爸在客厅看电视。",ep:"Bàba zài kètīng kàn diànshì.",em:"아버지가 거실에서 TV를 보세요."},
+    {no:1434,h:"可惜",p:"kěxī",m:"아깝다, 안타깝다",ex:"你不来真可惜。",ep:"Nǐ bù lái zhēn kěxī.",em:"네가 안 와서 정말 아쉬워요.",wr:"1~3급: 可"},
+    {no:1435,h:"科学",p:"kēxué",m:"과학 · 과학적인 (形)",ex:"我们要相信科学。",ep:"Wǒmen yào xiāngxìn kēxué.",em:"우리는 과학을 믿어야 해요.",wr:"4급 신규: 科 · 1~3급: 学"},
+    {no:1436,h:"空",p:"kòng",m:"비우다, 빈틈·시간 (kòng) — 空 kōng '비어 있다'",ex:"今天没有空，明天行吗？",ep:"Jīntiān méi yǒu kòng, míngtiān xíng ma?",em:"오늘은 시간이 없는데 내일 괜찮아요?",wr:"1~3급: 空"},
+    {no:1437,h:"空",p:"kōng",m:"비어 있다, 텅 빈 · 하늘 (kōng)",ex:"房间里是空的。",ep:"Fángjiān li shì kōng de.",em:"방 안이 텅 비어 있어요.",wr:"1~3급: 空"},
+    {no:1438,h:"恐怕",p:"kǒngpà",m:"아마 …일 것이다 · …할까 걱정되다",ex:"恐怕他不会来了。",ep:"Kǒngpà tā bú huì lái le.",em:"아마 그는 안 올 것 같아요.",wr:"1~3급: 怕"},
+    {no:1439,h:"空气",p:"kōngqì",m:"공기",ex:"早上的空气很好。",ep:"Zǎoshang de kōngqì hěn hǎo.",em:"아침 공기가 아주 좋아요.",wr:"1~3급: 空"},
+    {no:1440,h:"口语",p:"kǒuyǔ",m:"회화, 구어",ex:"我的口语不太好。",ep:"Wǒ de kǒuyǔ bú tài hǎo.",em:"제 회화 실력은 별로예요.",ts:"3성+3성 → 앞 음절이 2성: kǒuyǔ → kóuyǔ",wr:"1~3급: 口·语"},
+    {no:1441,h:"苦",p:"kǔ",m:"쓰다 · 힘들다, 고생스럽다",ex:"这个药很苦。",ep:"Zhè ge yào hěn kǔ.",em:"이 약은 아주 써요."},
+    {no:1442,h:"快餐",p:"kuàicān",m:"패스트푸드",ex:"他中午常常吃快餐。",ep:"Tā zhōngwǔ chángcháng chī kuàicān.",em:"그는 점심에 자주 패스트푸드를 먹어요.",wr:"4급 신규: 餐"},
+    {no:1443,h:"快递",p:"kuàidì",m:"택배",ex:"快递到了。",ep:"Kuàidì dào le.",em:"택배가 도착했어요."},
+    {no:1444,h:"快速",p:"kuàisù",m:"빠른, 신속한",ex:"我们需要快速解决。",ep:"Wǒmen xūyào kuàisù jiějué.",em:"우리는 빨리 해결해야 해요."},
+    {no:1445,h:"困",p:"kùn",m:"졸리다 · 가두다 (动)",ex:"我有点儿困。",ep:"Wǒ yǒudiǎnr kùn.",em:"저는 좀 졸려요.",wr:"4급 신규: 困"},
+    {no:1446,h:"困难",p:"kùnnan",m:"어렵다 · 어려움 (名)",ex:"这件事很困难。",ep:"Zhè jiàn shì hěn kùnnan.",em:"이 일은 아주 어려워요.",nt:"nan",ntNote:"‘nan’은 경성 — kùnnan. 원성조 nán으로 읽지 않아요",wr:"4급 신규: 困 · 1~3급: 难"},
+    {no:1447,h:"辣",p:"là",m:"맵다",ex:"这个菜太辣了。",ep:"Zhè ge cài tài là le.",em:"이 음식은 너무 매워요."},
+    {no:1448,h:"拉",p:"lā",m:"당기다, 끌다",ex:"请把门拉开。",ep:"Qǐng bǎ mén lā kāi.",em:"문을 당겨 열어 주세요.",wr:"4급 신규: 拉"},
+    {no:1449,h:"来不及",p:"láibují",m:"시간에 늦다, 미처 못 하다",ex:"现在走已经来不及了。",ep:"Xiànzài zǒu yǐjīng láibují le.",em:"지금 가면 이미 늦었어요.",nt:"bu",ntNote:"‘bu’는 경성 — láibují. 원성조 bù로 읽지 않아요",wr:"4급 신규: 及 · 1~3급: 来·不"},
+    {no:1450,h:"来得及",p:"láidejí",m:"시간이 되다, 미처 할 수 있다",ex:"别急，还来得及。",ep:"Bié jí, hái láidejí.",em:"서두르지 마세요, 아직 시간 돼요.",nt:"de",ntNote:"‘de’는 경성 — láidejí. 원성조 dé로 읽지 않아요",wr:"4급 신규: 及 · 1~3급: 来"},
+    {no:1451,h:"垃圾",p:"lājī",m:"쓰레기",ex:"请把垃圾扔了。",ep:"Qǐng bǎ lājī rēng le.",em:"쓰레기를 버려 주세요."},
+    {no:1452,h:"懒",p:"lǎn",m:"게으르다, 나태하다",ex:"他太懒了，什么也不做。",ep:"Tā tài lǎn le, shénme yě bú zuò.",em:"그는 너무 게을러서 아무것도 안 해요."},
+    {no:1453,h:"浪费",p:"làngfèi",m:"낭비하다",ex:"不要浪费时间。",ep:"Bú yào làngfèi shíjiān.",em:"시간을 낭비하지 마세요."},
+    {no:1454,h:"浪漫",p:"làngmàn",m:"로맨틱하다, 낭만적이다",ex:"这是一个浪漫的故事。",ep:"Zhè shì yí ge làngmàn de gùshi.",em:"이것은 로맨틱한 이야기예요."},
+    {no:1455,h:"老虎",p:"lǎohǔ",m:"호랑이",ex:"动物园里有三只老虎。",ep:"Dòngwùyuán li yǒu sān zhī lǎohǔ.",em:"동물원에 호랑이가 세 마리 있어요.",ts:"3성+3성 → 앞 음절이 2성: lǎohǔ → láohǔ",wr:"4급 신규: 虎"},
+    {no:1456,h:"老家",p:"lǎojiā",m:"고향, 본가",ex:"我的老家在南方。",ep:"Wǒ de lǎojiā zài nánfāng.",em:"제 고향은 남쪽이에요.",wr:"1~3급: 家"},
+    {no:1457,h:"老年",p:"lǎonián",m:"노년",ex:"老年人都喜欢安静。",ep:"Lǎoniánrén dōu xǐhuan ānjìng.",em:"노인들은 조용한 것을 좋아해요.",wr:"1~3급: 年"},
+    {no:1458,h:"老是",p:"lǎoshì",m:"늘, 자꾸, 계속",ex:"你怎么老是迟到？",ep:"Nǐ zěnme lǎoshì chídào?",em:"왜 자꾸 지각해요?",wr:"1~3급: 是"},
+    {no:1459,h:"冷静",p:"lěngjìng",m:"냉정하다, 침착하다",ex:"遇到问题要冷静。",ep:"Yùdào wèntí yào lěngjìng.",em:"문제가 생기면 침착해야 해요."},
+    {no:1460,h:"俩",p:"liǎ",m:"둘, 두 사람 (两个의 구어)",ex:"我们俩是好朋友。",ep:"Wǒmen liǎ shì hǎo péngyou.",em:"우리 둘은 좋은 친구예요.",wr:"4급 신규: 俩"},
+    {no:1461,h:"连",p:"lián",m:"…조차 · 연결되다 (动)",ex:"他连这个字都不认识。",ep:"Tā lián zhè ge zì dōu bú rènshi.",em:"그는 이 글자조차 몰라요.",wr:"4급 신규: 连"},
+    {no:1462,h:"凉",p:"liáng",m:"서늘하다, 차갑다",ex:"水有点儿凉。",ep:"Shuǐ yǒudiǎnr liáng.",em:"물이 좀 차가워요.",wr:"1~3급: 凉"},
+    {no:1463,h:"量",p:"liáng",m:"재다, 측정하다 (liáng) — 量 liàng '양'",ex:"请量一下体重。",ep:"Qǐng liáng yíxià tǐzhòng.",em:"체중을 좀 재 주세요.",wr:"4급 신규: 量"},
+    {no:1464,h:"亮",p:"liàng",m:"밝다 · 빛나다, 켜다",ex:"房间里的灯很亮。",ep:"Fángjiān li de dēng hěn liàng.",em:"방의 불이 아주 밝아요."},
+    {no:1465,h:"两",p:"liǎng",m:"둘, 두 (양사 앞의 수)",ex:"我买了两个苹果。",ep:"Wǒ mǎi le liǎng ge píngguǒ.",em:"저는 사과 두 개를 샀어요.",wr:"1~3급: 两"},
+    {no:1466,h:"联系",p:"liánxì",m:"연락하다 · 관계, 연계",ex:"到了以后请跟我联系。",ep:"Dào le yǐhòu qǐng gēn wǒ liánxì.",em:"도착하면 저에게 연락해 주세요.",wr:"4급 신규: 联"},
+    {no:1467,h:"列",p:"liè",m:"열거하다, 늘어놓다 · 열 (양사)",ex:"请列一个名单。",ep:"Qǐng liè yí ge míngdān.",em:"명단을 하나 작성해 주세요."},
+    {no:1468,h:"理发",p:"lǐ fà",m:"이발하다, 머리를 깎다",ex:"我每个月理一次发。",ep:"Wǒ měi ge yuè lǐ yí cì fà.",em:"저는 한 달에 한 번 이발해요.",lh:"동사+목적어 — 理了发, 理过发",wr:"1~3급: 发"},
+    {no:1469,h:"厉害",p:"lìhai",m:"대단하다, 심하다, 굉장하다",ex:"今天太热了，热得厉害。",ep:"Jīntiān tài rè le, rè de lìhai.",em:"오늘 너무 더워서 무척 심해요.",nt:"hai",ntNote:"‘hai’는 경성 — lìhai. 원성조 hài로 읽지 않아요"},
+    {no:1470,h:"理解",p:"lǐjiě",m:"이해하다",ex:"我理解你的心情。",ep:"Wǒ lǐjiě nǐ de xīnqíng.",em:"당신 마음을 이해해요.",ts:"3성+3성 → 앞 음절이 2성: lǐjiě → líjiě"},
+    {no:1471,h:"礼貌",p:"lǐmào",m:"예의 · 예의 바른 (形)",ex:"他对人很有礼貌。",ep:"Tā duì rén hěn yǒu lǐmào.",em:"그는 사람들에게 아주 예의 발라요.",wr:"1~3급: 礼"},
+    {no:1472,h:"另",p:"lìng",m:"다른, 또 하나의",ex:"我们坐另一班车吧。",ep:"Wǒmen zuò lìng yì bān chē ba.",em:"우리 다른 차를 타요.",wr:"4급 신규: 另"},
+    {no:1473,h:"零下",p:"líng xià",m:"영하",ex:"今天外面零下十度。",ep:"Jīntiān wàimiàn líng xià shí dù.",em:"오늘 밖은 영하 10도예요.",wr:"1~3급: 下"},
+    {no:1474,h:"零花钱",p:"línghuāqián",m:"용돈",ex:"妈妈每个月给我零花钱。",ep:"Māma měi ge yuè gěi wǒ línghuāqián.",em:"엄마가 매달 용돈을 주세요."},
+    {no:1475,h:"零钱",p:"língqián",m:"잔돈",ex:"你有零钱吗？",ep:"Nǐ yǒu língqián ma?",em:"잔돈 있어요?"},
+    {no:1476,h:"零食",p:"língshí",m:"간식",ex:"孩子喜欢吃零食。",ep:"Háizi xǐhuan chī língshí.",em:"아이는 간식 먹는 걸 좋아해요.",wr:"4급 신규: 食"},
+    {no:1477,h:"另外",p:"lìngwài",m:"그 밖에, 따로 · 다른 (대)",ex:"另外，我还有一件事要说。",ep:"Lìngwài, wǒ hái yǒu yí jiàn shì yào shuō.",em:"그 밖에 할 말이 하나 더 있어요.",wr:"4급 신규: 另"},
+    {no:1478,h:"力气",p:"lìqi",m:"힘, 기력",ex:"他力气很大。",ep:"Tā lìqi hěn dà.",em:"그는 힘이 아주 세요.",nt:"qi",ntNote:"‘qi’는 경성 — lìqi. 원성조 qì로 읽지 않아요",wr:"1~3급: 力"},
+    {no:1479,h:"例如",p:"lìrú",m:"예를 들면, 예컨대",ex:"我喜欢运动，例如跑步。",ep:"Wǒ xǐhuan yùndòng, lìrú pǎobù.",em:"저는 운동을 좋아해요, 예를 들면 달리기요.",wr:"4급 신규: 例 · 1~3급: 如"},
+    {no:1480,h:"留",p:"liú",m:"남다, 남기다 · 머무르다",ex:"他留在家里没有出去。",ep:"Tā liú zài jiā li méi yǒu chūqu.",em:"그는 집에 남아서 나가지 않았어요."},
+    {no:1481,h:"流",p:"liú",m:"흐르다",ex:"他的鼻子流血了。",ep:"Tā de bízi liú xuè le.",em:"그의 코에서 피가 났어요.",wr:"4급 신규: 流"},
+    {no:1482,h:"流利",p:"liúlì",m:"유창하다",ex:"他汉语说得很流利。",ep:"Tā Hànyǔ shuō de hěn liúlì.",em:"그는 중국어를 아주 유창하게 해요.",wr:"4급 신규: 流·利"},
+    {no:1483,h:"留下",p:"liúxia",m:"남기다, 남다",ex:"他给我留下了一封信。",ep:"Tā gěi wǒ liúxià le yì fēng xìn.",em:"그는 저에게 편지를 한 통 남겼어요.",nt:"xia",ntNote:"‘xia’는 경성 — liúxia. 원성조 xià로 읽지 않아요",wr:"1~3급: 下"},
+    {no:1484,h:"流行",p:"liúxíng",m:"유행하다, 인기 있다",ex:"这首歌现在很流行。",ep:"Zhè shǒu gē xiànzài hěn liúxíng.",em:"이 노래는 지금 아주 유행해요.",wr:"4급 신규: 流 · 1~3급: 行"},
+    {no:1485,h:"理想",p:"lǐxiǎng",m:"이상 · 이상적인 (形)",ex:"他的理想是当一名医生。",ep:"Tā de lǐxiǎng shì dāng yì míng yīshēng.",em:"그의 이상은 의사가 되는 거예요.",ts:"3성+3성 → 앞 음절이 2성: lǐxiǎng → líxiǎng"},
+    {no:1486,h:"例子",p:"lìzi",m:"예, 사례",ex:"请再举一个例子。",ep:"Qǐng zài jǔ yí ge lìzi.",em:"예를 하나 더 들어 주세요.",nt:"zi",ntNote:"‘zi’는 경성 — lìzi. 원성조 zǐ로 읽지 않아요",wr:"4급 신규: 例 · 1~3급: 子"},
+    {no:1487,h:"乱",p:"luàn",m:"어지럽다 · 함부로 (부)",ex:"房间太乱了。",ep:"Fángjiān tài luàn le.",em:"방이 너무 어질러져 있어요."},
+    {no:1488,h:"旅馆",p:"lǚguǎn",m:"여관",ex:"我们住在一家小旅馆。",ep:"Wǒmen zhù zài yì jiā xiǎo lǚguǎn.",em:"우리는 작은 여관에 묵었어요.",ts:"3성+3성 → 앞 음절이 2성: lǚguǎn → lǘguǎn"},
+    {no:1489,h:"路过",p:"lùguò",m:"지나가다, (가는 길에) 들르다",ex:"我路过这里，就进来了。",ep:"Wǒ lùguò zhèli, jiù jìn lai le.",em:"여기를 지나다가 들어왔어요.",wr:"1~3급: 过"},
+    {no:1490,h:"旅客",p:"lǚkè",m:"여객, 여행객",ex:"车站里旅客很多。",ep:"Chēzhàn li lǚkè hěn duō.",em:"역에 여행객이 아주 많아요."},
+    {no:1491,h:"落",p:"luò",m:"떨어지다 · (물건을) 두고 내리다",ex:"我的书落在教室了。",ep:"Wǒ de shū là zài jiàoshì le.",em:"제 책을 교실에 두고 왔어요."},
+    {no:1492,h:"律师",p:"lǜshī",m:"변호사",ex:"他哥哥是律师。",ep:"Tā gēge shì lǜshī.",em:"그의 형은 변호사예요."},
+    {no:1493,h:"旅行",p:"lǚxíng",m:"여행(하다)",ex:"我们明年去中国旅行。",ep:"Wǒmen míngnián qù Zhōngguó lǚxíng.",em:"우리는 내년에 중국 여행을 가요.",wr:"1~3급: 行"},
+    {no:1494,h:"麻烦",p:"máfan",m:"귀찮다 · 폐 끼치다 · 번거로움",ex:"麻烦你帮我一下。",ep:"Máfan nǐ bāng wǒ yíxià.",em:"번거롭지만 좀 도와주세요.",nt:"fan",ntNote:"‘fan’은 경성 — máfan. 원성조 fán으로 읽지 않아요",wr:"4급 신규: 麻·烦"},
+    {no:1495,h:"满",p:"mǎn",m:"가득 차다 · 가득 (형)",ex:"杯子里装满了水。",ep:"Bēizi li zhuāng mǎn le shuǐ.",em:"컵에 물이 가득 차 있어요."},
+    {no:1496,h:"馒头",p:"mántou",m:"만터우 (중국식 찐빵)",ex:"早上我吃了两个馒头。",ep:"Zǎoshang wǒ chī le liǎng ge mántou.",em:"아침에 만터우 두 개를 먹었어요.",nt:"tou",ntNote:"‘tou’는 경성 — mántou. 원성조 tóu로 읽지 않아요"},
+    {no:1497,h:"毛巾",p:"máojīn",m:"수건",ex:"请给我一条毛巾。",ep:"Qǐng gěi wǒ yì tiáo máojīn.",em:"수건 하나 주세요.",wr:"1~3급: 毛"},
+    {no:1498,h:"毛衣",p:"máoyī",m:"스웨터, 털옷",ex:"这件毛衣是妈妈给我做的。",ep:"Zhè jiàn máoyī shì māma gěi wǒ zuò de.",em:"이 스웨터는 엄마가 만들어 주신 거예요.",wr:"1~3급: 毛"},
+    {no:1499,h:"帽子",p:"màozi",m:"모자",ex:"外面风大，戴上帽子吧。",ep:"Wàimiàn fēng dà, dài shàng màozi ba.",em:"바람이 세니 모자를 쓰세요.",nt:"zi",ntNote:"‘zi’는 경성 — màozi. 원성조 zǐ로 읽지 않아요",wr:"1~3급: 子"},
+    {no:1500,h:"美",p:"měi",m:"아름답다, 곱다 (美 단독)",ex:"这里的景色很美。",ep:"Zhèli de jǐngsè hěn měi.",em:"이곳 경치가 아주 아름다워요.",wr:"4급 신규: 美"},
+    {no:1501,h:"美好",p:"měihǎo",m:"아름답다, 멋지다 (삶·추억)",ex:"我们有一个美好的明天。",ep:"Wǒmen yǒu yí ge měihǎo de míngtiān.",em:"우리에게는 아름다운 내일이 있어요.",ts:"3성+3성 → 앞 음절이 2성: měihǎo → méihǎo",wr:"4급 신규: 美 · 1~3급: 好"},
+    {no:1502,h:"美景",p:"měijǐng",m:"아름다운 경치",ex:"山上的美景让人不想走。",ep:"Shān shang de měijǐng ràng rén bù xiǎng zǒu.",em:"산 위의 아름다운 경치에 발길이 떨어지지 않아요.",ts:"3성+3성 → 앞 음절이 2성: měijǐng → méijǐng",wr:"4급 신규: 美"},
+    {no:1503,h:"美丽",p:"měilì",m:"아름답다, 예쁘다 (경치·모습)",ex:"这个城市很美丽。",ep:"Zhè ge chéngshì hěn měilì.",em:"이 도시는 아주 아름다워요.",wr:"4급 신규: 美"},
+    {no:1504,h:"美食",p:"měishí",m:"맛있는 음식, 미식",ex:"这里的美食很有名。",ep:"Zhèli de měishí hěn yǒumíng.",em:"이곳 음식이 아주 유명해요.",wr:"4급 신규: 美·食"},
+    {no:1505,h:"梦",p:"mèng",m:"꿈(을 꾸다)",ex:"我昨晚做了一个梦。",ep:"Wǒ zuówǎn zuò le yí ge mèng.",em:"어젯밤 꿈을 꿨어요."},
+    {no:1506,h:"梦想",p:"mèngxiǎng",m:"꿈꾸다 · 꿈, 염원",ex:"他的梦想是当歌手。",ep:"Tā de mèngxiǎng shì dāng gēshǒu.",em:"그의 꿈은 가수가 되는 거예요."},
+    {no:1507,h:"面对",p:"miànduì",m:"마주하다, 직면하다",ex:"我们要面对困难。",ep:"Wǒmen yào miànduì kùnnan.",em:"우리는 어려움을 마주해야 해요.",wr:"1~3급: 对"},
+    {no:1508,h:"免费",p:"miǎnfèi",m:"무료(로)",ex:"儿童可以免费进入。",ep:"Értóng kěyǐ miǎnfèi jìnrù.",em:"어린이는 무료로 입장할 수 있어요."},
+    {no:1509,h:"面试",p:"miànshì",m:"면접(을 보다)",ex:"明天我要去面试。",ep:"Míngtiān wǒ yào qù miànshì.",em:"내일 면접을 보러 가요."},
+    {no:1510,h:"秒",p:"miǎo",m:"초 (시간 단위)",ex:"请等我三十秒。",ep:"Qǐng děng wǒ sānshí miǎo.",em:"30초만 기다려 주세요."},
+    {no:1511,h:"密码",p:"mìmǎ",m:"비밀번호, 암호",ex:"我忘了密码。",ep:"Wǒ wàng le mìmǎ.",em:"비밀번호를 잊어버렸어요."},
+    {no:1512,h:"民族",p:"mínzú",m:"민족",ex:"中国有五十多个民族。",ep:"Zhōngguó yǒu wǔshí duō ge mínzú.",em:"중국에는 50개 넘는 민족이 있어요.",wr:"4급 신규: 民"},
+    {no:1513,h:"末",p:"mò",m:"끝, 말 (期末·月末)",ex:"这个月末我要去旅行。",ep:"Zhè ge yuèmò wǒ yào qù lǚxíng.",em:"이번 달 말에 여행을 가요."},
+    {no:1514,h:"目标",p:"mùbiāo",m:"목표",ex:"我的目标是学好汉语。",ep:"Wǒ de mùbiāo shì xué hǎo Hànyǔ.",em:"제 목표는 중국어를 잘하는 거예요.",wr:"4급 신규: 标 · 1~3급: 目"},
+    {no:1515,h:"目的",p:"mùdì",m:"목적",ex:"你来这里的目的是什么？",ep:"Nǐ lái zhèli de mùdì shì shénme?",em:"여기 온 목적이 뭐예요?",wr:"1~3급: 目·的"},
+    {no:1516,h:"目的地",p:"mùdìdì",m:"목적지",ex:"我们到目的地了。",ep:"Wǒmen dào mùdìdì le.",em:"목적지에 도착했어요.",wr:"1~3급: 目·的·地"},
+    {no:1517,h:"母女",p:"mǔnǚ",m:"모녀",ex:"她们母女都很漂亮。",ep:"Tāmen mǔnǚ dōu hěn piàoliang.",em:"그 모녀는 둘 다 예뻐요.",ts:"3성+3성 → 앞 음절이 2성: mǔnǚ → múnǚ",wr:"1~3급: 女"},
+    {no:1518,h:"目前",p:"mùqián",m:"현재, 지금",ex:"目前我还没有工作。",ep:"Mùqián wǒ hái méi yǒu gōngzuò.",em:"지금은 아직 직장이 없어요.",wr:"1~3급: 目"},
+    {no:1519,h:"母亲",p:"mǔqīn",m:"어머니",ex:"我母亲很喜欢花。",ep:"Wǒ mǔqīn hěn xǐhuan huā.",em:"어머니는 꽃을 아주 좋아하세요."},
+    {no:1520,h:"母子",p:"mǔzǐ",m:"모자 (어머니와 아들)",ex:"这对母子在公园里散步。",ep:"Zhè duì mǔzǐ zài gōngyuán li sàn bù.",em:"이 모자는 공원에서 산책해요.",ts:"3성+3성 → 앞 음절이 2성: mǔzǐ → múzǐ",wr:"1~3급: 子"},
+    {no:1521,h:"耐心",p:"nàixīn",m:"인내심(이 있다)",ex:"老师很有耐心。",ep:"Lǎoshī hěn yǒu nàixīn.",em:"선생님은 아주 인내심이 많아요.",wr:"1~3급: 心"},
+    {no:1522,h:"南部",p:"nánbù",m:"남부",ex:"这个国家的南部很热。",ep:"Zhè ge guójiā de nánbù hěn rè.",em:"이 나라 남부는 아주 더워요.",wr:"4급 신규: 部 · 1~3급: 南"},
+    {no:1523,h:"难道",p:"nándào",m:"설마 …인가?, 혹시 …은 아니겠지",ex:"难道你不知道？",ep:"Nándào nǐ bù zhīdào?",em:"설마 모르세요?",wr:"1~3급: 难"},
+    {no:1524,h:"男士",p:"nánshì",m:"남성, 신사",ex:"男士请走这边。",ep:"Nánshì qǐng zǒu zhèbian.",em:"남성분은 이쪽으로 가세요.",wr:"1~3급: 男"},
+    {no:1525,h:"难受",p:"nánshòu",m:"괴롭다, 견디기 힘들다",ex:"我今天身体有点儿难受。",ep:"Wǒ jīntiān shēntǐ yǒudiǎnr nánshòu.",em:"오늘 몸이 좀 안 좋아요.",wr:"1~3급: 难·受"},
+    {no:1526,h:"难忘",p:"nánwàng",m:"잊을 수 없다, 잊기 어렵다",ex:"这是一次难忘的旅行。",ep:"Zhè shì yí cì nánwàng de lǚxíng.",em:"이번 여행은 잊을 수 없어요.",wr:"1~3급: 难"},
+    {no:1527,h:"男性",p:"nánxìng",m:"남성",ex:"这个工作男性比较多。",ep:"Zhè ge gōngzuò nánxìng bǐjiào duō.",em:"이 일은 남성이 비교적 많아요.",wr:"4급 신규: 性 · 1~3급: 男"},
+    {no:1528,h:"内",p:"nèi",m:"안, 내부",ex:"教室内不能吃东西。",ep:"Jiàoshì nèi bù néng chī dōngxi.",em:"교실 안에서는 음식을 먹으면 안 돼요.",wr:"4급 신규: 内"},
+    {no:1529,h:"内容",p:"nèiróng",m:"내용",ex:"这本书的内容很有意思。",ep:"Zhè běn shū de nèiróng hěn yǒu yìsi.",em:"이 책 내용은 아주 재미있어요.",wr:"4급 신규: 内"},
+    {no:1530,h:"内心",p:"nèixīn",m:"내심, 마음속",ex:"他内心很高兴。",ep:"Tā nèixīn hěn gāoxìng.",em:"그는 마음속으로 아주 기뻐요.",wr:"4급 신규: 内 · 1~3급: 心"},
+    {no:1531,h:"能否",p:"néng fǒu",m:"…할 수 있는지 (어떤지)",ex:"能否帮我一个忙？",ep:"Néng fǒu bāng wǒ yí ge máng?",em:"제 부탁을 들어줄 수 있을까요?",wr:"4급 신규: 否"},
+    {no:1532,h:"能够",p:"nénggòu",m:"…할 수 있다",ex:"我相信你能够做到。",ep:"Wǒ xiāngxìn nǐ nénggòu zuò dào.",em:"나는 네가 해낼 수 있다고 믿어.",wr:"4급 신규: 够"},
+    {no:1533,h:"能力",p:"nénglì",m:"능력",ex:"他的工作能力很强。",ep:"Tā de gōngzuò nénglì hěn qiáng.",em:"그의 업무 능력은 아주 뛰어나요.",wr:"1~3급: 力"},
+    {no:1534,h:"嗯",p:"ǹg",m:"응, 음 (긍정·대답)",ex:"嗯，我明白了。",ep:"Ǹg, wǒ míngbai le.",em:"응, 알겠어요."},
+    {no:1535,h:"年底",p:"niándǐ",m:"연말",ex:"年底我要去南方。",ep:"Niándǐ wǒ yào qù nánfāng.",em:"연말에 남쪽에 갈 거예요.",wr:"1~3급: 年"},
+    {no:1536,h:"年龄",p:"niánlíng",m:"나이, 연령",ex:"他们的年龄差不多。",ep:"Tāmen de niánlíng chàbuduō.",em:"그들은 나이가 비슷해요.",wr:"1~3급: 年"},
+    {no:1537,h:"弄",p:"nòng",m:"하다, 만들다 · 만지다, 다루다",ex:"你在弄什么？",ep:"Nǐ zài nòng shénme?",em:"뭐 하고 있어요?",wr:"4급 신규: 弄"},
+    {no:1538,h:"农村",p:"nóngcūn",m:"농촌, 시골",ex:"他从小在农村长大。",ep:"Tā cóng xiǎo zài nóngcūn zhǎng dà.",em:"그는 시골에서 자랐어요.",wr:"4급 신규: 农·村"},
+    {no:1539,h:"暖和",p:"nuǎnhuo",m:"따뜻하다 · 따뜻하게 하다 (动)",ex:"今天比昨天暖和。",ep:"Jīntiān bǐ zuótiān nuǎnhuo.",em:"오늘은 어제보다 따뜻해요.",nt:"huo",ntNote:"‘huo’는 경성 — nuǎnhuo. 원성조 huó로 읽지 않아요",wr:"1~3급: 和"},
+    {no:1540,h:"女性",p:"nǚxìng",m:"여성",ex:"这家公司的女性很多。",ep:"Zhè jiā gōngsī de nǚxìng hěn duō.",em:"이 회사는 여성이 많아요.",wr:"4급 신규: 性 · 1~3급: 女"},
+    {no:1541,h:"偶尔",p:"ǒu'ěr",m:"때때로, 가끔 · 이따금의 (形)",ex:"我偶尔会去那儿吃饭。",ep:"Wǒ ǒu'ěr huì qù nàr chī fàn.",em:"가끔 거기 가서 밥을 먹어요.",ts:"3성+3성 → 앞 음절이 2성: ǒu'ěr → óu'ěr"},
+    {no:1542,h:"排",p:"pái",m:"배열하다, 줄 세우다 · 줄 · (양사) 줄",ex:"请大家排好队。",ep:"Qǐng dàjiā pái hǎo duì.",em:"다들 줄을 잘 서 주세요.",wr:"4급 신규: 排"},
+    {no:1543,h:"牌",p:"pái",m:"패, 명패 · (카드) 패",ex:"他们在打牌。",ep:"Tāmen zài dǎ pái.",em:"그들은 카드놀이를 하고 있어요.",wr:"4급 신규: 牌"},
+    {no:1544,h:"拍",p:"pāi",m:"치다 · 찍다 (사진) · 박수 치다",ex:"这张照片是我拍的。",ep:"Zhè zhāng zhàopiàn shì wǒ pāi de.",em:"이 사진은 제가 찍은 거예요."},
+    {no:1545,h:"排队",p:"pái duì",m:"줄을 서다",ex:"买票要排队。",ep:"Mǎi piào yào pái duì.",em:"표를 살 때는 줄을 서야 해요.",lh:"동사+목적어 — 排了队, 排了半天队",wr:"4급 신규: 排·队"},
+    {no:1546,h:"排球",p:"páiqiú",m:"배구",ex:"她喜欢打排球。",ep:"Tā xǐhuan dǎ páiqiú.",em:"그녀는 배구를 좋아해요.",wr:"4급 신규: 排"},
+    {no:1547,h:"牌子",p:"páizi",m:"간판, 브랜드, 명패",ex:"这个牌子的鞋很好。",ep:"Zhè ge páizi de xié hěn hǎo.",em:"이 브랜드 신발은 아주 좋아요.",nt:"zi",ntNote:"‘zi’는 경성 — páizi. 원성조 zǐ로 읽지 않아요",wr:"4급 신규: 牌 · 1~3급: 子"},
+    {no:1548,h:"判断",p:"pànduàn",m:"판단하다",ex:"我判断错了。",ep:"Wǒ pànduàn cuò le.",em:"제 판단이 틀렸어요.",wr:"4급 신규: 断"},
+    {no:1549,h:"陪",p:"péi",m:"동행하다, 함께 있어 주다",ex:"你陪我走走好吗？",ep:"Nǐ péi wǒ zǒuzou hǎo ma?",em:"나랑 좀 걸어 줄래요?"},
+    {no:1550,h:"片",p:"piàn",m:"조각, 편 (얇은 것의 양사)",ex:"我吃了两片面包。",ep:"Wǒ chī le liǎng piàn miànbāo.",em:"빵 두 조각을 먹었어요.",wr:"1~3급: 片"},
+    {no:1551,h:"篇",p:"piān",m:"편 (글·작품의 양사)",ex:"我写了一篇文章。",ep:"Wǒ xiě le yì piān wénzhāng.",em:"글 한 편을 썼어요.",wr:"4급 신규: 篇"},
+    {no:1552,h:"皮肤",p:"pífū",m:"피부",ex:"她的皮肤很好。",ep:"Tā de pífū hěn hǎo.",em:"그녀는 피부가 아주 좋아요."},
+    {no:1553,h:"平常",p:"píngcháng",m:"보통(의), 평소 · 보통 때 (名)",ex:"他平常不怎么喝酒。",ep:"Tā píngcháng bù zěnme hē jiǔ.",em:"그는 평소에 술을 별로 안 마셔요.",wr:"1~3급: 平"},
+    {no:1554,h:"乒乓球",p:"pīngpāngqiú",m:"탁구",ex:"中国人很喜欢打乒乓球。",ep:"Zhōngguórén hěn xǐhuan dǎ pīngpāngqiú.",em:"중국인은 탁구를 아주 좋아해요."},
+    {no:1555,h:"批评",p:"pīpíng",m:"비판하다, 꾸짖다",ex:"老师批评了他。",ep:"Lǎoshī pīpíng le tā.",em:"선생님이 그를 꾸짖었어요."},
+    {no:1556,h:"脾气",p:"píqi",m:"성미, 기질",ex:"他的脾气很好。",ep:"Tā de píqi hěn hǎo.",em:"그는 성미가 아주 좋아요.",nt:"qi",ntNote:"‘qi’는 경성 — píqi. 원성조 qì로 읽지 않아요"},
+    {no:1557,h:"皮鞋",p:"píxié",m:"구두, 가죽신발",ex:"这双皮鞋很贵。",ep:"Zhè shuāng píxié hěn guì.",em:"이 구두는 아주 비싸요."},
+    {no:1558,h:"破",p:"pò",m:"깨지다, 찢어지다 · 낡은 (形)",ex:"我的鞋破了。",ep:"Wǒ de xié pò le.",em:"제 신발이 찢어졌어요."},
+    {no:1559,h:"普遍",p:"pǔbiàn",m:"보편적이다, 널리 퍼지다",ex:"这种情况很普遍。",ep:"Zhè zhǒng qíngkuàng hěn pǔbiàn.",em:"이런 경우는 아주 흔해요.",wr:"4급 신규: 普"},
+    {no:1560,h:"葡萄",p:"pútao",m:"포도",ex:"葡萄多少钱一斤？",ep:"Pútao duōshao qián yì jīn?",em:"포도 한 근에 얼마예요?",nt:"tao",ntNote:"‘tao’는 경성 — pútao. 원성조 táo로 읽지 않아요"},
+    {no:1561,h:"葡萄酒",p:"pútaojiǔ",m:"포도주, 와인",ex:"爸爸喜欢喝葡萄酒。",ep:"Bàba xǐhuan hē pútaojiǔ.",em:"아버지는 와인을 좋아하세요.",nt:"tao",ntNote:"‘tao’는 경성 — pútaojiǔ. 원성조 táo로 읽지 않아요"},
+    {no:1562,h:"普通",p:"pǔtōng",m:"보통의, 평범한",ex:"这只是一个普通的日子。",ep:"Zhè zhǐshì yí ge pǔtōng de rìzi.",em:"그냥 평범한 날이에요.",wr:"4급 신규: 普·通"},
+    {no:1563,h:"普通话",p:"pǔtōnghuà",m:"표준 중국어 (보통화)",ex:"她的普通话很标准。",ep:"Tā de pǔtōnghuà hěn biāozhǔn.",em:"그녀의 표준 중국어는 아주 정확해요.",wr:"4급 신규: 普·通"},
+    {no:1564,h:"气",p:"qì",m:"기, 기운 · 화내다 (动)",ex:"他气得说不出话。",ep:"Tā qì de shuō bu chū huà.",em:"그는 화가 나서 말이 안 나와요."},
+    {no:1565,h:"期",p:"qī",m:"기, 호 (간행물·과정의 양사)",ex:"我看这个杂志的每一期。",ep:"Wǒ kàn zhè ge zázhì de měi yì qī.",em:"저는 이 잡지의 매 호를 봐요."},
+    {no:1566,h:"前方",p:"qiánfāng",m:"앞, 전방",ex:"前方五百米有一个加油站。",ep:"Qiánfāng wǔ bǎi mǐ yǒu yí ge jiāyóuzhàn.",em:"앞쪽 500미터에 주유소가 있어요.",wr:"1~3급: 方"},
+    {no:1567,h:"强",p:"qiáng",m:"강하다, 세다, 뛰어나다",ex:"他的能力很强。",ep:"Tā de nénglì hěn qiáng.",em:"그의 능력은 아주 뛰어나요.",wr:"4급 신규: 强"},
+    {no:1568,h:"前后",p:"qiánhòu",m:"앞뒤, 전후",ex:"春节前后很忙。",ep:"Chūnjié qiánhòu hěn máng.",em:"설 전후에는 아주 바빠요.",wr:"1~3급: 后"},
+    {no:1569,h:"千克",p:"qiānkè",m:"킬로그램",ex:"这袋米有五千克。",ep:"Zhè dài mǐ yǒu wǔ qiānkè.",em:"이 쌀 봉지는 5킬로그램이에요.",wr:"4급 신규: 克"},
+    {no:1570,h:"千万",p:"qiānwàn",m:"절대, 부디 · 천만 (수)",ex:"你千万要小心。",ep:"Nǐ qiānwàn yào xiǎoxīn.",em:"꼭 조심해야 해요."},
+    {no:1571,h:"签证",p:"qiānzhèng",m:"비자(를 받다)",ex:"我的签证还没下来。",ep:"Wǒ de qiānzhèng hái méi xiàlai.",em:"제 비자가 아직 안 나왔어요."},
+    {no:1572,h:"桥",p:"qiáo",m:"다리 (교량)",ex:"这座桥很长。",ep:"Zhè zuò qiáo hěn cháng.",em:"이 다리는 아주 길어요."},
+    {no:1573,h:"巧",p:"qiǎo",m:"교묘하다 · 때마침, 공교롭다",ex:"真巧，我正想找你。",ep:"Zhēn qiǎo, wǒ zhèng xiǎng zhǎo nǐ.",em:"마침 잘됐네요, 너를 찾으려던 참이었어요."},
+    {no:1574,h:"敲",p:"qiāo",m:"두드리다, 노크하다",ex:"有人敲我的门。",ep:"Yǒu rén qiāo wǒ de mén.",em:"누가 제 문을 두드려요."},
+    {no:1575,h:"巧克力",p:"qiǎokèlì",m:"초콜릿",ex:"孩子喜欢吃巧克力。",ep:"Háizi xǐhuan chī qiǎokèlì.",em:"아이는 초콜릿을 좋아해요.",wr:"4급 신규: 克 · 1~3급: 力"},
+    {no:1576,h:"其次",p:"qícì",m:"다음으로, 그다음",ex:"首先要说清楚，其次要简单。",ep:"Shǒuxiān yào shuō qīngchu, qícì yào jiǎndān.",em:"먼저 명확하게 말하고, 다음으로 간단해야 해요.",wr:"1~3급: 其"},
+    {no:1577,h:"起到",p:"qǐdào",m:"(역할을) 하다, 이르게 하다",ex:"他的话起到了很好的作用。",ep:"Tā de huà qǐdào le hěn hǎo de zuòyòng.",em:"그의 말이 아주 좋은 작용을 했어요."},
+    {no:1578,h:"气候",p:"qìhòu",m:"기후",ex:"这里的气候很舒服。",ep:"Zhèli de qìhòu hěn shūfu.",em:"이곳 기후는 아주 쾌적해요."},
+    {no:1579,h:"期末",p:"qīmò",m:"학기말, 기말",ex:"下周期末考试。",ep:"Xià zhōu qīmò kǎoshì.",em:"다음 주에 기말고사가 있어요."},
+    {no:1580,h:"琴",p:"qín",m:"피아노·거문고 등 (현악기)",ex:"她从小就学琴。",ep:"Tā cóng xiǎo jiù xué qín.",em:"그녀는 어릴 때부터 악기를 배웠어요."},
+    {no:1581,h:"轻",p:"qīng",m:"가볍다",ex:"这个箱子很轻。",ep:"Zhè ge xiāngzi hěn qīng.",em:"이 상자는 아주 가벼워요.",wr:"1~3급: 轻"},
+    {no:1582,h:"情况",p:"qíngkuàng",m:"상황, 사정",ex:"现在的情况怎么样？",ep:"Xiànzài de qíngkuàng zěnmeyàng?",em:"지금 상황이 어때요?",wr:"4급 신규: 况"},
+    {no:1583,h:"青年",p:"qīngnián",m:"청년",ex:"他是一个有理想的青年。",ep:"Tā shì yí ge yǒu lǐxiǎng de qīngnián.",em:"그는 이상이 있는 청년이에요.",wr:"4급 신규: 青 · 1~3급: 年"},
+    {no:1584,h:"轻松",p:"qīngsōng",m:"편안하다, 홀가분하다",ex:"周末想轻松一下。",ep:"Zhōumò xiǎng qīngsōng yíxià.",em:"주말에는 좀 쉬고 싶어요.",wr:"1~3급: 轻"},
+    {no:1585,h:"庆祝",p:"qìngzhù",m:"축하하다, 기념하다",ex:"我们在庆祝他的生日。",ep:"Wǒmen zài qìngzhù tā de shēngrì.",em:"우리는 그의 생일을 축하하고 있어요."},
+    {no:1586,h:"亲戚",p:"qīnqi",m:"친척",ex:"过年我们去亲戚家。",ep:"Guònián wǒmen qù qīnqi jiā.",em:"설날에 우리는 친척 집에 가요.",nt:"qi",ntNote:"‘qi’는 경성 — qīnqi. 원성조 qī로 읽지 않아요"},
+    {no:1587,h:"汽水",p:"qìshuǐ",m:"사이다, 탄산음료",ex:"我要一瓶汽水。",ep:"Wǒ yào yì píng qìshuǐ.",em:"사이다 한 병 주세요.",wr:"1~3급: 汽"},
+    {no:1588,h:"球队",p:"qiúduì",m:"(스포츠) 팀, 구단",ex:"他是这个球队的队员。",ep:"Tā shì zhè ge qiúduì de duìyuán.",em:"그는 이 팀의 선수예요.",wr:"4급 신규: 队"},
+    {no:1589,h:"球迷",p:"qiúmí",m:"(스포츠) 팬",ex:"这里的球迷很多。",ep:"Zhèli de qiúmí hěn duō.",em:"이곳에는 스포츠 팬이 많아요."},
+    {no:1590,h:"气温",p:"qìwēn",m:"기온",ex:"今天气温很低。",ep:"Jīntiān qìwēn hěn dī.",em:"오늘 기온이 아주 낮아요.",wr:"4급 신규: 温"},
+    {no:1591,h:"其中",p:"qízhōng",m:"그중, 그 가운데",ex:"这些书其中一半是我的。",ep:"Zhèxiē shū qízhōng yí bàn shì wǒ de.",em:"이 책들 중 절반은 제 거예요.",wr:"1~3급: 其·中"},
+    {no:1592,h:"期中",p:"qīzhōng",m:"학기 중간, 중간고사",ex:"期中考试在下周。",ep:"Qīzhōng kǎoshì zài xià zhōu.",em:"중간고사가 다음 주에 있어요.",wr:"1~3급: 中"},
+    {no:1593,h:"取",p:"qǔ",m:"가지러 가다, 찾다, 얻다",ex:"我去银行取钱。",ep:"Wǒ qù yínháng qǔ qián.",em:"저는 은행에 돈을 찾으러 가요.",wr:"4급 신규: 取"},
+    {no:1594,h:"区",p:"qū",m:"구 (행정 구역), 지역",ex:"这个区有很多学校。",ep:"Zhè ge qū yǒu hěn duō xuéxiào.",em:"이 구에는 학교가 많아요.",wr:"1~3급: 区"},
+    {no:1595,h:"全",p:"quán",m:"전부의, 온 · 모두 (副)",ex:"全班都同意。",ep:"Quán bān dōu tóngyì.",em:"반 전체가 동의해요.",wr:"1~3급: 全"},
+    {no:1596,h:"全部",p:"quánbù",m:"전부, 모두",ex:"这些全部是我的。",ep:"Zhèxiē quánbù shì wǒ de.",em:"이건 전부 제 거예요.",wr:"4급 신규: 部 · 1~3급: 全"},
+    {no:1597,h:"全都",p:"quándōu",m:"모두, 전부 (부사)",ex:"他们全都来了。",ep:"Tāmen quándōu lái le.",em:"그들은 모두 왔어요.",wr:"1~3급: 全"},
+    {no:1598,h:"全球",p:"quánqiú",m:"전 세계",ex:"这个品牌全球都有名。",ep:"Zhè ge pǐnpái quánqiú dōu yǒumíng.",em:"이 브랜드는 전 세계적으로 유명해요.",wr:"1~3급: 全"},
+    {no:1599,h:"全身",p:"quánshēn",m:"온몸",ex:"我全身都疼。",ep:"Wǒ quánshēn dōu téng.",em:"온몸이 다 아파요.",wr:"1~3급: 全"},
+    {no:1600,h:"区别",p:"qūbié",m:"구별하다 · 차이 (名)",ex:"这两个词有什么区别？",ep:"Zhè liǎng ge cí yǒu shénme qūbié?",em:"이 두 단어는 무슨 차이가 있어요?",wr:"1~3급: 区"},
+    {no:1601,h:"取得",p:"qǔdé",m:"얻다, 획득하다, 거두다",ex:"他取得了很好的成绩。",ep:"Tā qǔdé le hěn hǎo de chéngjì.",em:"그는 아주 좋은 성적을 거뒀어요.",wr:"4급 신규: 取"},
+    {no:1602,h:"却",p:"què",m:"그러나, 오히려",ex:"他病了，却还来上班。",ep:"Tā bìng le, què hái lái shàng bān.",em:"그는 아픈데도 오히려 출근했어요."},
+    {no:1603,h:"缺",p:"quē",m:"모자라다, 없다",ex:"我们还缺一个人。",ep:"Wǒmen hái quē yí ge rén.",em:"우리는 아직 한 명이 모자라요."},
+    {no:1604,h:"缺点",p:"quēdiǎn",m:"단점, 결점",ex:"每个人都有缺点。",ep:"Měi ge rén dōu yǒu quēdiǎn.",em:"누구에게나 단점이 있어요.",wr:"1~3급: 点"},
+    {no:1605,h:"缺少",p:"quēshǎo",m:"부족하다, 없다",ex:"我们缺少经验。",ep:"Wǒmen quēshǎo jīngyàn.",em:"우리는 경험이 부족해요.",wr:"1~3급: 少"},
+    {no:1606,h:"确实",p:"quèshí",m:"확실히, 정말로",ex:"他确实很努力。",ep:"Tā quèshí hěn nǔlì.",em:"그는 정말 열심히 해요.",wr:"4급 신규: 确 · 1~3급: 实"},
+    {no:1607,h:"取消",p:"qǔxiāo",m:"취소하다",ex:"会议取消了。",ep:"Huìyì qǔxiāo le.",em:"회의가 취소됐어요.",wr:"4급 신규: 取"},
+    {no:1608,h:"然而",p:"rán’ér",m:"그러나, 그런데 (서면)",ex:"他很努力，然而没有成功。",ep:"Tā hěn nǔlì, rán'ér méi yǒu chénggōng.",em:"그는 열심히 했지만 그러나 성공하지 못했어요.",wr:"1~3급: 而"},
+    {no:1609,h:"热闹",p:"rènao",m:"떠들썩하다, 활기차다 · 활기 (名)",ex:"街上很热闹。",ep:"Jiē shang hěn rènao.",em:"거리가 아주 활기차요.",nt:"nao",ntNote:"‘nao’는 경성 — rènao. 원성조 nào로 읽지 않아요"},
+    {no:1610,h:"仍",p:"réng",m:"여전히, 아직도",ex:"他仍在工作。",ep:"Tā réng zài gōngzuò.",em:"그는 아직도 일하고 있어요."},
+    {no:1611,h:"扔",p:"rēng",m:"던지다 · 버리다",ex:"请把球扔给我。",ep:"Qǐng bǎ qiú rēng gěi wǒ.",em:"공을 저에게 던져 주세요.",wr:"4급 신규: 扔"},
+    {no:1612,h:"仍然",p:"réngrán",m:"여전히, 그대로",ex:"天气仍然很冷。",ep:"Tiānqì réngrán hěn lěng.",em:"날씨가 여전히 아주 추워요."},
+    {no:1613,h:"任何",p:"rènhé",m:"어떤 …도, 아무 …나",ex:"我没有任何问题。",ep:"Wǒ méi yǒu rènhé wèntí.",em:"저는 어떤 문제도 없어요.",wr:"4급 신규: 任"},
+    {no:1614,h:"人生",p:"rénshēng",m:"인생",ex:"人生很短，要好好过。",ep:"Rénshēng hěn duǎn, yào hǎohǎo guò.",em:"인생은 짧으니 잘 살아야 해요.",wr:"1~3급: 人·生"},
+    {no:1615,h:"人数",p:"rénshù",m:"인원수",ex:"这次活动的人数不多。",ep:"Zhè cì huódòng de rénshù bù duō.",em:"이번 행사는 인원이 많지 않아요.",wr:"1~3급: 人"},
+    {no:1616,h:"任务",p:"rènwu",m:"임무, 과제",ex:"今天的任务完成了。",ep:"Jīntiān de rènwu wánchéng le.",em:"오늘 임무를 완료했어요.",nt:"wu",ntNote:"‘wu’는 경성 — rènwu. 원성조 wù로 읽지 않아요",wr:"4급 신규: 任 · 1~3급: 务"},
+    {no:1617,h:"人员",p:"rényuán",m:"인원, 요원, 직원",ex:"这里的工作人员很热情。",ep:"Zhèli de gōngzuò rényuán hěn rèqíng.",em:"이곳 직원들은 아주 친절해요.",wr:"1~3급: 人"},
+    {no:1618,h:"日常",p:"rìcháng",m:"일상의, 일상적인",ex:"这是我的日常生活。",ep:"Zhè shì wǒ de rìcháng shēnghuó.",em:"이것은 제 일상생활이에요.",wr:"1~3급: 日"},
+    {no:1619,h:"日记",p:"rìjì",m:"일기",ex:"我每天写日记。",ep:"Wǒ měitiān xiě rìjì.",em:"저는 매일 일기를 써요.",wr:"1~3급: 日"},
+    {no:1620,h:"日期",p:"rìqī",m:"날짜",ex:"请填上日期。",ep:"Qǐng tián shàng rìqī.",em:"날짜를 적어 주세요.",wr:"1~3급: 日"},
+    {no:1621,h:"日子",p:"rìzi",m:"날, 날짜 · 생활, 형편",ex:"今天是个好日子。",ep:"Jīntiān shì ge hǎo rìzi.",em:"오늘은 좋은 날이에요.",nt:"zi",ntNote:"‘zi’는 경성 — rìzi. 원성조 zǐ로 읽지 않아요",wr:"1~3급: 日·子"},
+    {no:1622,h:"入",p:"rù",m:"들어가다, 넣다",ex:"请把手放入水中。",ep:"Qǐng bǎ shǒu fàng rù shuǐ zhōng.",em:"손을 물에 넣어 보세요.",wr:"4급 신규: 入"},
+    {no:1623,h:"入口",p:"rùkǒu",m:"입구",ex:"入口在左边。",ep:"Rùkǒu zài zuǒbian.",em:"입구는 왼쪽에 있어요.",wr:"4급 신규: 入 · 1~3급: 口"},
+    {no:1624,h:"入学",p:"rùxué",m:"입학하다",ex:"他今年入学了。",ep:"Tā jīnnián rùxué le.",em:"그는 올해 입학했어요.",wr:"4급 신규: 入 · 1~3급: 学"},
+    {no:1625,h:"入住",p:"rùzhù",m:"입주하다, 체크인하다",ex:"我们下午三点入住。",ep:"Wǒmen xiàwǔ sān diǎn rùzhù.",em:"우리는 오후 3시에 체크인해요.",wr:"4급 신규: 入"},
+    {no:1626,h:"散步",p:"sàn bù",m:"산책하다",ex:"吃完晚饭我们去散步。",ep:"Chī wán wǎnfàn wǒmen qù sàn bù.",em:"저녁을 먹고 우리는 산책해요.",lh:"동사+목적어 — 散了一会儿步, 散过步"},
+    {no:1627,h:"扫码",p:"sǎo mǎ",m:"(QR) 코드를 스캔하다",ex:"请扫码支付。",ep:"Qǐng sǎo mǎ zhīfù.",em:"QR코드로 결제해 주세요.",ts:"3성+3성 → 앞 음절이 2성: sǎo mǎ → sáo mǎ",lh:"동사+목적어 — 扫了码, 扫过码"},
+    {no:1628,h:"森林",p:"sēnlín",m:"숲, 삼림",ex:"这片森林很大。",ep:"Zhè piàn sēnlín hěn dà.",em:"이 숲은 아주 넓어요."},
+    {no:1629,h:"商量",p:"shāngliang",m:"상의하다, 의논하다",ex:"我们商量一下再决定。",ep:"Wǒmen shāngliang yíxià zài juédìng.",em:"우리 상의하고 결정해요.",nt:"liang",ntNote:"‘liang’은 경성 — shāngliang. 원성조 liàng으로 읽지 않아요",wr:"4급 신규: 量"},
+    {no:1630,h:"上门",p:"shàngmén",m:"(집으로) 찾아가다, 방문하다",ex:"医生上门看病。",ep:"Yīshēng shàng mén kàn bìng.",em:"의사가 집으로 와서 진료해요.",wr:"1~3급: 上"},
+    {no:1631,h:"商品",p:"shāngpǐn",m:"상품",ex:"这里的商品很便宜。",ep:"Zhèli de shāngpǐn hěn piányi.",em:"이곳 상품은 아주 싸요.",wr:"4급 신규: 品"},
+    {no:1632,h:"伤心",p:"shāngxīn",m:"슬프다, 속상하다",ex:"她看起来很伤心。",ep:"Tā kàn qǐlai hěn shāngxīn.",em:"그녀는 아주 슬퍼 보여요.",wr:"1~3급: 心"},
+    {no:1633,h:"稍",p:"shāo",m:"조금, 약간",ex:"请稍等。",ep:"Qǐng shāo děng.",em:"잠시만 기다려 주세요."},
+    {no:1634,h:"少见",p:"shǎojiàn",m:"드물다, 보기 힘들다",ex:"这种情况很少见。",ep:"Zhè zhǒng qíngkuàng hěn shǎojiàn.",em:"이런 경우는 아주 드물어요.",wr:"1~3급: 少"},
+    {no:1635,h:"少量",p:"shǎoliàng",m:"소량",ex:"只要少量就够了。",ep:"Zhǐ yào shǎoliàng jiù gòu le.",em:"소량만 있으면 충분해요.",wr:"4급 신규: 量 · 1~3급: 少"},
+    {no:1636,h:"少年",p:"shàonián",m:"소년",ex:"那个少年在打球。",ep:"Nà ge shàonián zài dǎ qiú.",em:"그 소년은 공놀이를 하고 있어요.",wr:"1~3급: 少·年"},
+    {no:1637,h:"少数",p:"shǎoshù",m:"소수",ex:"只有少数人同意。",ep:"Zhǐ yǒu shǎoshù rén tóngyì.",em:"소수만 동의해요.",wr:"1~3급: 少"},
+    {no:1638,h:"稍微",p:"shāowēi",m:"약간, 조금",ex:"请稍微等一下。",ep:"Qǐng shāowēi děng yíxià.",em:"조금만 기다려 주세요."},
+    {no:1639,h:"社会",p:"shèhuì",m:"사회",ex:"社会发展得很快。",ep:"Shèhuì fāzhǎn de hěn kuài.",em:"사회가 아주 빠르게 발전해요.",wr:"4급 신규: 社 · 1~3급: 会"},
+    {no:1640,h:"身",p:"shēn",m:"몸 · (옷의 양사) 벌",ex:"他穿着一身新衣服。",ep:"Tā chuān zhe yì shēn xīn yīfu.",em:"그는 새 옷 한 벌을 입고 있어요."},
+    {no:1641,h:"深",p:"shēn",m:"깊다 · 심하다 · 늦은 (밤)",ex:"这条河很深。",ep:"Zhè tiáo hé hěn shēn.",em:"이 강은 아주 깊어요.",wr:"4급 신규: 深"},
+    {no:1642,h:"身份证",p:"shēnfènzhèng",m:"신분증",ex:"请给我看一下身份证。",ep:"Qǐng gěi wǒ kàn yíxià shēnfènzhèng.",em:"신분증을 좀 보여 주세요.",wr:"4급 신규: 份"},
+    {no:1643,h:"剩",p:"shèng",m:"남다, 남기다",ex:"只剩下一个了。",ep:"Zhǐ shèng xià yí ge le.",em:"하나만 남았어요."},
+    {no:1644,h:"省",p:"shěng",m:"성, 도 (행정 구역) — 省 shěng '아끼다'도 있어요",ex:"这个省在中国的东部。",ep:"Zhè ge shěng zài Zhōngguó de dōngbù.",em:"이 성은 중국 동부에 있어요.",wr:"4급 신규: 省"},
+    {no:1645,h:"生",p:"shēng",m:"낳다, 태어나다 (동)",ex:"她生了一个女儿。",ep:"Tā shēng le yí ge nǚ'ér.",em:"그녀는 딸을 하나 낳았어요.",wr:"1~3급: 生"},
+    {no:1646,h:"生",p:"shēng",m:"날것의, 익지 않은 (형) · 억지로 (부)",ex:"这个菜是生的，不能吃。",ep:"Zhè ge cài shì shēng de, bù néng chī.",em:"이 음식은 익지 않아서 먹을 수 없어요.",wr:"1~3급: 生"},
+    {no:1647,h:"生命",p:"shēngmìng",m:"생명",ex:"每一个生命都很重要。",ep:"Měi yí ge shēngmìng dōu hěn zhòngyào.",em:"모든 생명은 아주 중요해요.",wr:"1~3급: 生"},
+    {no:1648,h:"生意",p:"shēngyi",m:"장사, 사업",ex:"他的生意很好。",ep:"Tā de shēngyi hěn hǎo.",em:"그의 장사는 아주 잘돼요.",nt:"yi",ntNote:"‘yi’는 경성 — shēngyi. 원성조 yì로 읽지 않아요",wr:"1~3급: 生"},
+    {no:1649,h:"申请",p:"shēnqǐng",m:"신청하다, 지원하다",ex:"我申请了这个工作。",ep:"Wǒ shēnqǐng le zhè ge gōngzuò.",em:"저는 이 일자리에 지원했어요."},
+    {no:1650,h:"甚至",p:"shènzhì",m:"심지어, …조차",ex:"他甚至没有吃饭。",ep:"Tā shènzhì méi yǒu chī fàn.",em:"그는 심지어 밥도 안 먹었어요.",wr:"4급 신규: 至"},
+    {no:1651,h:"摄氏度",p:"shèshìdù",m:"섭씨 (도)",ex:"今天只有五摄氏度。",ep:"Jīntiān zhǐ yǒu wǔ shèshìdù.",em:"오늘은 5도밖에 안 돼요.",wr:"4급 신규: 度"},
+    {no:1652,h:"使",p:"shǐ",m:"…하게 하다, 시키다 · 쓰다",ex:"这个消息使他很高兴。",ep:"Zhè ge xiāoxi shǐ tā hěn gāoxìng.",em:"이 소식이 그를 아주 기쁘게 했어요.",wr:"4급 신규: 使"},
+    {no:1653,h:"失败",p:"shībài",m:"실패하다 · 실패한 (형)",ex:"这次比赛他失败了。",ep:"Zhè cì bǐsài tā shībài le.",em:"이번 시합에서 그는 실패했어요."},
+    {no:1654,h:"市场",p:"shìchǎng",m:"시장",ex:"我去市场买水果。",ep:"Wǒ qù shìchǎng mǎi shuǐguǒ.",em:"저는 시장에 과일을 사러 가요."},
+    {no:1655,h:"十分",p:"shífēn",m:"매우, 아주",ex:"这里十分安静。",ep:"Zhèli shífēn ānjìng.",em:"이곳은 매우 조용해요.",wr:"1~3급: 十·分"},
+    {no:1656,h:"是否",p:"shìfǒu",m:"…인지 아닌지",ex:"我不知道他是否回来。",ep:"Wǒ bù zhīdào tā shìfǒu huílai.",em:"그가 올지 안 올지 모르겠어요.",wr:"4급 신규: 否 · 1~3급: 是"},
+    {no:1657,h:"师傅",p:"shīfu",m:"사부 · 기사님·아저씨 (호칭)",ex:"司机师傅，请停车。",ep:"Sījī shīfu, qǐng tíng chē.",em:"기사님, 세워 주세요.",nt:"fu",ntNote:"‘fu’는 경성 — shīfu. 원성조 fù로 읽지 않아요"},
+    {no:1658,h:"使馆",p:"shǐguǎn",m:"대사관",ex:"我要去中国使馆。",ep:"Wǒ yào qù Zhōngguó shǐguǎn.",em:"저는 중국 대사관에 가야 해요.",ts:"3성+3성 → 앞 음절이 2성: shǐguǎn → shíguǎn",wr:"4급 신규: 使"},
+    {no:1659,h:"适合",p:"shìhé",m:"적합하다, 어울리다",ex:"这个颜色很适合你。",ep:"Zhè ge yánsè hěn shìhé nǐ.",em:"이 색은 너에게 아주 잘 어울려요.",wr:"1~3급: 适·合"},
+    {no:1660,h:"实际",p:"shíjì",m:"실제 · 실제의 (형)",ex:"实际情况不一样。",ep:"Shíjì qíngkuàng bù yíyàng.",em:"실제 상황은 달라요.",wr:"4급 신규: 际 · 1~3급: 实"},
+    {no:1661,h:"世纪",p:"shìjì",m:"세기",ex:"这是二十一世纪。",ep:"Zhè shì èrshíyī shìjì.",em:"이것은 21세기예요."},
+    {no:1662,h:"时间表",p:"shíjiānbiǎo",m:"시간표",ex:"请看一下时间表。",ep:"Qǐng kàn yíxià shíjiānbiǎo.",em:"시간표를 한번 보세요.",wr:"1~3급: 时·间"},
+    {no:1663,h:"实际上",p:"shíjìshàng",m:"실제로는, 사실은",ex:"实际上，他没有去。",ep:"Shíjìshang, tā méi yǒu qù.",em:"사실은 그는 가지 않았어요.",wr:"4급 신규: 际 · 1~3급: 实·上"},
+    {no:1664,h:"食品",p:"shípǐn",m:"식품",ex:"请买一些食品回来。",ep:"Qǐng mǎi yìxiē shípǐn huílai.",em:"식품 좀 사 와 주세요.",wr:"4급 신규: 食·品"},
+    {no:1665,h:"视频",p:"shìpín",m:"동영상, 영상 통화",ex:"我们晚上视频吧。",ep:"Wǒmen wǎnshang shìpín ba.",em:"우리 저녁에 영상 통화해요."},
+    {no:1666,h:"市区",p:"shìqū",m:"시내, 시가지",ex:"市区里车很多。",ep:"Shìqū li chē hěn duō.",em:"시내에는 차가 아주 많아요.",wr:"1~3급: 区"},
+    {no:1667,h:"失去",p:"shīqù",m:"잃다, 상실하다",ex:"他失去了工作。",ep:"Tā shīqù le gōngzuò.",em:"그는 일자리를 잃었어요.",wr:"1~3급: 去"},
+    {no:1668,h:"师生",p:"shīshēng",m:"교사와 학생, 사제",ex:"全校师生都参加了。",ep:"Quán xiào shīshēng dōu cānjiā le.",em:"전교생과 교사가 모두 참가했어요.",wr:"1~3급: 生"},
+    {no:1669,h:"食堂",p:"shítáng",m:"식당, 구내식당",ex:"我们在学校食堂吃饭。",ep:"Wǒmen zài xuéxiào shítáng chī fàn.",em:"우리는 학교 식당에서 밥을 먹어요.",wr:"4급 신규: 食·堂"},
+    {no:1670,h:"试题",p:"shìtí",m:"시험 문제",ex:"这次的试题很难。",ep:"Zhè cì de shìtí hěn nán.",em:"이번 시험 문제는 아주 어려워요."},
+    {no:1671,h:"失望",p:"shīwàng",m:"실망하다 · 실망스러운 (형)",ex:"我对这个结果很失望。",ep:"Wǒ duì zhè ge jiéguǒ hěn shīwàng.",em:"저는 이 결과에 아주 실망했어요."},
+    {no:1672,h:"食物",p:"shíwù",m:"음식물",ex:"这里的食物很好吃。",ep:"Zhèli de shíwù hěn hǎochī.",em:"이곳 음식은 아주 맛있어요.",wr:"4급 신규: 食 · 1~3급: 物"},
+    {no:1673,h:"适应",p:"shìyìng",m:"적응하다",ex:"他已经适应了这里的生活。",ep:"Tā yǐjīng shìyìng le zhèli de shēnghuó.",em:"그는 이미 이곳 생활에 적응했어요.",wr:"1~3급: 适·应"},
+    {no:1674,h:"使用",p:"shǐyòng",m:"사용하다",ex:"这个怎么使用？",ep:"Zhè ge zěnme shǐyòng?",em:"이건 어떻게 사용해요?",wr:"4급 신규: 使 · 1~3급: 用"},
+    {no:1675,h:"实在",p:"shízài",m:"정말, 실로 · 실속 있는 (형)",ex:"我实在太累了。",ep:"Wǒ shízài tài lèi le.",em:"저는 정말 너무 피곤해요.",wr:"1~3급: 实·在"},
+    {no:1676,h:"十字路口",p:"shízì lùkǒu",m:"십자로, 교차로",ex:"前面有一个十字路口。",ep:"Qiánmiàn yǒu yí ge shízì lùkǒu.",em:"앞에 십자로가 하나 있어요.",wr:"1~3급: 十·字·口"},
+    {no:1677,h:"首",p:"shǒu",m:"수 (노래·시의 양사)",ex:"我很喜欢这首歌。",ep:"Wǒ hěn xǐhuan zhè shǒu gē.",em:"저는 이 노래를 아주 좋아해요."},
+    {no:1678,h:"受不了",p:"shòubuliǎo",m:"견딜 수 없다, 참을 수 없다",ex:"今天太热了，我受不了。",ep:"Jīntiān tài rè le, wǒ shòubuliǎo.",em:"오늘 너무 더워서 못 견디겠어요.",nt:"bu",ntNote:"‘bu’는 경성 — shòubuliǎo. 원성조 bù로 읽지 않아요",wr:"1~3급: 受·不·了"},
+    {no:1679,h:"首都",p:"shǒudū",m:"수도",ex:"北京是中国的首都。",ep:"Běijīng shì Zhōngguó de shǒudū.",em:"베이징은 중국의 수도예요."},
+    {no:1680,h:"收费",p:"shōufèi",m:"요금을 받다, 유료",ex:"这个停车场怎么收费？",ep:"Zhè ge tíngchēchǎng zěnme shōufèi?",em:"이 주차장은 요금이 어떻게 돼요?",wr:"1~3급: 收"},
+    {no:1681,h:"售票员",p:"shòupiàoyuán",m:"매표원",ex:"售票员在门口。",ep:"Shòupiàoyuán zài ménkǒu.",em:"매표원이 입구에 있어요."},
+    {no:1682,h:"收入",p:"shōurù",m:"수입 · 받아들이다 (动)",ex:"他今年的收入不错。",ep:"Tā jīnnián de shōurù búcuò.",em:"그의 올해 수입은 괜찮아요.",wr:"4급 신규: 入 · 1~3급: 收"},
+    {no:1683,h:"受伤",p:"shòu shāng",m:"부상하다, 다치다",ex:"他在比赛中受伤了。",ep:"Tā zài bǐsài zhōng shòu shāng le.",em:"그는 시합 중에 다쳤어요.",lh:"동사+목적어 — 受了伤, 受过伤",wr:"1~3급: 受"},
+    {no:1684,h:"收拾",p:"shōushi",m:"정리하다 · (짐을) 싸다",ex:"请把房间收拾一下。",ep:"Qǐng bǎ fángjiān shōushi yíxià.",em:"방을 좀 정리해 주세요.",nt:"shi",ntNote:"‘shi’는 경성 — shōushi. 원성조 shí로 읽지 않아요",wr:"1~3급: 收"},
+    {no:1685,h:"收听",p:"shōutīng",m:"청취하다 (방송을)",ex:"很多人收听这个节目。",ep:"Hěn duō rén shōutīng zhè ge jiémù.",em:"많은 사람이 이 프로그램을 청취해요.",wr:"1~3급: 收"},
+    {no:1686,h:"首先",p:"shǒuxiān",m:"우선, 먼저",ex:"首先，我要感谢大家。",ep:"Shǒuxiān, wǒ yào gǎnxiè dàjiā.",em:"먼저, 여러분께 감사드려요."},
+    {no:1687,h:"数",p:"shù",m:"수, 숫자 (shù) · 세다 (shǔ)",ex:"这个数太大了。",ep:"Zhè ge shù tài dà le.",em:"이 숫자는 너무 커요."},
+    {no:1688,h:"输",p:"shū",m:"지다 (경기에서) · 지다, 나르다",ex:"我们输了一场比赛。",ep:"Wǒmen shū le yì chǎng bǐsài.",em:"우리는 경기에서 한 번 졌어요.",wr:"4급 신규: 输"},
+    {no:1689,h:"熟",p:"shú",m:"익다 · 익숙하다 (구어 shóu)",ex:"这个西瓜熟了。",ep:"Zhè ge xīguā shú le.",em:"이 수박은 익었어요.",wr:"4급 신규: 熟"},
+    {no:1690,h:"帅",p:"shuài",m:"잘생기다, 멋있다",ex:"他穿这身衣服很帅。",ep:"Tā chuān zhè shēn yīfu hěn shuài.",em:"그는 이 옷을 입으니 아주 멋있어요."},
+    {no:1691,h:"暑假",p:"shǔjià",m:"여름방학",ex:"暑假我们去旅行。",ep:"Shǔjià wǒmen qù lǚxíng.",em:"여름방학에 우리는 여행을 가요.",wr:"1~3급: 假"},
+    {no:1692,h:"数量",p:"shùliàng",m:"수량",ex:"商品的数量不够。",ep:"Shāngpǐn de shùliàng bú gòu.",em:"상품 수량이 부족해요.",wr:"4급 신규: 量"},
+    {no:1693,h:"树林",p:"shùlín",m:"숲, 수림",ex:"树林里很凉快。",ep:"Shùlín li hěn liángkuai.",em:"숲속은 아주 시원해요.",wr:"1~3급: 树"},
+    {no:1694,h:"顺便",p:"shùnbiàn",m:"하는 김에, 겸사겸사",ex:"你出去的时候顺便买点儿水果。",ep:"Nǐ chūqu de shíhou shùnbiàn mǎi diǎnr shuǐguǒ.",em:"나갈 때 김에 과일 좀 사 와요.",wr:"4급 신규: 顺"},
+    {no:1695,h:"顺利",p:"shùnlì",m:"순조롭다",ex:"祝你一切顺利！",ep:"Zhù nǐ yíqiè shùnlì!",em:"모든 일이 순조롭기를 바라요!",wr:"4급 신규: 顺·利"},
+    {no:1696,h:"顺序",p:"shùnxù",m:"순서",ex:"请按顺序排队。",ep:"Qǐng àn shùnxù pái duì.",em:"순서대로 줄을 서 주세요.",wr:"4급 신규: 顺"},
+    {no:1697,h:"说法",p:"shuōfǎ",m:"말투, 주장, 견해",ex:"他的说法很有意思。",ep:"Tā de shuōfǎ hěn yǒu yìsi.",em:"그의 주장이 아주 재미있어요.",wr:"1~3급: 说·法"},
+    {no:1698,h:"说明",p:"shuōmíng",m:"설명하다 · 설명 (名)",ex:"请说明一下原因。",ep:"Qǐng shuōmíng yíxià yuányīn.",em:"이유를 설명해 주세요.",wr:"1~3급: 说"},
+    {no:1699,h:"说明书",p:"shuōmíngshū",m:"설명서",ex:"请看一下说明书。",ep:"Qǐng kàn yíxià shuōmíngshū.",em:"설명서를 한번 보세요.",wr:"1~3급: 说·书"},
+    {no:1700,h:"硕士",p:"shuòshì",m:"석사",ex:"他今年读硕士。",ep:"Tā jīnnián dú shuòshì.",em:"그는 올해 석사 과정을 밟아요."},
+    {no:1701,h:"熟悉",p:"shúxi",m:"잘 알다, 익숙하다",ex:"我熟悉这个地方。",ep:"Wǒ shúxi zhè ge dìfang.",em:"저는 이곳을 잘 알아요.",nt:"xi",ntNote:"‘xi’는 경성 — shúxi. 원성조 xī로 읽지 않아요",wr:"4급 신규: 熟"},
+    {no:1702,h:"数字",p:"shùzì",m:"숫자",ex:"请把这些数字写下来。",ep:"Qǐng bǎ zhèxiē shùzì xiě xiàlai.",em:"이 숫자들을 적어 주세요.",wr:"1~3급: 字"},
+    {no:1703,h:"死",p:"sǐ",m:"죽다 · 죽은 (형) · 극도로 (부)",ex:"那棵树死了。",ep:"Nà kē shù sǐ le.",em:"그 나무는 죽었어요."},
+    {no:1704,h:"算",p:"suàn",m:"계산하다 · …로 치다 · 그런 셈이다 (부)",ex:"请你算一下多少钱。",ep:"Qǐng nǐ suàn yíxià duōshao qián.",em:"얼마인지 계산해 주세요."},
+    {no:1705,h:"酸",p:"suān",m:"시다, 신맛이 나다",ex:"这个苹果有点儿酸。",ep:"Zhè ge píngguǒ yǒudiǎnr suān.",em:"이 사과는 좀 시어요."},
+    {no:1706,h:"酸奶",p:"suānnǎi",m:"요구르트",ex:"我每天早上喝一杯酸奶。",ep:"Wǒ měitiān zǎoshang hē yì bēi suānnǎi.",em:"저는 매일 아침 요구르트 한 잔을 마셔요."},
+    {no:1707,h:"速度",p:"sùdù",m:"속도",ex:"他说话的速度太快了。",ep:"Tā shuōhuà de sùdù tài kuài le.",em:"그는 말하는 속도가 너무 빨라요.",wr:"4급 신규: 度"},
+    {no:1708,h:"随便",p:"suíbiàn",m:"마음대로 하다, 편한 대로 · 아무거나",ex:"这里的东西可以随便吃。",ep:"Zhèli de dōngxi kěyǐ suíbiàn chī.",em:"여기 음식은 마음대로 먹어도 돼요.",wr:"4급 신규: 随"},
+    {no:1709,h:"随着",p:"suízhe",m:"~에 따라, ~와 더불어 (介)",ex:"随着天气变暖，花都开了。",ep:"Suízhe tiānqì biàn nuǎn, huā dōu kāi le.",em:"날씨가 따뜻해지면서 꽃이 다 피었어요.",nt:"zhe",ntNote:"‘zhe’는 경성 — suízhe",wr:"4급 신규: 随"},
+    {no:1710,h:"塑料",p:"sùliào",m:"플라스틱",ex:"请少用塑料袋。",ep:"Qǐng shǎo yòng sùliào dài.",em:"비닐봉지를 적게 써 주세요."},
+    {no:1711,h:"孙女",p:"sūnnǚ",m:"손녀",ex:"他有一个可爱的孙女。",ep:"Tā yǒu yí ge kě'ài de sūnnǚ.",em:"그는 귀여운 손녀가 하나 있어요.",wr:"1~3급: 女"},
+    {no:1712,h:"孙子",p:"sūnzi",m:"손자",ex:"爷爷带孙子去公园。",ep:"Yéye dài sūnzi qù gōngyuán.",em:"할아버지가 손자를 공원에 데려가세요.",nt:"zi",ntNote:"‘zi’는 경성 — sūnzi. 원성조 zǐ로 읽지 않아요",wr:"1~3급: 子"},
+    {no:1713,h:"所有",p:"suǒyǒu",m:"모든, 전부의",ex:"所有的学生都来了。",ep:"Suǒyǒu de xuésheng dōu lái le.",em:"모든 학생이 왔어요.",ts:"3성+3성 → 앞 음절이 2성: suǒyǒu → suóyǒu",wr:"1~3급: 有"},
+    {no:1714,h:"台",p:"tái",m:"대 (기계·차의 양사) · 무대 (名)",ex:"我家有两台电脑。",ep:"Wǒ jiā yǒu liǎng tái diànnǎo.",em:"우리 집에는 컴퓨터가 두 대 있어요.",wr:"4급 신규: 台"},
+    {no:1715,h:"抬",p:"tái",m:"들다, 들어 올리다",ex:"请帮我把桌子抬起来。",ep:"Qǐng bāng wǒ bǎ zhuōzi tái qǐlai.",em:"탁자를 들어 주세요."},
+    {no:1716,h:"态度",p:"tàidù",m:"태도",ex:"他的态度很好。",ep:"Tā de tàidù hěn hǎo.",em:"그의 태도는 아주 좋아요.",wr:"4급 신규: 态·度"},
+    {no:1717,h:"抬头",p:"tái tóu",m:"고개를 들다",ex:"他抬头看了看天。",ep:"Tā tái tóu kàn le kàn tiān.",em:"그는 고개를 들어 하늘을 봤어요.",lh:"동사+목적어 — 抬了抬头, 抬起头"},
+    {no:1718,h:"弹",p:"tán",m:"(악기를) 치다, 튕기다",ex:"她会弹钢琴。",ep:"Tā huì tán gāngqín.",em:"그녀는 피아노를 칠 줄 알아요."},
+    {no:1719,h:"谈",p:"tán",m:"이야기하다, 이야기 나누다",ex:"我们谈了一个小时。",ep:"Wǒmen tán le yí ge xiǎoshí.",em:"우리는 한 시간 동안 이야기했어요.",wr:"4급 신규: 谈"},
+    {no:1720,h:"趟",p:"tàng",m:"번, 차례 (왕복의 양사)",ex:"我去了两趟银行。",ep:"Wǒ qù le liǎng tàng yínháng.",em:"저는 은행에 두 번 다녀왔어요."},
+    {no:1721,h:"躺",p:"tǎng",m:"눕다",ex:"他躺在床上看书。",ep:"Tā tǎng zài chuáng shang kàn shū.",em:"그는 침대에 누워 책을 봐요."},
+    {no:1722,h:"汤",p:"tāng",m:"국, 탕",ex:"这个汤很好喝。",ep:"Zhè ge tāng hěn hǎohē.",em:"이 국은 아주 맛있어요.",wr:"4급 신규: 汤"},
+    {no:1723,h:"讨论",p:"tǎolùn",m:"토론하다, 논의하다",ex:"我们讨论一下这个问题。",ep:"Wǒmen tǎolùn yíxià zhè ge wèntí.",em:"이 문제를 논의해 봅시다.",wr:"4급 신규: 讨·论"},
+    {no:1724,h:"讨厌",p:"tǎoyàn",m:"싫다 · 미워하다 (动)",ex:"我讨厌下雨天。",ep:"Wǒ tǎoyàn xià yǔ tiān.",em:"저는 비 오는 날이 싫어요.",wr:"4급 신규: 讨"},
+    {no:1725,h:"特点",p:"tèdiǎn",m:"특점, 특징",ex:"这个城市有什么特点？",ep:"Zhè ge chéngshì yǒu shénme tèdiǎn?",em:"이 도시는 어떤 특징이 있어요?",wr:"1~3급: 特·点"},
+    {no:1726,h:"提",p:"tí",m:"들다 · 제기하다, 언급하다",ex:"他手里提着一个袋子。",ep:"Tā shǒu li tí zhe yí ge dàizi.",em:"그는 손에 봉지를 들고 있어요."},
+    {no:1727,h:"填写",p:"tiánxiě",m:"기입하다, 작성하다",ex:"请填写这张表格。",ep:"Qǐng tiánxiě zhè zhāng biǎogé.",em:"이 표를 작성해 주세요.",wr:"1~3급: 写"},
+    {no:1728,h:"条件",p:"tiáojiàn",m:"조건",ex:"这里的条件很好。",ep:"Zhèli de tiáojiàn hěn hǎo.",em:"이곳 조건은 아주 좋아요."},
+    {no:1729,h:"提出",p:"tíchū",m:"제기하다, 내놓다",ex:"他提出了一个新的想法。",ep:"Tā tíchū le yí ge xīn de xiǎngfǎ.",em:"그는 새로운 생각을 하나 내놨어요."},
+    {no:1730,h:"提到",p:"tídào",m:"언급하다, 말하다",ex:"他提到了你的名字。",ep:"Tā tídào le nǐ de míngzi.",em:"그는 당신 이름을 언급했어요."},
+    {no:1731,h:"提供",p:"tígōng",m:"제공하다",ex:"酒店提供早餐。",ep:"Jiǔdiàn tígōng zǎocān.",em:"호텔에서 아침을 제공해요."},
+    {no:1732,h:"体检",p:"tǐjiǎn",m:"건강검진(을 받다)",ex:"公司每年安排一次体检。",ep:"Gōngsī měi nián ānpái yí cì tǐjiǎn.",em:"회사가 해마다 건강검진을 한 번씩 준비해요.",ts:"3성+3성 → 앞 음절이 2성: tǐjiǎn → tíjiǎn"},
+    {no:1733,h:"停",p:"tíng",m:"멈추다 · 세우다",ex:"车停了。",ep:"Chē tíng le.",em:"차가 멈췄어요.",wr:"4급 신규: 停"},
+    {no:1734,h:"停车",p:"tíng chē",m:"차를 세우다, 주차하다",ex:"这里不能停车。",ep:"Zhèli bù néng tíng chē.",em:"여기서는 주차하면 안 돼요.",lh:"동사+목적어 — 停了车, 停不了车",wr:"4급 신규: 停"},
+    {no:1735,h:"停车场",p:"tíngchēchǎng",m:"주차장",ex:"停车场在地下。",ep:"Tíngchēchǎng zài dìxià.",em:"주차장은 지하에 있어요.",wr:"4급 신규: 停"},
+    {no:1736,h:"听力",p:"tīnglì",m:"듣기 (시험), 청력",ex:"这次考试的听力不难。",ep:"Zhè cì kǎoshì de tīnglì bù nán.",em:"이번 시험의 듣기는 어렵지 않아요.",wr:"1~3급: 力"},
+    {no:1737,h:"停止",p:"tíngzhǐ",m:"정지하다, 중단하다",ex:"雨已经停止了。",ep:"Yǔ yǐjīng tíngzhǐ le.",em:"비가 이미 그쳤어요.",wr:"4급 신규: 停·止"},
+    {no:1738,h:"听众",p:"tīngzhòng",m:"청취자",ex:"这个节目有很多听众。",ep:"Zhè ge jiémù yǒu hěn duō tīngzhòng.",em:"이 프로그램은 청취자가 많아요.",wr:"4급 신규: 众"},
+    {no:1739,h:"提前",p:"tíqián",m:"앞당기다 · 미리 (부)",ex:"会议提前到下午两点。",ep:"Huìyì tíqián dào xiàwǔ liǎng diǎn.",em:"회의가 오후 2시로 앞당겨졌어요."},
+    {no:1740,h:"体温",p:"tǐwēn",m:"체온",ex:"他的体温有点儿高。",ep:"Tā de tǐwēn yǒudiǎnr gāo.",em:"그의 체온이 조금 높아요.",wr:"4급 신규: 温"},
+    {no:1741,h:"提醒",p:"tíxǐng",m:"일깨워 주다, 알려 주다",ex:"请提醒我明天带伞。",ep:"Qǐng tíxǐng wǒ míngtiān dài sǎn.",em:"내일 우산 챙기라고 알려 주세요."},
+    {no:1742,h:"体重",p:"tǐzhòng",m:"체중",ex:"我的体重增加了。",ep:"Wǒ de tǐzhòng zēngjiā le.",em:"제 체중이 늘었어요.",wr:"1~3급: 重"},
+    {no:1743,h:"痛",p:"tòng",m:"아프다 · 통증 (名)",ex:"我的头有点儿痛。",ep:"Wǒ de tóu yǒudiǎnr tòng.",em:"머리가 좀 아파요.",wr:"4급 신규: 痛"},
+    {no:1744,h:"桶",p:"tǒng",m:"통, 양동이",ex:"桶里有很多水。",ep:"Tǒng li yǒu hěn duō shuǐ.",em:"통에 물이 많이 있어요."},
+    {no:1745,h:"通",p:"tōng",m:"통하다, 열려 있다 · 통 (양사)",ex:"这条路通到哪儿？",ep:"Zhè tiáo lù tōng dào nǎr?",em:"이 길은 어디로 통해요?",wr:"4급 신규: 通"},
+    {no:1746,h:"通过",p:"tōngguò",m:"통과하다 · ~을 통해 (介)",ex:"我通过了考试。",ep:"Wǒ tōngguò le kǎoshì.",em:"저는 시험에 합격했어요.",wr:"4급 신규: 通 · 1~3급: 过"},
+    {no:1747,h:"童年",p:"tóngnián",m:"어린 시절, 동년",ex:"我的童年很快乐。",ep:"Wǒ de tóngnián hěn kuàilè.",em:"제 어린 시절은 아주 즐거웠어요.",wr:"1~3급: 年"},
+    {no:1748,h:"同时",p:"tóngshí",m:"동시 · 동시에 (连)",ex:"我们同时到了。",ep:"Wǒmen tóngshí dào le.",em:"우리는 동시에 도착했어요.",wr:"1~3급: 同·时"},
+    {no:1749,h:"同样",p:"tóngyàng",m:"같은, 마찬가지의",ex:"我们都有同样的问题。",ep:"Wǒmen dōu yǒu tóngyàng de wèntí.",em:"우리는 모두 같은 문제가 있어요.",wr:"1~3급: 同"},
+    {no:1750,h:"通知",p:"tōngzhī",m:"통지하다 · 통지, 안내 (名)",ex:"学校通知我们明天不上课。",ep:"Xuéxiào tōngzhī wǒmen míngtiān bú shàng kè.",em:"학교에서 내일 수업이 없다고 알려 왔어요.",wr:"4급 신규: 通"},
+    {no:1751,h:"头痛",p:"tóutòng",m:"두통이 있다, 골치 아프다",ex:"我今天有点儿头痛。",ep:"Wǒ jīntiān yǒudiǎnr tóutòng.",em:"오늘 머리가 좀 아파요.",wr:"4급 신규: 痛"},
+    {no:1752,h:"图",p:"tú",m:"그림, 도면 · 도모하다 (动)",ex:"这本书里有很多图。",ep:"Zhè běn shū li yǒu hěn duō tú.",em:"이 책에는 그림이 많아요.",wr:"1~3급: 图"},
+    {no:1753,h:"土",p:"tǔ",m:"흙 · 토착의, 촌스러운 (形)",ex:"这里需要一些土。",ep:"Zhèli xūyào yìxiē tǔ.",em:"여기에는 흙이 좀 필요해요.",wr:"4급 신규: 土"},
+    {no:1754,h:"推",p:"tuī",m:"밀다, 밀어내다",ex:"请帮我推一下门。",ep:"Qǐng bāng wǒ tuī yíxià mén.",em:"문을 좀 밀어 주세요.",wr:"4급 신규: 推"},
+    {no:1755,h:"推迟",p:"tuīchí",m:"연기하다, 미루다",ex:"会议推迟到下周。",ep:"Huìyì tuīchí dào xià zhōu.",em:"회의가 다음 주로 연기됐어요.",wr:"4급 신규: 推"},
+    {no:1756,h:"推出",p:"tuīchū",m:"내놓다, 출시하다",ex:"这家公司推出了新产品。",ep:"Zhè jiā gōngsī tuīchū le xīn chǎnpǐn.",em:"이 회사가 신제품을 내놨어요.",wr:"4급 신규: 推"},
+    {no:1757,h:"脱",p:"tuō",m:"벗다, 탈락하다",ex:"屋里很热，脱件衣服吧。",ep:"Wū li hěn rè, tuō jiàn yīfu ba.",em:"방이 더우니 옷을 하나 벗으세요."},
+    {no:1758,h:"图片",p:"túpiàn",m:"그림, 사진",ex:"请发一张图片给我。",ep:"Qǐng fā yì zhāng túpiàn gěi wǒ.",em:"사진 한 장을 보내 주세요.",wr:"1~3급: 图·片"},
+    {no:1759,h:"外出",p:"wàichū",m:"외출하다",ex:"他今天外出了。",ep:"Tā jīntiān wàichū le.",em:"그는 오늘 외출했어요."},
+    {no:1760,h:"外套",p:"wàitào",m:"외투, 코트",ex:"外面冷，穿上外套。",ep:"Wàimiàn lěng, chuān shàng wàitào.",em:"밖이 추우니 외투를 입으세요.",wr:"4급 신규: 套"},
+    {no:1761,h:"晚安",p:"wǎn'ān",m:"안녕히 주무세요",ex:"妈妈，晚安！",ep:"Māma, wǎn'ān!",em:"엄마, 안녕히 주무세요!",wr:"1~3급: 安"},
+    {no:1762,h:"晚餐",p:"wǎncān",m:"저녁 식사",ex:"晚餐准备好了。",ep:"Wǎncān zhǔnbèi hǎo le.",em:"저녁 식사가 준비됐어요.",wr:"4급 신규: 餐"},
+    {no:1763,h:"网购",p:"wǎnggòu",m:"인터넷 쇼핑(을 하다)",ex:"妈妈也喜欢网购。",ep:"Māma yě xǐhuan wǎnggòu.",em:"엄마도 인터넷 쇼핑을 좋아하세요."},
+    {no:1764,h:"往往",p:"wǎngwǎng",m:"흔히, 대개는, 자주",ex:"周末这里往往人很多。",ep:"Zhōumò zhèli wǎngwǎng rén hěn duō.",em:"주말에는 여기 흔히 사람이 많아요.",ts:"3성+3성 → 앞 음절이 2성: wǎngwǎng → wángwǎng"},
+    {no:1765,h:"网页",p:"wǎngyè",m:"웹 페이지",ex:"这个网页打不开。",ep:"Zhè ge wǎngyè dǎ bu kāi.",em:"이 웹 페이지가 안 열려요.",wr:"1~3급: 页"},
+    {no:1766,h:"网友",p:"wǎngyǒu",m:"네티즌, 온라인 친구",ex:"我们是在网上认识的网友。",ep:"Wǒmen shì zài wǎng shang rènshi de wǎngyǒu.",em:"우리는 인터넷에서 만난 친구예요.",ts:"3성+3성 → 앞 음절이 2성: wǎngyǒu → wángyǒu"},
+    {no:1767,h:"网址",p:"wǎngzhǐ",m:"웹사이트 주소",ex:"请把网址发给我。",ep:"Qǐng bǎ wǎngzhǐ fā gěi wǒ.",em:"웹사이트 주소를 보내 주세요.",ts:"3성+3성 → 앞 음절이 2성: wǎngzhǐ → wángzhǐ"},
+    {no:1768,h:"完全",p:"wánquán",m:"완전히 · 완전한 (형)",ex:"我完全同意。",ep:"Wǒ wánquán tóngyì.",em:"저는 완전히 동의해요.",wr:"1~3급: 全"},
+    {no:1769,h:"袜子",p:"wàzi",m:"양말",ex:"这双袜子多少钱？",ep:"Zhè shuāng wàzi duōshao qián?",em:"이 양말 얼마예요?",nt:"zi",ntNote:"‘zi’는 경성 — wàzi. 원성조 zǐ로 읽지 않아요",wr:"1~3급: 子"},
+    {no:1770,h:"为",p:"wéi",m:"…이 되다, …라고 여기다 (wéi) — 为 wèi '위하다'도 있어요",ex:"他的理想是成为一名医生。",ep:"Tā de lǐxiǎng shì chéngwéi yì míng yīshēng.",em:"그의 이상은 의사가 되는 거예요.",wr:"1~3급: 为"},
+    {no:1771,h:"味",p:"wèi",m:"맛, 냄새 (味 단독)",ex:"这杯水有一点儿味儿。",ep:"Zhè bēi shuǐ yǒu yìdiǎnr wèir.",em:"이 물은 냄새가 좀 나요.",wr:"4급 신규: 味"},
+    {no:1772,h:"味道",p:"wèidào",m:"맛, 냄새, 풍미",ex:"妈妈做的菜味道很好。",ep:"Māma zuò de cài wèidào hěn hǎo.",em:"엄마가 만든 음식 맛이 아주 좋아요.",wr:"4급 신규: 味"},
+    {no:1773,h:"卫生",p:"wèishēng",m:"위생 · 위생적인 (형)",ex:"这里的卫生条件很好。",ep:"Zhèli de wèishēng tiáojiàn hěn hǎo.",em:"이곳 위생 상태가 아주 좋아요.",wr:"1~3급: 生"},
+    {no:1774,h:"危险",p:"wēixiǎn",m:"위험하다 · 위험 (名)",ex:"这里很危险，别去。",ep:"Zhèli hěn wēixiǎn, bié qù.",em:"여기는 위험하니 가지 마세요."},
+    {no:1775,h:"闻",p:"wén",m:"냄새를 맡다 · (소식을) 듣다",ex:"你闻闻这个花。",ep:"Nǐ wénwen zhè ge huā.",em:"이 꽃 냄새 맡아 봐요.",wr:"1~3급: 闻"},
+    {no:1776,h:"温度",p:"wēndù",m:"온도",ex:"今天的温度不高。",ep:"Jīntiān de wēndù bù gāo.",em:"오늘 온도는 높지 않아요.",wr:"4급 신규: 温·度"},
+    {no:1777,h:"文件",p:"wénjiàn",m:"서류, 파일",ex:"请把这些文件收好。",ep:"Qǐng bǎ zhèxiē wénjiàn shōu hǎo.",em:"이 서류들을 잘 보관해 주세요.",wr:"1~3급: 文"},
+    {no:1778,h:"文章",p:"wénzhāng",m:"글, 논문",ex:"这篇文章写得很好。",ep:"Zhè piān wénzhāng xiě de hěn hǎo.",em:"이 글은 아주 잘 썼어요.",wr:"4급 신규: 章 · 1~3급: 文"},
+    {no:1779,h:"文字",p:"wénzì",m:"문자, 글자",ex:"这本书的文字很简单。",ep:"Zhè běn shū de wénzì hěn jiǎndān.",em:"이 책의 글자는 아주 간단해요.",wr:"1~3급: 文·字"},
+    {no:1780,h:"无",p:"wú",m:"없다, …이 아니다 (서면)",ex:"房间里无人。",ep:"Fángjiān li wú rén.",em:"방 안에 아무도 없어요.",wr:"4급 신규: 无"},
+    {no:1781,h:"午餐",p:"wǔcān",m:"점심 식사",ex:"午餐我吃面条。",ep:"Wǔcān wǒ chī miàntiáo.",em:"점심에 국수를 먹었어요.",wr:"4급 신규: 餐 · 1~3급: 午"},
+    {no:1782,h:"无法",p:"wúfǎ",m:"…할 수 없다, 방법이 없다",ex:"我无法回答这个问题。",ep:"Wǒ wúfǎ huídá zhè ge wèntí.",em:"저는 이 질문에 대답할 수 없어요.",wr:"4급 신규: 无 · 1~3급: 法"},
+    {no:1783,h:"误会",p:"wùhuì",m:"오해(하다)",ex:"对不起，是我误会你了。",ep:"Duìbuqǐ, shì wǒ wùhuì nǐ le.",em:"미안해요, 제가 오해했어요.",wr:"4급 신규: 误 · 1~3급: 会"},
+    {no:1784,h:"无聊",p:"wúliáo",m:"심심하다, 지루하다",ex:"一个人在家有点儿无聊。",ep:"Yí ge rén zài jiā yǒudiǎnr wúliáo.",em:"혼자 집에 있으면 좀 심심해요.",wr:"4급 신규: 无"},
+    {no:1785,h:"无论",p:"wúlùn",m:"…에 관계없이, …이든",ex:"无论多难，我都要试试。",ep:"Wúlùn duō nán, wǒ dōu yào shìshi.",em:"아무리 어려워도 해 볼 거예요.",wr:"4급 신규: 无·论"},
+    {no:1786,h:"污染",p:"wūrǎn",m:"오염(시키다)",ex:"空气污染很严重。",ep:"Kōngqì wūrǎn hěn yánzhòng.",em:"공기 오염이 아주 심해요."},
+    {no:1787,h:"细",p:"xì",m:"가늘다, 세밀하다",ex:"这根线很细。",ep:"Zhè gēn xiàn hěn xì.",em:"이 실은 아주 가늘어요."},
+    {no:1788,h:"吸",p:"xī",m:"들이마시다, 빨아들이다",ex:"请深深地吸一口气。",ep:"Qǐng shēnshēn de xī yì kǒu qì.",em:"깊게 숨을 들이마시세요."},
+    {no:1789,h:"下降",p:"xiàjiàng",m:"하강하다, 떨어지다",ex:"气温开始下降了。",ep:"Qìwēn kāishǐ xiàjiàng le.",em:"기온이 떨어지기 시작했어요.",wr:"1~3급: 下"},
+    {no:1790,h:"咸",p:"xián",m:"짜다",ex:"这个菜太咸了。",ep:"Zhè ge cài tài xián le.",em:"이 음식은 너무 짜요."},
+    {no:1791,h:"鲜",p:"xiān",m:"신선하다, 산뜻하다",ex:"这个鱼很鲜。",ep:"Zhè ge yú hěn xiān.",em:"이 생선은 아주 신선해요."},
+    {no:1792,h:"项",p:"xiàng",m:"항, 가지 (조항·항목의 양사)",ex:"这次有三项活动。",ep:"Zhè cì yǒu sān xiàng huódòng.",em:"이번에는 세 가지 행사가 있어요."},
+    {no:1793,h:"响",p:"xiǎng",m:"울리다, 소리가 나다 · 시끄러운 (형)",ex:"电话响了。",ep:"Diànhuà xiǎng le.",em:"전화가 울렸어요.",wr:"1~3급: 响"},
+    {no:1794,h:"香",p:"xiāng",m:"향기롭다, 맛있다",ex:"这个花很香。",ep:"Zhè ge huā hěn xiāng.",em:"이 꽃은 향기가 아주 좋아요.",wr:"1~3급: 香"},
+    {no:1795,h:"相比",p:"xiāngbǐ",m:"비교하다, 견주어 보다",ex:"与去年相比，今年更热。",ep:"Yǔ qùnián xiāngbǐ, jīnnián gèng rè.",em:"작년과 비교하면 올해가 더 더워요.",wr:"1~3급: 相·比"},
+    {no:1796,h:"想法",p:"xiǎngfǎ",m:"생각, 착상",ex:"我有一个新的想法。",ep:"Wǒ yǒu yí ge xīn de xiǎngfǎ.",em:"저는 새로운 생각이 하나 있어요.",ts:"3성+3성 → 앞 음절이 2성: xiǎngfǎ → xiángfǎ",wr:"1~3급: 法"},
+    {no:1797,h:"相反",p:"xiāngfǎn",m:"반대이다 · 반대로 (连)",ex:"他们的想法完全相反。",ep:"Tāmen de xiǎngfǎ wánquán xiāngfǎn.",em:"그들의 생각은 완전히 반대예요.",wr:"4급 신규: 反 · 1~3급: 相"},
+    {no:1798,h:"相互",p:"xiānghù",m:"상호, 서로",ex:"我们要相互理解。",ep:"Wǒmen yào xiānghù lǐjiě.",em:"우리는 서로 이해해야 해요.",wr:"1~3급: 相"},
+    {no:1799,h:"相同",p:"xiāngtóng",m:"같다, 동일하다",ex:"我们的看法相同。",ep:"Wǒmen de kànfǎ xiāngtóng.",em:"우리 견해가 같아요.",wr:"1~3급: 相·同"},
+    {no:1800,h:"详细",p:"xiángxì",m:"상세하다",ex:"请说得详细一点儿。",ep:"Qǐng shuō de xiángxì yìdiǎnr.",em:"좀 더 자세히 말해 주세요."},
+    {no:1801,h:"鲜花",p:"xiānhuā",m:"생화, (갓 꺾은) 꽃",ex:"她喜欢鲜花。",ep:"Tā xǐhuan xiānhuā.",em:"그녀는 생화를 좋아해요."},
+    {no:1802,h:"现金",p:"xiànjīn",m:"현금",ex:"这里可以用现金吗？",ep:"Zhèli kěyǐ yòng xiànjīn ma?",em:"여기서 현금 쓸 수 있어요?",wr:"4급 신규: 金 · 1~3급: 现"},
+    {no:1803,h:"羡慕",p:"xiànmù",m:"부러워하다",ex:"我很羡慕你。",ep:"Wǒ hěn xiànmù nǐ.",em:"저는 당신이 부러워요."},
+    {no:1804,h:"线上",p:"xiànshàng",m:"온라인, 인터넷상의",ex:"我们在线上开会。",ep:"Wǒmen zài xiànshàng kāi huì.",em:"우리는 온라인으로 회의해요.",wr:"4급 신규: 线 · 1~3급: 上"},
+    {no:1805,h:"线下",p:"xiànxià",m:"오프라인, 실제 공간의",ex:"线下也可以买票。",ep:"Xiànxià yě kěyǐ mǎi piào.",em:"오프라인에서도 표를 살 수 있어요.",wr:"4급 신규: 线 · 1~3급: 下"},
+    {no:1806,h:"现有",p:"xiànyǒu",m:"현재의, 기존의",ex:"现有的条件还不够。",ep:"Xiànyǒu de tiáojiàn hái bú gòu.",em:"현재 조건으로는 아직 부족해요.",wr:"1~3급: 现·有"},
+    {no:1807,h:"小吃",p:"xiǎochī",m:"간식, 향토 먹거리",ex:"这条街有很多小吃。",ep:"Zhè tiáo jiē yǒu hěn duō xiǎochī.",em:"이 거리에는 먹거리가 많아요.",wr:"1~3급: 小"},
+    {no:1808,h:"效果",p:"xiàoguǒ",m:"효과",ex:"这个药的效果很好。",ep:"Zhè ge yào de xiàoguǒ hěn hǎo.",em:"이 약은 효과가 아주 좋아요."},
+    {no:1809,h:"笑话",p:"xiàohua",m:"농담, 우스갯소리 · 비웃다 (动)",ex:"他讲了一个笑话。",ep:"Tā jiǎng le yí ge xiàohua.",em:"그는 우스갯소리를 하나 했어요.",nt:"hua",ntNote:"‘hua’는 경성 — xiàohua. 원성조 huà로 읽지 않아요"},
+    {no:1810,h:"小伙子",p:"xiǎohuǒzi",m:"청년, 총각",ex:"这个小伙子很高。",ep:"Zhè ge xiǎohuǒzi hěn gāo.",em:"이 청년은 키가 아주 커요.",nt:"zi",ntNote:"‘zi’는 경성 — xiǎohuǒzi. 원성조 zǐ로 읽지 않아요",ts:"3성+3성 → 앞 음절이 2성: xiǎohuǒzi → xiáohuǒzi",wr:"1~3급: 小·子"},
+    {no:1811,h:"小说",p:"xiǎoshuō",m:"소설",ex:"我喜欢看小说。",ep:"Wǒ xǐhuan kàn xiǎoshuō.",em:"저는 소설 읽는 걸 좋아해요.",wr:"1~3급: 小·说"},
+    {no:1812,h:"消息",p:"xiāoxi",m:"소식, 메시지",ex:"我有一个好消息。",ep:"Wǒ yǒu yí ge hǎo xiāoxi.",em:"좋은 소식이 하나 있어요.",nt:"xi",ntNote:"‘xi’는 경성 — xiāoxi. 원성조 xī로 읽지 않아요"},
+    {no:1813,h:"小组",p:"xiǎozǔ",m:"조, 그룹",ex:"我们小组有五个人。",ep:"Wǒmen xiǎozǔ yǒu wǔ ge rén.",em:"우리 조는 다섯 명이에요.",ts:"3성+3성 → 앞 음절이 2성: xiǎozǔ → xiáozǔ",wr:"4급 신규: 组 · 1~3급: 小"},
+    {no:1814,h:"西部",p:"xībù",m:"서부",ex:"他去西部工作了。",ep:"Tā qù xībù gōngzuò le.",em:"그는 서부로 일하러 갔어요.",wr:"4급 신규: 部"},
+    {no:1815,h:"血",p:"xiě",m:"피 (구어 xiě) — 문어 xuè",ex:"他的手流血了。",ep:"Tā de shǒu liú xiě le.",em:"그의 손에서 피가 나요.",wr:"4급 신규: 血"},
+    {no:1816,h:"西红柿",p:"xīhóngshì",m:"토마토",ex:"我喜欢吃西红柿。",ep:"Wǒ xǐhuan chī xīhóngshì.",em:"저는 토마토를 좋아해요."},
+    {no:1817,h:"心",p:"xīn",m:"마음, 심장",ex:"我的心跳得很快。",ep:"Wǒ de xīn tiào de hěn kuài.",em:"심장이 빨리 뛰어요.",wr:"1~3급: 心"},
+    {no:1818,h:"性",p:"xìng",m:"(접미사) …성, 성질 (性别·男性처럼 쓰여요)",ex:"孩子的性格跟妈妈一样。",ep:"Háizi de xìnggé gēn māma yíyàng.",em:"아이 성격이 엄마와 같아요.",wr:"4급 신규: 性"},
+    {no:1819,h:"醒",p:"xǐng",m:"깨다, 잠에서 깨다",ex:"我早上六点就醒了。",ep:"Wǒ zǎoshang liù diǎn jiù xǐng le.",em:"저는 아침 6시에 깼어요."},
+    {no:1820,h:"性别",p:"xìngbié",m:"성별",ex:"请填写年龄和性别。",ep:"Qǐng tiánxiě niánlíng hé xìngbié.",em:"나이와 성별을 적어 주세요.",wr:"4급 신규: 性"},
+    {no:1821,h:"兴奋",p:"xīngfèn",m:"흥분하다, 신나다",ex:"孩子们很兴奋。",ep:"Háizimen hěn xīngfèn.",em:"아이들이 아주 신나 있어요."},
+    {no:1822,h:"幸福",p:"xìngfú",m:"행복(하다)",ex:"他们一家人很幸福。",ep:"Tāmen yì jiā rén hěn xìngfú.",em:"그들 가족은 아주 행복해요."},
+    {no:1823,h:"性格",p:"xìnggé",m:"성격",ex:"他们两个人的性格完全不同。",ep:"Tāmen liǎng ge rén de xìnggé wánquán bù tóng.",em:"그 두 사람은 성격이 완전히 달라요.",wr:"4급 신규: 性"},
+    {no:1824,h:"星星",p:"xīngxing",m:"별",ex:"晚上星星很亮。",ep:"Wǎnshang xīngxing hěn liàng.",em:"밤에 별이 아주 밝아요.",nt:"xing",ntNote:"‘xing’은 경성 — xīngxing. 원성조 xīng으로 읽지 않아요"},
+    {no:1825,h:"信号",p:"xìnhào",m:"신호",ex:"这里手机没有信号。",ep:"Zhèli shǒujī méi yǒu xìnhào.",em:"여기는 휴대폰 신호가 없어요.",wr:"1~3급: 信"},
+    {no:1826,h:"辛苦",p:"xīnkǔ",m:"수고스럽다 · 수고하다",ex:"您辛苦了！",ep:"Nín xīnkǔ le!",em:"수고하셨어요!"},
+    {no:1827,h:"心情",p:"xīnqíng",m:"기분, 심정",ex:"我今天心情很好。",ep:"Wǒ jīntiān xīnqíng hěn hǎo.",em:"오늘 기분이 아주 좋아요.",wr:"1~3급: 心"},
+    {no:1828,h:"信息",p:"xìnxī",m:"정보, 메시지",ex:"我收到了你的信息。",ep:"Wǒ shōudào le nǐ de xìnxī.",em:"당신 메시지를 받았어요.",wr:"1~3급: 信"},
+    {no:1829,h:"信心",p:"xìnxīn",m:"자신감, 확신",ex:"我对自己很有信心。",ep:"Wǒ duì zìjǐ hěn yǒu xìnxīn.",em:"저는 자신에 대한 확신이 있어요.",wr:"1~3급: 信·心"},
+    {no:1830,h:"熊",p:"xióng",m:"곰",ex:"动物园里的熊很可爱。",ep:"Dòngwùyuán li de xióng hěn kě'ài.",em:"동물원의 곰은 아주 귀여워요."},
+    {no:1831,h:"兄弟",p:"xiōngdì",m:"형제",ex:"他们兄弟三个都很高。",ep:"Tāmen xiōngdì sān ge dōu hěn gāo.",em:"그 세 형제는 모두 키가 커요.",wr:"4급 신규: 兄"},
+    {no:1832,h:"修",p:"xiū",m:"고치다 · 짓다 · 전공하다",ex:"我的手机要修一下。",ep:"Wǒ de shǒujī yào xiū yíxià.",em:"제 휴대폰을 좀 고쳐야 해요."},
+    {no:1833,h:"修理",p:"xiūlǐ",m:"수리하다",ex:"他在修理自行车。",ep:"Tā zài xiūlǐ zìxíngchē.",em:"그는 자전거를 고치고 있어요."},
+    {no:1834,h:"细心",p:"xìxīn",m:"세심하다, 꼼꼼하다",ex:"她做事很细心。",ep:"Tā zuò shì hěn xìxīn.",em:"그녀는 일을 아주 세심하게 해요.",wr:"1~3급: 心"},
+    {no:1835,h:"吸引",p:"xīyǐn",m:"끌다, 매혹하다",ex:"这部电影吸引了很多观众。",ep:"Zhè bù diànyǐng xīyǐn le hěn duō guānzhòng.",em:"이 영화는 많은 관객을 끌었어요."},
+    {no:1836,h:"许多",p:"xǔduō",m:"많은, 다수의",ex:"这里有许多人。",ep:"Zhèli yǒu xǔduō rén.",em:"여기에는 많은 사람이 있어요.",wr:"4급 신규: 许 · 1~3급: 多"},
+    {no:1837,h:"学费",p:"xuéfèi",m:"학비, 수업료",ex:"学费不太贵。",ep:"Xuéfèi bú tài guì.",em:"학비는 그리 비싸지 않아요.",wr:"1~3급: 学"},
+    {no:1838,h:"学院",p:"xuéyuàn",m:"단과대학, 학원",ex:"我在外语学院学习。",ep:"Wǒ zài wàiyǔ xuéyuàn xuéxí.",em:"저는 외국어대학에서 공부해요.",wr:"1~3급: 学"},
+    {no:1839,h:"压",p:"yā",m:"누르다, 압박하다",ex:"别压这个盒子。",ep:"Bié yā zhè ge hézi.",em:"이 상자를 누르지 마세요.",wr:"4급 신규: 压"},
+    {no:1840,h:"牙膏",p:"yágāo",m:"치약",ex:"我需要买一支牙膏。",ep:"Wǒ xūyào mǎi yì zhī yágāo.",em:"치약 하나 사야 해요.",wr:"1~3급: 牙"},
+    {no:1841,h:"压力",p:"yālì",m:"압력, 스트레스",ex:"最近工作压力很大。",ep:"Zuìjìn gōngzuò yālì hěn dà.",em:"요즘 업무 스트레스가 아주 커요.",wr:"4급 신규: 压 · 1~3급: 力"},
+    {no:1842,h:"盐",p:"yán",m:"소금",ex:"汤里放一点儿盐。",ep:"Tāng li fàng yìdiǎnr yán.",em:"국에 소금을 조금 넣으세요."},
+    {no:1843,h:"演",p:"yǎn",m:"연기하다, 공연하다",ex:"他在电影里演一个老师。",ep:"Tā zài diànyǐng li yǎn yí ge lǎoshī.",em:"그는 영화에서 교사 역할을 해요."},
+    {no:1844,h:"烟",p:"yān",m:"담배 · 연기",ex:"我不喜欢烟的味道。",ep:"Wǒ bù xǐhuan yān de wèidào.",em:"저는 담배 냄새를 싫어해요."},
+    {no:1845,h:"演唱",p:"yǎnchàng",m:"(노래를) 부르다",ex:"她演唱了一首歌。",ep:"Tā yǎnchàng le yì shǒu gē.",em:"그녀가 노래 한 곡을 불렀어요."},
+    {no:1846,h:"演出",p:"yǎnchū",m:"공연(하다)",ex:"演出八点开始。",ep:"Yǎnchū bā diǎn kāishǐ.",em:"공연은 8시에 시작해요."},
+    {no:1847,h:"养成",p:"yǎngchéng",m:"(습관을) 기르다, 몸에 배게 하다",ex:"孩子要养成好习惯。",ep:"Háizi yào yǎngchéng hǎo xíguàn.",em:"아이는 좋은 습관을 길러야 해요.",wr:"1~3급: 养·成"},
+    {no:1848,h:"严格",p:"yángé",m:"엄격하다 · 엄격하게 하다 (动)",ex:"老师对我们很严格。",ep:"Lǎoshī duì wǒmen hěn yángé.",em:"선생님은 우리에게 아주 엄격하세요."},
+    {no:1849,h:"阳光",p:"yángguāng",m:"햇빛, 햇살",ex:"今天的阳光很好。",ep:"Jīntiān de yángguāng hěn hǎo.",em:"오늘 햇살이 아주 좋아요.",wr:"1~3급: 阳"},
+    {no:1850,h:"样子",p:"yàngzi",m:"모양, 모습, 생김새",ex:"这个样子很好看。",ep:"Zhè ge yàngzi hěn hǎokàn.",em:"이 모양이 아주 예뻐요.",nt:"zi",ntNote:"‘zi’는 경성 — yàngzi. 원성조 zǐ로 읽지 않아요",wr:"1~3급: 子"},
+    {no:1851,h:"眼镜",p:"yǎnjìng",m:"안경",ex:"我的眼镜在哪儿？",ep:"Wǒ de yǎnjìng zài nǎr?",em:"제 안경이 어디 있어요?"},
+    {no:1852,h:"研究",p:"yánjiū",m:"연구하다",ex:"他在研究这个问题。",ep:"Tā zài yánjiū zhè ge wèntí.",em:"그는 이 문제를 연구하고 있어요.",wr:"4급 신규: 研·究"},
+    {no:1853,h:"研究生",p:"yánjiūshēng",m:"대학원생",ex:"她是研究生。",ep:"Tā shì yánjiūshēng.",em:"그녀는 대학원생이에요.",wr:"4급 신규: 研·究 · 1~3급: 生"},
+    {no:1854,h:"眼前",p:"yǎnqián",m:"눈앞",ex:"眼前是一片大海。",ep:"Yǎnqián shì yí piàn dà hǎi.",em:"눈앞은 온통 바다예요."},
+    {no:1855,h:"演员",p:"yǎnyuán",m:"배우",ex:"她是一名演员。",ep:"Tā shì yì míng yǎnyuán.",em:"그녀는 배우예요."},
+    {no:1856,h:"严重",p:"yánzhòng",m:"심각하다, 엄중하다",ex:"他的病很严重。",ep:"Tā de bìng hěn yánzhòng.",em:"그의 병이 아주 심각해요.",wr:"1~3급: 重"},
+    {no:1857,h:"邀请",p:"yāoqǐng",m:"초청하다, 초대하다",ex:"他邀请我去他家。",ep:"Tā yāoqǐng wǒ qù tā jiā.",em:"그는 저를 자기 집에 초대했어요."},
+    {no:1858,h:"要是",p:"yàoshi",m:"만약 …라면 (구어)",ex:"要是下雨，我们就不去了。",ep:"Yàoshi xià yǔ, wǒmen jiù bú qù le.",em:"비가 오면 우리는 가지 않아요.",nt:"shi",ntNote:"‘shi’는 경성 — yàoshi. 원성조 shì로 읽지 않아요",wr:"1~3급: 要·是"},
+    {no:1859,h:"钥匙",p:"yàoshi",m:"열쇠",ex:"我找不到钥匙了。",ep:"Wǒ zhǎo bu dào yàoshi le.",em:"열쇠를 못 찾겠어요.",nt:"shi",ntNote:"‘shi’는 경성 — yàoshi"},
+    {no:1860,h:"亚洲",p:"Yàzhōu",m:"아시아",ex:"亚洲有很多国家。",ep:"Yàzhōu yǒu hěn duō guójiā.",em:"아시아에는 나라가 많아요.",wr:"4급 신규: 亚"},
+    {no:1861,h:"夜",p:"yè",m:"밤 · (양사) 밤",ex:"他一夜没睡。",ep:"Tā yí yè méi shuì.",em:"그는 밤새 잠을 못 잤어요.",wr:"4급 신규: 夜"},
+    {no:1862,h:"夜晚",p:"yèwǎn",m:"밤, 밤 시간",ex:"夜晚的城市很漂亮。",ep:"Yèwǎn de chéngshì hěn piàoliang.",em:"밤의 도시는 아주 예뻐요.",wr:"4급 신규: 夜"},
+    {no:1863,h:"也许",p:"yěxǔ",m:"아마도, 어쩌면",ex:"也许他会来。",ep:"Yěxǔ tā huì lái.",em:"아마 그는 올지도 몰라요.",ts:"3성+3성 → 앞 음절이 2성: yěxǔ → yéxǔ",wr:"4급 신규: 许 · 1~3급: 也"},
+    {no:1864,h:"叶子",p:"yèzi",m:"잎, 잎사귀",ex:"秋天叶子都黄了。",ep:"Qiūtiān yèzi dōu huáng le.",em:"가을에는 잎이 다 누렇게 변해요.",nt:"zi",ntNote:"‘zi’는 경성 — yèzi. 원성조 zǐ로 읽지 않아요",wr:"1~3급: 子"},
+    {no:1865,h:"已",p:"yǐ",m:"이미, 벌써",ex:"天已黑了。",ep:"Tiān yǐ hēi le.",em:"날이 이미 어두워졌어요."},
+    {no:1866,h:"意见",p:"yìjiàn",m:"의견",ex:"我想听听大家的意见。",ep:"Wǒ xiǎng tīngting dàjiā de yìjiàn.",em:"여러분의 의견을 듣고 싶어요."},
+    {no:1867,h:"因此",p:"yīncǐ",m:"그래서, 따라서",ex:"昨天下雨，因此比赛取消了。",ep:"Zuótiān xià yǔ, yīncǐ bǐsài qǔxiāo le.",em:"어제 비가 와서 경기가 취소됐어요.",wr:"4급 신규: 此"},
+    {no:1868,h:"以内",p:"yǐnèi",m:"이내, 안",ex:"三天以内给我答复。",ep:"Sān tiān yǐnèi gěi wǒ dáfù.",em:"사흘 안에 답을 주세요.",wr:"4급 신규: 内 · 1~3급: 以"},
+    {no:1869,h:"赢",p:"yíng",m:"이기다",ex:"我们赢了！",ep:"Wǒmen yíng le!",em:"우리가 이겼어요!"},
+    {no:1870,h:"赢得",p:"yíngdé",m:"얻다, 따내다 (승리·환영을)",ex:"他赢得了比赛。",ep:"Tā yíngdé le bǐsài.",em:"그는 시합에서 이겼어요."},
+    {no:1871,h:"应聘",p:"yìngpìn",m:"응모하다, 채용에 지원하다",ex:"他去那家公司应聘了。",ep:"Tā qù nà jiā gōngsī yìngpìn le.",em:"그는 그 회사에 지원했어요.",wr:"1~3급: 应"},
+    {no:1872,h:"引起",p:"yǐnqǐ",m:"일으키다, 초래하다",ex:"这件事引起了很多人的关注。",ep:"Zhè jiàn shì yǐnqǐ le hěn duō rén de guānzhù.",em:"이 일이 많은 사람의 관심을 불러일으켰어요.",ts:"3성+3성 → 앞 음절이 2성: yǐnqǐ → yínqǐ"},
+    {no:1873,h:"印象",p:"yìnxiàng",m:"인상",ex:"他给我留下了很好的印象。",ep:"Tā gěi wǒ liúxià le hěn hǎo de yìnxiàng.",em:"그는 제게 아주 좋은 인상을 남겼어요.",wr:"4급 신규: 印·象"},
+    {no:1874,h:"一切",p:"yíqiè",m:"모든 것, 일체",ex:"一切都会好的。",ep:"Yíqiè dōu huì hǎo de.",em:"모든 게 다 잘 될 거예요.",ts:"一 + 4성(qiè) → yí: yíqiè",wr:"1~3급: 一"},
+    {no:1875,h:"一生",p:"yìshēng",m:"일생, 평생",ex:"他一生都在教书。",ep:"Tā yìshēng dōu zài jiāo shū.",em:"그는 평생 교편을 잡았어요.",ts:"一 + 1·2·3성(shēng) → yì: yìshēng",wr:"1~3급: 一·生"},
+    {no:1876,h:"艺术",p:"yìshù",m:"예술",ex:"她很喜欢艺术。",ep:"Tā hěn xǐhuan yìshù.",em:"그녀는 예술을 아주 좋아해요.",wr:"4급 신규: 术"},
+    {no:1877,h:"勇敢",p:"yǒnggǎn",m:"용감하다",ex:"他是个勇敢的人。",ep:"Tā shì ge yǒnggǎn de rén.",em:"그는 용감한 사람이에요.",ts:"3성+3성 → 앞 음절이 2성: yǒnggǎn → yónggǎn",wr:"4급 신규: 敢"},
+    {no:1878,h:"用来",p:"yònglái",m:"…하는 데 쓰이다",ex:"这些钱用来买书。",ep:"Zhèxiē qián yònglái mǎi shū.",em:"이 돈은 책을 사는 데 써요.",wr:"1~3급: 用·来"},
+    {no:1879,h:"用于",p:"yòngyú",m:"…에 쓰이다",ex:"这种材料用于建房子。",ep:"Zhè zhǒng cáiliào yòngyú jiàn fángzi.",em:"이 재료는 집을 짓는 데 쓰여요.",wr:"1~3급: 用·于"},
+    {no:1880,h:"永远",p:"yǒngyuǎn",m:"영원히 · 영원 (名)",ex:"我永远记得这一天。",ep:"Wǒ yǒngyuǎn jìde zhè yì tiān.",em:"저는 이날을 영원히 기억해요.",ts:"3성+3성 → 앞 음절이 2성: yǒngyuǎn → yóngyuǎn",wr:"4급 신규: 永"},
+    {no:1881,h:"由",p:"yóu",m:"~에 의해, ~로부터 (介)",ex:"这本书由三个人一起写的。",ep:"Zhè běn shū yóu sān ge rén yìqǐ xiě de.",em:"이 책은 세 사람이 함께 썼어요.",wr:"4급 신규: 由"},
+    {no:1882,h:"油",p:"yóu",m:"기름, 석유",ex:"这个菜放的油太多了。",ep:"Zhè ge cài fàng de yóu tài duō le.",em:"이 음식은 기름이 너무 많이 들어갔어요.",wr:"4급 신규: 油"},
+    {no:1883,h:"优点",p:"yōudiǎn",m:"장점",ex:"每个人都有自己的优点。",ep:"Měi ge rén dōu yǒu zìjǐ de yōudiǎn.",em:"누구에게나 자기 장점이 있어요.",wr:"1~3급: 点"},
+    {no:1884,h:"友好",p:"yǒuhǎo",m:"우호적이다, 다정하다",ex:"两国关系很友好。",ep:"Liǎng guó guānxì hěn yǒuhǎo.",em:"두 나라 관계가 아주 우호적이에요.",ts:"3성+3성 → 앞 음절이 2성: yǒuhǎo → yóuhǎo",wr:"1~3급: 好"},
+    {no:1885,h:"幽默",p:"yōumò",m:"유머러스하다",ex:"他说话很幽默。",ep:"Tā shuōhuà hěn yōumò.",em:"그는 말이 아주 유머러스해요."},
+    {no:1886,h:"尤其",p:"yóuqí",m:"특히, 더욱",ex:"我喜欢水果，尤其是苹果。",ep:"Wǒ xǐhuan shuǐguǒ, yóuqí shì píngguǒ.",em:"저는 과일을 좋아해요, 특히 사과요.",wr:"1~3급: 其"},
+    {no:1887,h:"友情",p:"yǒuqíng",m:"우정",ex:"我们的友情很深。",ep:"Wǒmen de yǒuqíng hěn shēn.",em:"우리 우정은 깊어요."},
+    {no:1888,h:"有趣",p:"yǒuqù",m:"재미있다, 흥미롭다",ex:"这个游戏很有趣。",ep:"Zhè ge yóuxì hěn yǒuqù.",em:"이 게임은 아주 재미있어요.",wr:"1~3급: 有"},
+    {no:1889,h:"游玩",p:"yóuwán",m:"놀며 다니다, 유람하다",ex:"我们在公园游玩了一天。",ep:"Wǒmen zài gōngyuán yóuwán le yì tiān.",em:"우리는 공원에서 하루 종일 놀았어요."},
+    {no:1890,h:"有效",p:"yǒuxiào",m:"유효하다, 효과가 있다",ex:"这个办法很有效。",ep:"Zhè ge bànfǎ hěn yǒuxiào.",em:"이 방법은 아주 효과적이에요.",wr:"1~3급: 有"},
+    {no:1891,h:"优秀",p:"yōuxiù",m:"우수하다",ex:"她是一个优秀的学生。",ep:"Tā shì yí ge yōuxiù de xuésheng.",em:"그녀는 우수한 학생이에요."},
+    {no:1892,h:"友谊",p:"yǒuyì",m:"우의, 우정",ex:"友谊第一，比赛第二。",ep:"Yǒuyì dì yī, bǐsài dì èr.",em:"우정이 첫째고 시합은 둘째예요."},
+    {no:1893,h:"由于",p:"yóuyú",m:"~때문에, ~로 인해 (介·连)",ex:"由于下雨，我们没去。",ep:"Yóuyú xià yǔ, wǒmen méi qù.",em:"비 때문에 우리는 가지 않았어요.",wr:"4급 신규: 由 · 1~3급: 于"},
+    {no:1894,h:"有着",p:"yǒuzhe",m:"가지고 있다 (서면)",ex:"这个城市有着很长的历史。",ep:"Zhè ge chéngshì yǒuzhe hěn cháng de lìshǐ.",em:"이 도시는 아주 긴 역사를 가지고 있어요.",nt:"zhe",ntNote:"‘zhe’는 경성 — yǒuzhe",wr:"1~3급: 有"},
+    {no:1895,h:"与",p:"yǔ",m:"~와/과 · 그리고 (서면)",ex:"我与他一起去了。",ep:"Wǒ yǔ tā yìqǐ qù le.",em:"저는 그와 함께 갔어요.",wr:"4급 신규: 与"},
+    {no:1896,h:"原来",p:"yuánlái",m:"원래 · 알고 보니 (副) · 본래의 (形)",ex:"原来你在这儿！",ep:"Yuánlái nǐ zài zhèr!",em:"알고 보니 여기 있었네요!",wr:"4급 신규: 原 · 1~3급: 来"},
+    {no:1897,h:"远离",p:"yuǎnlí",m:"멀리 떠나다, 멀리하다",ex:"我们应该远离危险。",ep:"Wǒmen yīnggāi yuǎnlí wēixiǎn.",em:"우리는 위험에서 멀리해야 해요."},
+    {no:1898,h:"原谅",p:"yuánliàng",m:"용서하다",ex:"请原谅我。",ep:"Qǐng yuánliàng wǒ.",em:"저를 용서해 주세요.",wr:"4급 신규: 原"},
+    {no:1899,h:"原因",p:"yuányīn",m:"원인, 이유",ex:"你知道原因吗？",ep:"Nǐ zhīdào yuányīn ma?",em:"원인을 알아요?",wr:"4급 신규: 原"},
+    {no:1900,h:"院长",p:"yuànzhǎng",m:"원장, 학부장",ex:"院长今天不在。",ep:"Yuànzhǎng jīntiān bú zài.",em:"원장님은 오늘 안 계세요.",wr:"1~3급: 长"},
+    {no:1901,h:"院子",p:"yuànzi",m:"마당, 뜰",ex:"院子里有很多花。",ep:"Yuànzi li yǒu hěn duō huā.",em:"마당에 꽃이 많아요.",nt:"zi",ntNote:"‘zi’는 경성 — yuànzi. 원성조 zǐ로 읽지 않아요",wr:"1~3급: 子"},
+    {no:1902,h:"约",p:"yuē",m:"약속하다 · 대략 (副)",ex:"我们约好三点见面。",ep:"Wǒmen yuē hǎo sān diǎn jiàn miàn.",em:"우리는 3시에 만나기로 약속했어요.",wr:"4급 신규: 约"},
+    {no:1903,h:"月饼",p:"yuèbing",m:"월병 (중추절 과자)",ex:"中秋节吃月饼。",ep:"Zhōngqiūjié chī yuèbing.",em:"중추절에는 월병을 먹어요.",nt:"bing",ntNote:"‘bing’은 경성 — yuèbing. 원성조 bǐng으로 읽지 않아요",wr:"1~3급: 月"},
+    {no:1904,h:"阅读",p:"yuèdú",m:"열독하다, 읽다",ex:"我每天阅读半个小时。",ep:"Wǒ měitiān yuèdú bàn ge xiǎoshí.",em:"저는 매일 30분씩 읽어요."},
+    {no:1905,h:"月份",p:"yuèfèn",m:"월, 달",ex:"三月份我要去旅行。",ep:"Sān yuèfèn wǒ yào qù lǚxíng.",em:"3월에 여행을 갈 거예요.",wr:"4급 신규: 份 · 1~3급: 月"},
+    {no:1906,h:"约会",p:"yuēhuì",m:"데이트(하다), 약속",ex:"她今晚有一个约会。",ep:"Tā jīnwǎn yǒu yí ge yuēhuì.",em:"그녀는 오늘 저녁 데이트가 있어요.",wr:"4급 신규: 约 · 1~3급: 会"},
+    {no:1907,h:"语法",p:"yǔfǎ",m:"문법",ex:"汉语的语法不太难。",ep:"Hànyǔ de yǔfǎ bú tài nán.",em:"중국어 문법은 그리 어렵지 않아요.",ts:"3성+3성 → 앞 음절이 2성: yǔfǎ → yúfǎ",wr:"1~3급: 语·法"},
+    {no:1908,h:"愉快",p:"yúkuài",m:"유쾌하다, 즐겁다",ex:"祝你假期愉快！",ep:"Zhù nǐ jiàqī yúkuài!",em:"즐거운 휴가 되세요!"},
+    {no:1909,h:"云",p:"yún",m:"구름",ex:"天上的云很白。",ep:"Tiān shang de yún hěn bái.",em:"하늘의 구름이 아주 하얘요.",wr:"4급 신규: 云"},
+    {no:1910,h:"允许",p:"yǔnxǔ",m:"허락하다, 허용하다",ex:"妈妈不允许我晚上出去。",ep:"Māma bù yǔnxǔ wǒ wǎnshang chūqu.",em:"엄마는 제가 밤에 나가는 걸 허락하지 않으세요.",ts:"3성+3성 → 앞 음절이 2성: yǔnxǔ → yúnxǔ",wr:"4급 신규: 许"},
+    {no:1911,h:"于是",p:"yúshì",m:"그래서, 그러자",ex:"他病了，于是没来上课。",ep:"Tā bìng le, yúshì méi lái shàng kè.",em:"그는 아파서 수업에 오지 않았어요.",wr:"1~3급: 于·是"},
+    {no:1912,h:"预习",p:"yùxí",m:"예습하다",ex:"上课以前要预习。",ep:"Shàng kè yǐqián yào yùxí.",em:"수업 전에 예습해야 해요.",wr:"1~3급: 习"},
+    {no:1913,h:"再次",p:"zàicì",m:"다시, 재차",ex:"他再次道歉了。",ep:"Tā zàicì dào qiàn le.",em:"그는 다시 사과했어요."},
+    {no:1914,h:"再说",p:"zàishuō",m:"나중에 다시 이야기하다 · 게다가 (连)",ex:"今天太晚了，明天再说吧。",ep:"Jīntiān tài wǎn le, míngtiān zàishuō ba.",em:"오늘은 너무 늦었으니 내일 다시 이야기해요.",wr:"1~3급: 说"},
+    {no:1915,h:"暂时",p:"zànshí",m:"잠시, 일시적",ex:"这只是暂时的困难。",ep:"Zhè zhǐshì zànshí de kùnnan.",em:"이것은 일시적인 어려움일 뿐이에요.",wr:"1~3급: 时"},
+    {no:1916,h:"暂停",p:"zàntíng",m:"일시 중지하다, 잠시 멈추다",ex:"比赛暂停了十分钟。",ep:"Bǐsài zàntíng le shí fēnzhōng.",em:"경기가 10분 동안 중단됐어요.",wr:"4급 신규: 停"},
+    {no:1917,h:"早餐",p:"zǎocān",m:"아침 식사",ex:"早餐我吃面包。",ep:"Zǎocān wǒ chī miànbāo.",em:"아침에 빵을 먹어요.",wr:"4급 신규: 餐"},
+    {no:1918,h:"早晨",p:"zǎochen",m:"아침 (이른 시간)",ex:"早晨我很早就起来了。",ep:"Zǎochen wǒ hěn zǎo jiù qǐlai le.",em:"아침 일찍 일어났어요.",nt:"chen",ntNote:"‘chen’은 경성 — zǎochen. 원성조 chén으로 읽지 않아요",wr:"4급 신규: 晨"},
+    {no:1919,h:"杂志",p:"zázhì",m:"잡지",ex:"我买了一本杂志。",ep:"Wǒ mǎi le yì běn zázhì.",em:"잡지 한 권을 샀어요.",wr:"4급 신규: 志"},
+    {no:1920,h:"增加",p:"zēngjiā",m:"늘리다, 증가하다",ex:"公司增加了两个部门。",ep:"Gōngsī zēngjiā le liǎng ge bùmén.",em:"회사가 부서를 두 개 늘렸어요.",wr:"4급 신규: 增 · 1~3급: 加"},
+    {no:1921,h:"增长",p:"zēngzhǎng",m:"증가하다, 성장하다",ex:"人口增长得很快。",ep:"Rénkǒu zēngzhǎng de hěn kuài.",em:"인구가 아주 빠르게 늘어요.",wr:"4급 신규: 增 · 1~3급: 长"},
+    {no:1922,h:"责任",p:"zérèn",m:"책임",ex:"这是我的责任。",ep:"Zhè shì wǒ de zérèn.",em:"이것은 제 책임이에요.",wr:"4급 신규: 任"},
+    {no:1923,h:"着",p:"zháo",m:"(불이) 붙다 · 맞다 (zháo) — 着 zhe '진행·상태', 着 zhuó '입다'",ex:"他睡着了吗？",ep:"Tā shuì zháo le ma?",em:"그는 잠들었어요?"},
+    {no:1924,h:"着火",p:"zháo huǒ",m:"불이 나다",ex:"那座楼着火了。",ep:"Nà zuò lóu zháo huǒ le.",em:"그 건물에 불이 났어요.",lh:"동사+목적어 — 着了火, 着过火"},
+    {no:1925,h:"招聘",p:"zhāopìn",m:"채용하다, 모집하다",ex:"这家公司在招聘。",ep:"Zhè jiā gōngsī zài zhāopìn.",em:"이 회사가 사람을 채용하고 있어요."},
+    {no:1926,h:"者",p:"zhě",m:"(접미사) …자, …하는 사람 (作者·读者처럼 쓰여요)",ex:"这本书的读者主要是年轻人。",ep:"Zhè běn shū de dúzhě zhǔyào shì niánqīngrén.",em:"이 책의 독자는 주로 젊은이들이에요.",wr:"1~3급: 者"},
+    {no:1927,h:"证",p:"zhèng",m:"증, 증명서",ex:"这个证很重要，别丢了。",ep:"Zhè ge zhèng hěn zhòngyào, bié diū le.",em:"이 증명서는 중요하니 잃어버리지 마세요."},
+    {no:1928,h:"整",p:"zhěng",m:"정돈된, 온전한 · 꼬박 (…동안)",ex:"他整晚都在看书。",ep:"Tā zhěng wǎn dōu zài kàn shū.",em:"그는 밤새 책을 봤어요."},
+    {no:1929,h:"正常",p:"zhèngcháng",m:"정상적이다, 정상이다",ex:"他的身体很正常。",ep:"Tā de shēntǐ hěn zhèngcháng.",em:"그의 몸 상태는 정상이에요."},
+    {no:1930,h:"整个",p:"zhěnggè",m:"전체의, 온",ex:"整个下午我都在家。",ep:"Zhěnggè xiàwǔ wǒ dōu zài jiā.",em:"오후 내내 집에 있었어요.",wr:"1~3급: 个"},
+    {no:1931,h:"正好",p:"zhènghǎo",m:"마침 · 꼭 알맞은 (形)",ex:"这件衣服正好合适。",ep:"Zhè jiàn yīfu zhènghǎo héshì.",em:"이 옷은 딱 맞아요.",wr:"1~3급: 好"},
+    {no:1932,h:"证件",p:"zhèngjiàn",m:"증명서, 신분증",ex:"请带好证件。",ep:"Qǐng dài hǎo zhèngjiàn.",em:"신분증을 잘 챙기세요."},
+    {no:1933,h:"整理",p:"zhěnglǐ",m:"정리하다, 정돈하다",ex:"我在整理房间。",ep:"Wǒ zài zhěnglǐ fángjiān.",em:"저는 방을 정리하고 있어요.",ts:"3성+3성 → 앞 음절이 2성: zhěnglǐ → zhénglǐ"},
+    {no:1934,h:"证明",p:"zhèngmíng",m:"증명하다 · 증명(서) (名)",ex:"请出示证明。",ep:"Qǐng chūshì zhèngmíng.",em:"증명서를 보여 주세요."},
+    {no:1935,h:"正确",p:"zhèngquè",m:"정확하다, 옳다",ex:"你的答案是正确的。",ep:"Nǐ de dá'àn shì zhèngquè de.",em:"당신 답이 정확해요.",wr:"4급 신규: 确"},
+    {no:1936,h:"正式",p:"zhèngshì",m:"정식의, 공식적인",ex:"这是一次正式的比赛。",ep:"Zhè shì yí cì zhèngshì de bǐsài.",em:"이것은 공식적인 시합이에요.",wr:"4급 신규: 式"},
+    {no:1937,h:"真正",p:"zhēnzhèng",m:"진정한, 참된 · 정말로 (副)",ex:"他是真正的好朋友。",ep:"Tā shì zhēnzhèng de hǎo péngyou.",em:"그는 진정한 좋은 친구예요."},
+    {no:1938,h:"值",p:"zhí",m:"값이 …이다 · 가치가 있다",ex:"这件衣服值多少钱？",ep:"Zhè jiàn yīfu zhí duōshao qián?",em:"이 옷은 얼마짜리예요?"},
+    {no:1939,h:"指",p:"zhǐ",m:"가리키다, 지적하다",ex:"他指着地图说。",ep:"Tā zhǐ zhe dìtú shuō.",em:"그는 지도를 가리키며 말했어요.",wr:"4급 신규: 指"},
+    {no:1940,h:"之",p:"zhī",m:"~의, ~을 (서면 문어 조사)",ex:"这是他成功的原因之一。",ep:"Zhè shì tā chénggōng de yuányīn zhī yī.",em:"이것은 그가 성공한 이유 중 하나예요.",wr:"4급 신규: 之"},
+    {no:1941,h:"支持",p:"zhīchí",m:"지지하다, 지탱하다",ex:"我们都支持你的想法。",ep:"Wǒmen dōu zhīchí nǐ de xiǎngfǎ.",em:"우리 모두 당신 생각을 지지해요.",wr:"4급 신규: 支"},
+    {no:1942,h:"指出",p:"zhǐchū",m:"지적하다, 짚어 내다",ex:"他指出了我的错误。",ep:"Tā zhǐchū le wǒ de cuòwù.",em:"그는 제 잘못을 지적했어요.",wr:"4급 신규: 指"},
+    {no:1943,h:"值得",p:"zhídé",m:"…할 만하다, 가치가 있다",ex:"这部电影值得看。",ep:"Zhè bù diànyǐng zhídé kàn.",em:"이 영화는 볼 만해요."},
+    {no:1944,h:"支付",p:"zhīfù",m:"결제하다, 지불하다",ex:"可以用手机支付。",ep:"Kěyǐ yòng shǒujī zhīfù.",em:"휴대폰으로 결제할 수 있어요.",wr:"4급 신규: 支"},
+    {no:1945,h:"只好",p:"zhǐhǎo",m:"…할 수밖에 없다",ex:"没有车了，只好走回去。",ep:"Méi yǒu chē le, zhǐhǎo zǒu huíqu.",em:"차가 없어서 걸어 돌아갈 수밖에 없었어요.",ts:"3성+3성 → 앞 음절이 2성: zhǐhǎo → zhíhǎo",wr:"1~3급: 好"},
+    {no:1946,h:"之后",p:"zhīhòu",m:"…후, 그 후",ex:"下课之后我们去看电影。",ep:"Xià kè zhīhòu wǒmen qù kàn diànyǐng.",em:"수업이 끝난 후 우리는 영화를 보러 가요.",wr:"4급 신규: 之 · 1~3급: 后"},
+    {no:1947,h:"之间",p:"zhījiān",m:"…사이, …간",ex:"朋友之间要互相帮助。",ep:"Péngyou zhījiān yào hùxiāng bāngzhù.",em:"친구 사이에는 서로 도와야 해요.",wr:"4급 신규: 之 · 1~3급: 间"},
+    {no:1948,h:"直接",p:"zhíjiē",m:"직접(의), 직접적으로",ex:"你可以直接告诉我。",ep:"Nǐ kěyǐ zhíjiē gàosu wǒ.",em:"당신이 저에게 직접 말해도 돼요.",wr:"1~3급: 直"},
+    {no:1949,h:"纸巾",p:"zhǐjīn",m:"티슈, 종이 수건",ex:"请给我一张纸巾。",ep:"Qǐng gěi wǒ yì zhāng zhǐjīn.",em:"티슈 한 장 주세요.",wr:"1~3급: 纸"},
+    {no:1950,h:"质量",p:"zhìliàng",m:"품질 · 질량",ex:"这些商品的质量很好。",ep:"Zhèxiē shāngpǐn de zhìliàng hěn hǎo.",em:"이 상품들은 품질이 아주 좋아요.",wr:"4급 신규: 量"},
+    {no:1951,h:"之前",p:"zhīqián",m:"…전, 이전",ex:"吃饭之前要洗手。",ep:"Chī fàn zhīqián yào xǐ shǒu.",em:"밥 먹기 전에 손을 씻어야 해요.",wr:"4급 신규: 之"},
+    {no:1952,h:"至少",p:"zhìshǎo",m:"적어도",ex:"至少要三天。",ep:"Zhìshǎo yào sān tiān.",em:"적어도 사흘이 걸려요.",wr:"4급 신규: 至 · 1~3급: 少"},
+    {no:1953,h:"知识",p:"zhīshi",m:"지식",ex:"他的知识很丰富。",ep:"Tā de zhīshi hěn fēngfù.",em:"그는 지식이 아주 풍부해요.",nt:"shi",ntNote:"‘shi’는 경성 — zhīshi. 원성조 shí로 읽지 않아요"},
+    {no:1954,h:"植物",p:"zhíwù",m:"식물",ex:"房间里放一些植物很好。",ep:"Fángjiān li fàng yìxiē zhíwù hěn hǎo.",em:"방에 식물을 두면 좋아요.",wr:"1~3급: 物"},
+    {no:1955,h:"职业",p:"zhíyè",m:"직업",ex:"你的职业是什么？",ep:"Nǐ de zhíyè shì shénme?",em:"직업이 뭐예요?",wr:"1~3급: 业"},
+    {no:1956,h:"之中",p:"zhīzhōng",m:"…가운데, …중",ex:"三个人之中他最年轻。",ep:"Sān ge rén zhīzhōng tā zuì niánqīng.",em:"세 사람 중에 그가 가장 젊어요.",wr:"4급 신규: 之 · 1~3급: 中"},
+    {no:1957,h:"种",p:"zhòng",m:"심다 (zhòng) — 种 zhǒng '종류'",ex:"爷爷在院子里种了很多花。",ep:"Yéye zài yuànzi li zhòng le hěn duō huā.",em:"할아버지가 마당에 꽃을 많이 심으셨어요.",wr:"1~3급: 种"},
+    {no:1958,h:"重",p:"zhòng",m:"무겁다 · 중대하다 (zhòng) — 重 chóng '다시'",ex:"这个箱子很重。",ep:"Zhè ge xiāngzi hěn zhòng.",em:"이 상자는 아주 무거워요.",wr:"1~3급: 重"},
+    {no:1959,h:"中餐",p:"zhōngcān",m:"중식, 중국 요리",ex:"我比较喜欢中餐。",ep:"Wǒ bǐjiào xǐhuan zhōngcān.",em:"저는 중식이 더 좋아요.",wr:"4급 신규: 餐 · 1~3급: 中"},
+    {no:1960,h:"重点",p:"zhòngdiǎn",m:"중점 · 특히 (副)",ex:"这是今天的重点。",ep:"Zhè shì jīntiān de zhòngdiǎn.",em:"이것이 오늘의 중점이에요.",wr:"1~3급: 重·点"},
+    {no:1961,h:"中年",p:"zhōngnián",m:"중년",ex:"他是一位中年男人。",ep:"Tā shì yí wèi zhōngnián nánrén.",em:"그는 중년 남자예요.",wr:"1~3급: 中·年"},
+    {no:1962,h:"重视",p:"zhòngshì",m:"중시하다",ex:"公司很重视这个问题。",ep:"Gōngsī hěn zhòngshì zhè ge wèntí.",em:"회사가 이 문제를 아주 중시해요.",wr:"1~3급: 重"},
+    {no:1963,h:"周围",p:"zhōuwéi",m:"주위, 둘레",ex:"我家周围有很多商店。",ep:"Wǒ jiā zhōuwéi yǒu hěn duō shāngdiàn.",em:"우리 집 주위에 가게가 많아요."},
+    {no:1964,h:"祝",p:"zhù",m:"축복하다, …하기를 빌다",ex:"祝你生日快乐！",ep:"Zhù nǐ shēngrì kuàilè!",em:"생일 축하해요!"},
+    {no:1965,h:"赚",p:"zhuàn",m:"(돈을) 벌다",ex:"他一个月赚多少钱？",ep:"Tā yí ge yuè zhuàn duōshao qián?",em:"그는 한 달에 얼마를 벌어요?"},
+    {no:1966,h:"转",p:"zhuǎn",m:"돌다, 돌리다, 바꾸다 (zhuǎn)",ex:"请向左转。",ep:"Qǐng xiàng zuǒ zhuǎn.",em:"왼쪽으로 도세요.",wr:"4급 신규: 转"},
+    {no:1967,h:"转发",p:"zhuǎnfā",m:"(메시지를) 전달하다, 공유하다",ex:"请帮我转发这个消息。",ep:"Qǐng bāng wǒ zhuǎnfā zhè ge xiāoxi.",em:"이 소식을 전달해 주세요.",wr:"4급 신규: 转 · 1~3급: 发"},
+    {no:1968,h:"装",p:"zhuāng",m:"담다, 싸다 · 설치하다",ex:"请把书装在箱子里。",ep:"Qǐng bǎ shū zhuāng zài xiāngzi li.",em:"책을 상자에 담아 주세요.",wr:"4급 신규: 装"},
+    {no:1969,h:"转机",p:"zhuǎnjī",m:"환승하다 · 전환점",ex:"我们在上海转机。",ep:"Wǒmen zài Shànghǎi zhuǎnjī.",em:"우리는 상하이에서 환승해요.",wr:"4급 신규: 转"},
+    {no:1970,h:"专门",p:"zhuānmén",m:"전문적으로, 일부러",ex:"他专门来见你。",ep:"Tā zhuānmén lái jiàn nǐ.",em:"그는 일부러 너를 만나러 왔어요.",wr:"4급 신규: 专"},
+    {no:1971,h:"专业",p:"zhuānyè",m:"전공 · 전문적인 (형)",ex:"我的专业是中文。",ep:"Wǒ de zhuānyè shì Zhōngwén.",em:"제 전공은 중국어예요.",wr:"4급 신규: 专 · 1~3급: 业"},
+    {no:1972,h:"祝贺",p:"zhùhè",m:"축하하다",ex:"我们祝贺他得了第一。",ep:"Wǒmen zhùhè tā dé le dì yī.",em:"우리는 그가 일등 한 것을 축하해요."},
+    {no:1973,h:"著名",p:"zhùmíng",m:"유명하다",ex:"他是一位著名的作家。",ep:"Tā shì yí wèi zhùmíng de zuòjiā.",em:"그는 유명한 작가예요.",wr:"1~3급: 名"},
+    {no:1974,h:"准",p:"zhǔn",m:"정확하다 · 틀림없이 (副)",ex:"我的表不准。",ep:"Wǒ de biǎo bù zhǔn.",em:"제 시계가 정확하지 않아요."},
+    {no:1975,h:"准确",p:"zhǔnquè",m:"정확하다",ex:"这个时间准确吗？",ep:"Zhè ge shíjiān zhǔnquè ma?",em:"이 시간 정확해요?",wr:"4급 신규: 确"},
+    {no:1976,h:"准时",p:"zhǔnshí",m:"시간을 지키는, 정시의",ex:"请准时到。",ep:"Qǐng zhǔnshí dào.",em:"제시간에 도착해 주세요.",wr:"1~3급: 时"},
+    {no:1977,h:"主意",p:"zhǔyi",m:"생각, 궁리, 계책",ex:"我有一个好主意。",ep:"Wǒ yǒu yí ge hǎo zhǔyi.",em:"좋은 생각이 있어요.",nt:"yi",ntNote:"‘yi’는 경성 — zhǔyi. 원성조 yì로 읽지 않아요",wr:"1~3급: 主"},
+    {no:1978,h:"自",p:"zì",m:"~로부터, ~에서 (서면)",ex:"他来自一个小城市。",ep:"Tā láizì yí ge xiǎo chéngshì.",em:"그는 작은 도시 출신이에요."},
+    {no:1979,h:"资料",p:"zīliào",m:"자료",ex:"我在找一些资料。",ep:"Wǒ zài zhǎo yìxiē zīliào.",em:"저는 자료를 좀 찾고 있어요.",wr:"4급 신규: 资"},
+    {no:1980,h:"自然",p:"zìrán",m:"자연 · 자연스러운 (형) · 자연히 (副)",ex:"这里的自然环境很好。",ep:"Zhèli de zìrán huánjìng hěn hǎo.",em:"이곳 자연환경이 아주 좋아요."},
+    {no:1981,h:"自习",p:"zìxí",m:"자습하다",ex:"晚上我们在教室自习。",ep:"Wǎnshang wǒmen zài jiàoshì zìxí.",em:"저녁에 우리는 교실에서 자습해요.",wr:"1~3급: 习"},
+    {no:1982,h:"仔细",p:"zǐxì",m:"자세하다, 꼼꼼하다",ex:"请仔细看一下说明书。",ep:"Qǐng zǐxì kàn yíxià shuōmíngshū.",em:"설명서를 자세히 봐 주세요."},
+    {no:1983,h:"自信",p:"zìxìn",m:"자신(하다), 자신감",ex:"他对自己很自信。",ep:"Tā duì zìjǐ hěn zìxìn.",em:"그는 자신에 대해 자신감이 있어요.",wr:"1~3급: 信"},
+    {no:1984,h:"自学",p:"zìxué",m:"독학하다",ex:"他自学了汉语。",ep:"Tā zìxué le Hànyǔ.",em:"그는 중국어를 독학했어요.",wr:"1~3급: 学"},
+    {no:1985,h:"总结",p:"zǒngjié",m:"총결하다, 정리하다 · 총결 (名)",ex:"我们总结一下今天的学习。",ep:"Wǒmen zǒngjié yíxià jīntiān de xuéxí.",em:"오늘 공부를 정리해 봅시다.",wr:"1~3급: 总·结"},
+    {no:1986,h:"组",p:"zǔ",m:"조, 그룹 · 조직하다 (动)",ex:"我们三个人一组。",ep:"Wǒmen sān ge rén yì zǔ.",em:"우리 세 명이 한 조예요.",wr:"4급 신규: 组"},
+    {no:1987,h:"租",p:"zū",m:"임대하다, 빌리다",ex:"我在附近租了一个房子。",ep:"Wǒ zài fùjìn zū le yí ge fángzi.",em:"저는 근처에 집을 하나 빌렸어요."},
+    {no:1988,h:"最终",p:"zuìzhōng",m:"최종적으로, 결국",ex:"他最终成功了。",ep:"Tā zuìzhōng chénggōng le.",em:"그는 결국 성공했어요."},
+    {no:1989,h:"尊重",p:"zūnzhòng",m:"존중하다 · 존중하는 (形)",ex:"我们要尊重老人。",ep:"Wǒmen yào zūnzhòng lǎorén.",em:"우리는 노인을 존중해야 해요.",wr:"1~3급: 重"},
+    {no:1990,h:"座",p:"zuò",m:"좌석 · 채, 기 (산·건물의 양사)",ex:"前面有一座大楼。",ep:"Qiánmiàn yǒu yí zuò dà lóu.",em:"앞에 큰 건물이 하나 있어요.",wr:"4급 신규: 座"},
+    {no:1991,h:"做法",p:"zuòfǎ",m:"하는 방식, 방법",ex:"这种做法不对。",ep:"Zhè zhǒng zuòfǎ bú duì.",em:"이런 방식은 옳지 않아요.",wr:"1~3급: 法"},
+    {no:1992,h:"作家",p:"zuòjiā",m:"작가",ex:"他是一位作家。",ep:"Tā shì yí wèi zuòjiā.",em:"그는 작가예요.",wr:"1~3급: 作·家"},
+    {no:1993,h:"做梦",p:"zuò mèng",m:"꿈을 꾸다",ex:"我昨晚做了一个梦。",ep:"Wǒ zuówǎn zuò le yí ge mèng.",em:"어젯밤 꿈을 꿨어요.",lh:"동사+목적어 — 做了一个梦, 做过梦"},
+    {no:1994,h:"作品",p:"zuòpǐn",m:"작품",ex:"这是我最喜欢的作品。",ep:"Zhè shì wǒ zuì xǐhuan de zuòpǐn.",em:"이것은 제가 가장 좋아하는 작품이에요.",wr:"4급 신규: 品 · 1~3급: 作"},
+    {no:1995,h:"作为",p:"zuòwéi",m:"~로서 (介) · …로 여기다",ex:"作为一名老师，我很高兴。",ep:"Zuòwéi yì míng lǎoshī, wǒ hěn gāoxìng.",em:"교사로서 저는 아주 기뻐요.",wr:"1~3급: 作·为"},
+    {no:1996,h:"座位",p:"zuòwèi",m:"좌석, 자리",ex:"这个座位有人吗？",ep:"Zhè ge zuòwèi yǒu rén ma?",em:"이 자리 주인 있어요?",wr:"4급 신규: 座"},
+    {no:1997,h:"作文",p:"zuòwén",m:"작문 · 작문하다",ex:"我写了一篇作文。",ep:"Wǒ xiě le yì piān zuòwén.",em:"작문 한 편을 썼어요.",wr:"1~3급: 作·文"},
+    {no:1998,h:"作用",p:"zuòyòng",m:"작용, 역할 · 작용하다 (动)",ex:"这个方法起了很大的作用。",ep:"Zhè ge fāngfǎ qǐ le hěn dà de zuòyòng.",em:"이 방법이 아주 큰 역할을 했어요.",wr:"1~3급: 作·用"},
+    {no:1999,h:"左右",p:"zuǒyòu",m:"좌우 · 정도, 쯤",ex:"会议十点左右开始。",ep:"Huìyì shí diǎn zuǒyòu kāishǐ.",em:"회의는 10시쯤 시작해요."},
+    {no:2000,h:"作者",p:"zuòzhě",m:"작자, 지은이",ex:"这本书的作者是谁？",ep:"Zhè běn shū de zuòzhě shì shéi?",em:"이 책의 지은이가 누구예요?",wr:"1~3급: 作·者"}
+  ];
+
+  var TOTAL = WORDS.length;
+  var DAY_SIZE = 25;
+  var DAYS = Math.ceil(TOTAL / DAY_SIZE);
+
+  /* ── 저장 (localStorage 안전 처리) ── */
+  var LS_KEY = "xinhsk3_4_known_v1";
+  var storageOK = true;
+  var known = {};
+
+  // 같은 한자가 두 번 나오는 경우(得 dé / děi)가 있어 한자+병음으로 구분한다.
+  // 4급은 生(shēng)이 두 항목(동사·형용사)이라 한자+병음이 겹쳐 번호를 덧붙인다.
+  var DUPKEY = { "生|shēng": 1 };
+  function wid(w){ return w.h + "|" + w.p + (DUPKEY[w.h + "|" + w.p] ? ("|" + w.no) : ""); }
+  var WID = [];
+  for(var wi=0; wi<TOTAL; wi++){ WID.push(wid(WORDS[wi])); }
+
+  function loadKnown(){
+    var out = {};
+    try{
+      var raw = window.localStorage.getItem(LS_KEY);
+      if(!raw) return out;
+      var arr = JSON.parse(raw);
+      if(Object.prototype.toString.call(arr) === "[object Array]"){
+        for(var i=0;i<arr.length;i++){
+          var k = arr[i];
+          if(typeof k !== "string" || !k) continue;
+          if(k.indexOf("|") > -1){
+            out[k] = 1;
+          }else{
+            // 예전 버전(한자만 저장) 기록 옮기기
+            for(var j=0;j<TOTAL;j++){
+              if(WORDS[j].h === k){ out[WID[j]] = 1; break; }
+            }
+          }
+        }
+      }
+    }catch(e){
+      storageOK = false;
+      return {};
+    }
+    return out;
+  }
+  function saveKnown(){
+    try{
+      window.localStorage.setItem(LS_KEY, JSON.stringify(Object.keys(known)));
+    }catch(e){
+      storageOK = false;
+    }
+  }
+  known = loadKnown();
+
+  /* ── 공통 유틸 ── */
+  function esc(s){
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+  function shuffle(a){
+    for(var i=a.length-1;i>0;i--){
+      var j = Math.floor(Math.random()*(i+1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+  // 성조 부호를 떼고 비교해서 'ni'로도 'nǐ'를 찾을 수 있게 한다
+  function norm(s){
+    var v = String(s);
+    try{ v = v.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }catch(e){}
+    return v.toLowerCase();
+  }
+
+  /* ── Day ── */
+  var state = { view:"card", day:0 };   // day 0 = 전체
+
+  function dayRange(d){
+    var s = (d - 1) * DAY_SIZE;
+    var e = Math.min(d * DAY_SIZE, TOTAL);
+    return [s, e];
+  }
+  function scopeIndices(){
+    var out = [];
+    if(!state.day){
+      for(var i=0;i<TOTAL;i++) out.push(i);
+    }else{
+      var r = dayRange(state.day);
+      for(var k=r[0];k<r[1];k++) out.push(k);
+    }
+    return out;
+  }
+  function scopeSize(){ return state.day ? (dayRange(state.day)[1] - dayRange(state.day)[0]) : TOTAL; }
+  function scopeLabel(){
+    if(!state.day) return "전체 " + TOTAL + "단어";
+    var r = dayRange(state.day);
+    return "Day " + state.day + " · " + (r[0]+1) + "~" + r[1] + "번";
+  }
+  function renderDayBar(){
+    var html = '<button class="daypill' + (state.day === 0 ? " active" : "") + '" data-day="0" role="tab" aria-selected="' + (state.day===0) + '">전체 1000</button>';
+    for(var d=1; d<=DAYS; d++){
+      var r = dayRange(d);
+      html += '<button class="daypill' + (state.day === d ? " active" : "") + '" data-day="' + d + '" role="tab" aria-selected="' + (state.day===d) + '">Day ' + d + '<span class="dp-n">(' + (r[0]+1) + '~' + r[1] + ')</span></button>';
+    }
+    dayBar.innerHTML = html;
+  }
+  function setDay(d){
+    if(state.day === d) return;
+    state.day = d;
+    renderDayBar();
+    buildDeck("new");
+    quiz = null;
+    renderProgress();
+    renderList();
+    if(state.view === "quiz") renderQuiz();
+    var r = d ? dayRange(d) : null;
+    toast(d ? ("Day " + d + " · " + (r[0]+1) + "~" + r[1] + "번 단어만 봐요") : ("전체 " + TOTAL + "단어를 봐요"));
+  }
+
+  /* ── 딱지: 경성 · 성조 변화 · 이합사 · 쓰기 (데이터 플래그만 보고 그린다) ── */
+  function badgeList(w, small){
+    var cls = small ? " sm" : "";
+    var out = "";
+    if(w.nt){
+      out += '<span class="bdg nt' + cls + '" data-bdg="nt" data-k="' + esc(wid(w)) + '" title="경성: ' + esc(w.ntNote || w.nt) + '">⚠️ 경성 주의</span>';
+    }
+    if(w.ts){
+      out += '<span class="bdg ts' + cls + '" data-bdg="ts" data-k="' + esc(wid(w)) + '" title="성조 변화: ' + esc(w.ts) + '">🔄 성조 변화</span>';
+    }
+    if(w.lh){
+      out += '<span class="bdg lh' + cls + '" data-bdg="lh" data-k="' + esc(wid(w)) + '" title="이합사: ' + esc(w.lh) + '">✂️ 이합사</span>';
+    }
+    if(w.wr){
+      out += '<span class="bdg wr' + cls + '" data-bdg="wr" data-k="' + esc(wid(w)) + '" title="쓰기: ' + esc(w.wr) + '">✍️ 쓰기</span>';
+    }
+    return out;
+  }
+  function badges(w){
+    var s = badgeList(w, false);
+    return s ? '<div class="bdgs">' + s + '</div>' : "";
+  }
+  function wordByKey(k){
+    for(var i=0;i<TOTAL;i++){ if(WID[i] === k) return WORDS[i]; }
+    return null;
+  }
+
+  function knownCount(){
+    var n = 0, list = scopeIndices();
+    for(var i=0;i<list.length;i++){ if(known[WID[list[i]]]) n++; }
+    return n;
+  }
+
+  /* ── 발음 (Web Speech API) ── */
+  var speechSupported = ("speechSynthesis" in window) && ("SpeechSynthesisUtterance" in window);
+  var voiceWarned = false;
+
+  function voiceList(){
+    try{ return window.speechSynthesis.getVoices() || []; }catch(e){ return []; }
+  }
+
+  function zhongVoice(list){
+    try{
+      var exact = null, any = null, named = null;
+      for(var i=0;i<list.length;i++){
+        var v = list[i];
+        var lang = String(v.lang || "").toLowerCase();
+        var name = String(v.name || "").toLowerCase();
+        if(lang === "zh-cn" || lang === "zh_cn" || lang.indexOf("zh-cn") === 0){
+          if(!exact) exact = v;
+          if(!named && (name.indexOf("ting") > -1 || name.indexOf("meijia") > -1 || name.indexOf("mei-jia") > -1 || name.indexOf("chinese") > -1)) named = v;
+        }else if(lang.indexOf("zh") === 0 && !any){
+          any = v;
+        }
+      }
+      return named || exact || any || null;
+    }catch(e){ return null; }
+  }
+
+  function speak(text){
+    if(!speechSupported){
+      toast("이 브라우저에서는 발음 듣기를 지원하지 않아요.");
+      return;
+    }
+    try{
+      window.speechSynthesis.cancel();
+      var list = voiceList();
+      var u = new SpeechSynthesisUtterance(String(text));
+      u.lang = "zh-CN";
+      u.rate = 0.85;
+      u.pitch = 1;
+      var v = zhongVoice(list);
+      if(v){ u.voice = v; }
+      else if(list.length && !voiceWarned){
+        voiceWarned = true;
+        toast("중국어 음성이 없어 발음이 부정확할 수 있어요. 설정에서 중국어 음성을 추가해 보세요.");
+      }
+      window.speechSynthesis.speak(u);
+    }catch(e){
+      toast("발음을 재생할 수 없어요.");
+    }
+  }
+  if(speechSupported){
+    try{ window.speechSynthesis.getVoices(); }catch(e){}
+  }
+
+  /* ── 토스트 ── */
+  var toastEl = document.getElementById("toast");
+  var toastTimer = null;
+  function toast(msg){
+    if(!toastEl) return;
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    if(toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove("show"); }, 2800);
+  }
+
+  /* ── 화면 전환 ── */
+  var tabs = document.querySelectorAll(".tab");
+  var views = { card:document.getElementById("view-card"), quiz:document.getElementById("view-quiz"), list:document.getElementById("view-list") };
+
+  function showView(name){
+    state.view = name;
+    for(var i=0;i<tabs.length;i++){
+      var on = tabs[i].getAttribute("data-view") === name;
+      tabs[i].classList.toggle("active", on);
+      tabs[i].setAttribute("aria-selected", on ? "true" : "false");
+    }
+    for(var k in views){
+      if(!Object.prototype.hasOwnProperty.call(views,k)) continue;
+      views[k].classList.toggle("active", k === name);
+    }
+    if(name !== "card" && speechSupported){ try{ window.speechSynthesis.cancel(); }catch(e){} }
+    if(name === "list"){ renderList(); }
+    if(name === "quiz" && !quiz){ renderQuiz(); }
+  }
+  for(var ti=0; ti<tabs.length; ti++){
+    (function(btn){ btn.addEventListener("click", function(){ showView(btn.getAttribute("data-view")); }); })(tabs[ti]);
+  }
+
+  /* ── 진행률 ── */
+  var progFill = document.getElementById("progFill");
+  var progTxt = document.getElementById("progTxt");
+  var progPct = document.getElementById("progPct");
+  function renderProgress(){
+    var n = knownCount();
+    var size = scopeSize();
+    var pct = size ? Math.round(n / size * 100) : 0;
+    progFill.style.width = pct + "%";
+    progTxt.textContent = (state.day ? ("Day " + state.day + " · ") : "") + "외운 단어 " + n + " / " + size;
+    progPct.textContent = pct + "%";
+  }
+
+  /* ═══════════════════════════════════════════
+     플래시카드
+     ═══════════════════════════════════════════ */
+  var cardArea = document.getElementById("cardArea");
+  var cardActions = document.getElementById("cardActions");
+  var deck = [];
+  var pos = 0;
+  var flipped = false;
+
+  function buildDeck(mode){
+    var all = scopeIndices();
+    if(mode === "new"){
+      var rest = all.filter(function(i){ return !known[WID[i]]; });
+      if(rest.length) all = rest;
+    }
+    shuffle(all);
+    deck = all;
+    pos = 0;
+    flipped = false;
+    renderCard();
+  }
+
+  function renderCard(){
+    if(!deck.length){ buildDeck("new"); return; }
+    if(pos >= deck.length){
+      cardArea.innerHTML = doneHTML();
+      cardActions.setAttribute("hidden","");
+      return;
+    }
+    cardActions.removeAttribute("hidden");
+    var w = WORDS[deck[pos]];
+    var body;
+    if(!flipped){
+      body =
+        '<div class="front">' +
+          '<div class="hanzi-xl" lang="zh-CN">' + esc(w.h) + '</div>' +
+          '<div class="hint">카드를 눌러 뜻과 예문 보기</div>' +
+        '</div>' +
+        '<button class="spk" data-speak="' + esc(w.h) + '" aria-label="' + esc(w.h) + ' 발음 듣기">🔊</button>';
+    }else{
+      body =
+        '<div class="back">' +
+          '<div class="h-row">' +
+            '<div>' +
+              '<div class="h" lang="zh-CN">' + esc(w.h) + '</div>' +
+              '<div class="pinyin">' + esc(w.p) + '</div>' +
+              badges(w) +
+            '</div>' +
+            '<button class="spk" data-speak="' + esc(w.h) + '" aria-label="' + esc(w.h) + ' 발음 듣기">🔊</button>' +
+          '</div>' +
+          '<div class="meaning">' + esc(w.m) + '</div>' +
+          '<div class="ex">' +
+            '<div class="ex-zh" lang="zh-CN">' + esc(w.ex) + '</div>' +
+            '<div class="ex-py">' + esc(w.ep) + '</div>' +
+            '<div class="ex-ko">' + esc(w.em) + '</div>' +
+          '</div>' +
+        '</div>';
+    }
+    cardArea.innerHTML = '<div class="card" data-flip="1" role="button" tabindex="0" aria-label="카드 뒤집기">' + body + '</div>';
+  }
+
+  function doneHTML(){
+    return '<div class="done">' +
+      '<div class="emo">🎉</div>' +
+      '<h2>이번 카드 다 봤어요!</h2>' +
+      '<p>' + esc(scopeLabel()) + ' · 외운 단어 ' + knownCount() + '개 / ' + scopeSize() + '개</p>' +
+      '<div class="actions" style="grid-template-columns:1fr">' +
+        '<button class="btn primary" data-act="quiz">✏️ 퀴즈로 확인하기</button>' +
+      '</div>' +
+      '<div class="actions">' +
+        '<button class="btn ghost" data-act="newdeck">못 외운 단어</button>' +
+        '<button class="btn ghost" data-act="alldeck">처음부터 다시</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function flip(){ flipped = !flipped; renderCard(); }
+
+  function advance(didKnow){
+    if(pos >= deck.length) return;
+    var w = WORDS[deck[pos]];
+    var k = WID[deck[pos]];
+    if(didKnow){
+      known[k] = 1;
+    }else{
+      delete known[k];
+      if(deck.length < scopeSize() * 3) deck.push(deck[pos]);
+    }
+    saveKnown();
+    pos++;
+    flipped = false;
+    renderProgress();
+    renderCard();
+  }
+
+  /* ═══════════════════════════════════════════
+     4지선다 퀴즈
+     ═══════════════════════════════════════════ */
+  var quizArea = document.getElementById("quizArea");
+  var quiz = null;
+
+  function makeItem(i, dir, scope){
+    var pool = [];
+    for(var k=0;k<scope.length;k++){ if(scope[k] !== i) pool.push(scope[k]); }
+    if(pool.length < 3){
+      pool = [];
+      for(var m=0;m<TOTAL;m++){ if(m !== i) pool.push(m); }
+    }
+    shuffle(pool);
+    var choices = shuffle([i, pool[0], pool[1], pool[2]]);
+    return { i:i, dir:dir, choices:choices };
+  }
+
+  function startQuiz(pool){
+    var scope = scopeIndices();
+    var base = (pool && pool.length) ? pool.slice() : scope.slice();
+    shuffle(base);
+    base = base.slice(0, Math.min(10, base.length));
+    quiz = { items:[], pos:0, score:0, wrong:[], answered:false, picked:-1 };
+    for(var i=0;i<base.length;i++){
+      quiz.items.push(makeItem(base[i], Math.random() < 0.5 ? "h2m" : "m2h", scope));
+    }
+    renderQuiz();
+  }
+
+  function renderQuiz(){
+    if(!quiz){ renderQuizIntro(); return; }
+    if(quiz.pos >= quiz.items.length){ renderResult(); return; }
+
+    var it = quiz.items[quiz.pos];
+    var w = WORDS[it.i];
+    var head =
+      '<div class="quiz-top">' +
+        '<span>문제 ' + (quiz.pos + 1) + ' / ' + quiz.items.length + '</span>' +
+        '<span>' + esc(scopeLabel()) + ' · 정답 ' + quiz.score + '</span>' +
+      '</div>';
+
+    var promptHTML;
+    if(it.dir === "h2m"){
+      promptHTML =
+        '<div class="q-label">이 단어의 뜻은?</div>' +
+        '<div class="q-hanzi" lang="zh-CN">' + esc(w.h) + '</div>' +
+        '<button class="spk" data-speak="' + esc(w.h) + '" aria-label="발음 듣기">🔊</button>';
+    }else{
+      promptHTML =
+        '<div class="q-label">이 뜻에 맞는 중국어는?</div>' +
+        '<div class="q-ko">' + esc(w.m) + '</div>';
+    }
+
+    var chHTML = '<div class="choices">';
+    for(var c=0;c<it.choices.length;c++){
+      var ci = it.choices[c];
+      var cw = WORDS[ci];
+      var label = (it.dir === "h2m") ? cw.m : cw.h;
+      var cls = "choice";
+      if(quiz.answered){
+        if(ci === it.i) cls += " correct";
+        else if(ci === quiz.picked) cls += " wrong";
+        else cls += " dim";
+      }
+      var hanziAttr = (it.dir === "m2h") ? ' lang="zh-CN"' : "";
+      chHTML += '<button class="' + cls + '" data-choice="' + ci + '">' +
+                  '<span class="num">' + (c + 1) + '</span>' +
+                  '<span' + hanziAttr + '>' + esc(label) + '</span>' +
+                '</button>';
+    }
+    chHTML += '</div>';
+
+    var fb = "";
+    if(quiz.answered){
+      var ok = quiz.picked === it.i;
+      fb =
+        '<div class="feedback">' +
+          '<div class="fb-head ' + (ok ? "ok" : "no") + '">' + (ok ? "정답이에요! ✅" : "아쉬워요, 이렇게 기억해요 🔎") + '</div>' +
+          '<div class="fb-row">' +
+            '<span class="fb-h" lang="zh-CN">' + esc(w.h) + '</span>' +
+            '<span class="fb-p">' + esc(w.p) + '</span>' +
+            '<span class="fb-m">' + esc(w.m) + '</span>' +
+            '<button class="spk sm" data-speak="' + esc(w.h) + '" aria-label="' + esc(w.h) + ' 발음 듣기">🔊</button>' +
+          '</div>' +
+          badges(w) +
+          '<div class="fb-ex" lang="zh-CN">' + esc(w.ex) + '<br>' + esc(w.em) + '</div>' +
+          '<div class="actions" style="grid-template-columns:1fr;margin-top:12px">' +
+            '<button class="btn primary" data-act="nextq">' + (quiz.pos + 1 >= quiz.items.length ? "결과 보기" : "다음 문제 →") + '</button>' +
+          '</div>' +
+        '</div>';
+    }
+
+    quizArea.innerHTML = head +
+      '<div class="qcard">' + promptHTML + '</div>' +
+      chHTML + fb;
+  }
+
+  function renderQuizIntro(){
+    quizArea.innerHTML =
+      '<div class="quiz-intro">' +
+        '<h2>4지선다 퀴즈</h2>' +
+        '<p><b>' + esc(scopeLabel()) + '</b>에서<br>한자→뜻, 뜻→한자 문제가 섞여 <b>10문제</b> 나와요.<br>틀린 단어는 다시 풀 수 있어요.</p>' +
+        '<button class="btn primary" data-act="quiz-new">못 외운 단어로 풀기</button>' +
+        '<button class="btn ghost" data-act="quiz-all">' + (state.day ? "이 Day 전체로 풀기" : "전체 단어로 풀기") + '</button>' +
+      '</div>';
+  }
+
+  function renderResult(){
+    var n = quiz.items.length;
+    var pct = n ? Math.round(quiz.score / n * 100) : 0;
+    var msg = pct === 100 ? "완벽해요! 👏" : (pct >= 70 ? "좋아요, 조금만 더! 💪" : "괜찮아요, 다시 보면 돼요 🌱");
+
+    var wrongHTML = "";
+    if(quiz.wrong.length){
+      wrongHTML = '<div class="wrong-list"><h3>틀린 단어 ' + quiz.wrong.length + '개</h3>';
+      for(var i=0;i<quiz.wrong.length;i++){
+        var w = WORDS[quiz.wrong[i]];
+        wrongHTML += '<div class="wrong-item">' +
+          '<span class="w-h" lang="zh-CN">' + esc(w.h) + '</span>' +
+          '<span class="w-p">' + esc(w.p) + '</span>' +
+          '<span class="w-m">' + esc(w.m) + '</span>' +
+        '</div>';
+      }
+      wrongHTML += "</div>";
+    }
+
+    quizArea.innerHTML =
+      '<div class="result">' +
+        '<h2>퀴즈 결과</h2>' +
+        '<div class="score-big">' + quiz.score + ' / ' + n + '</div>' +
+        '<div class="score-sub">' + pct + '% · ' + msg + '</div>' +
+        wrongHTML +
+        (quiz.wrong.length ? '<button class="btn primary" data-act="retry-wrong">틀린 단어 다시 풀기</button>' : '') +
+        '<button class="btn ghost" data-act="quiz-new">못 외운 단어로 새 퀴즈</button>' +
+        '<button class="btn soft small" data-act="quiz-all">' + (state.day ? "이 Day 전체로 풀기" : "전체 단어로 풀기") + '</button>' +
+      '</div>';
+  }
+
+  function answer(choiceIdx){
+    if(!quiz || quiz.answered) return;
+    var it = quiz.items[quiz.pos];
+    quiz.picked = choiceIdx;
+    quiz.answered = true;
+    if(choiceIdx === it.i){
+      quiz.score++;
+      known[WID[it.i]] = 1;
+    }else{
+      delete known[WID[it.i]];
+      quiz.wrong.push(it.i);
+    }
+    saveKnown();
+    renderProgress();
+    renderQuiz();
+  }
+
+  function nextQuestion(){
+    if(!quiz) return;
+    quiz.pos++;
+    quiz.answered = false;
+    quiz.picked = -1;
+    renderQuiz();
+  }
+
+  /* ═══════════════════════════════════════════
+     단어장
+     ═══════════════════════════════════════════ */
+  var searchEl = document.getElementById("search");
+  var listRows = document.getElementById("listRows");
+  var listCount = document.getElementById("listCount");
+  var currentFilter = "all";
+
+  function renderList(){
+    var q = String(searchEl.value || "").trim().toLowerCase();
+    var scope = scopeIndices();
+    var html = "";
+    var shown = 0;
+    for(var n=0;n<scope.length;n++){
+      var i = scope[n];
+      var w = WORDS[i];
+      var isK = !!known[WID[i]];
+      if(currentFilter === "new" && isK) continue;
+      if(currentFilter === "known" && !isK) continue;
+      if(q){
+        var hay = norm(w.h + " " + w.p + " " + w.m + " " + w.ex + " " + w.em);
+        var nq = norm(q);
+        if(hay.indexOf(nq) < 0 && hay.replace(/ /g, "").indexOf(nq.replace(/ /g, "")) < 0) continue;
+      }
+      shown++;
+      html += '<li class="row' + (isK ? " done" : "") + '">' +
+        '<button class="spk sm" data-speak="' + esc(w.h) + '" aria-label="' + esc(w.h) + ' 발음 듣기">🔊</button>' +
+        '<div class="row-main">' +
+          '<div class="row-top">' +
+            '<span class="row-h" lang="zh-CN">' + esc(w.h) + '</span>' +
+            '<span class="row-p">' + esc(w.p) + '</span>' +
+            badgeList(w, true) +
+          '</div>' +
+          '<div class="row-m">' + esc(w.m) + '</div>' +
+        '</div>' +
+        '<button class="mark' + (isK ? " on" : "") + '" data-toggle="' + esc(WID[i]) + '" aria-label="' + esc(w.h) + ' 암기 표시" aria-pressed="' + (isK ? "true" : "false") + '">' + (isK ? "✓" : "") + '</button>' +
+      '</li>';
+    }
+    if(!shown) html = '<li class="empty">찾는 단어가 없어요.</li>';
+    listRows.innerHTML = html;
+    listCount.textContent = esc(scopeLabel()) + " · " + shown + "개 단어";
+  }
+
+  var chips = document.querySelectorAll(".chip");
+  for(var ci2=0; ci2<chips.length; ci2++){
+    (function(chip){
+      chip.addEventListener("click", function(){
+        currentFilter = chip.getAttribute("data-filter");
+        for(var j=0;j<chips.length;j++) chips[j].classList.toggle("active", chips[j] === chip);
+        renderList();
+      });
+    })(chips[ci2]);
+  }
+  searchEl.addEventListener("input", renderList);
+
+  document.getElementById("resetBtn").addEventListener("click", function(){
+    var ok = window.confirm("학습 기록을 모두 지울까요?\n외운 단어 표시가 사라져요.");
+    if(!ok) return;
+    known = {};
+    saveKnown();
+    buildDeck("all");
+    renderProgress();
+    renderList();
+    quiz = null;
+    toast("학습 기록을 지웠어요.");
+  });
+
+  /* ── 이벤트 위임 ── */
+  document.addEventListener("click", function(e){
+    var t = e.target;
+    if(!t || !t.closest) return;
+
+    var dayBtn = t.closest("[data-day]");
+    if(dayBtn){
+      setDay(parseInt(dayBtn.getAttribute("data-day"), 10));
+      return;
+    }
+
+    var bdg = t.closest("[data-bdg]");
+    if(bdg){
+      e.stopPropagation();
+      var bw = wordByKey(bdg.getAttribute("data-k"));
+      if(bw){
+        var bkind = bdg.getAttribute("data-bdg");
+        var bmsg;
+        if(bkind === "nt"){
+          bmsg = "경성 주의 · " + (bw.ntNote ? bw.ntNote : "‘" + bw.nt + "’ 부분은 힘을 빼고 짧게 — " + bw.p);
+        }else if(bkind === "lh"){
+          bmsg = "이합사 · " + bw.lh;
+        }else if(bkind === "wr"){
+          bmsg = "쓰기 필수 한자 · " + bw.wr;
+        }else{
+          bmsg = "성조 변화 · " + bw.ts;
+        }
+        toast(bmsg);
+      }
+      return;
+    }
+
+    var spk = t.closest("[data-speak]");
+    if(spk){
+      e.stopPropagation();
+      speak(spk.getAttribute("data-speak"));
+      return;
+    }
+
+    var toggle = t.closest("[data-toggle]");
+    if(toggle){
+      var k = toggle.getAttribute("data-toggle");
+      if(known[k]) delete known[k]; else known[k] = 1;
+      saveKnown();
+      renderProgress();
+      renderList();
+      if(state.view === "card") renderCard();
+      return;
+    }
+
+    var choice = t.closest("[data-choice]");
+    if(choice){
+      answer(parseInt(choice.getAttribute("data-choice"), 10));
+      return;
+    }
+
+    var act = t.closest("[data-act]");
+    if(act){
+      var a = act.getAttribute("data-act");
+      if(a === "known") advance(true);
+      else if(a === "again") advance(false);
+      else if(a === "newdeck"){ buildDeck("new"); renderProgress(); }
+      else if(a === "alldeck"){ buildDeck("all"); renderProgress(); }
+      else if(a === "quiz"){ showView("quiz"); }
+      else if(a === "quiz-new"){
+        var pool = scopeIndices().filter(function(i){ return !known[WID[i]]; });
+        startQuiz(pool.length >= 4 ? pool : null);
+      }
+      else if(a === "quiz-all"){ startQuiz(null); }
+      else if(a === "nextq"){ nextQuestion(); }
+      else if(a === "retry-wrong"){
+        var wr = (quiz && quiz.wrong.length) ? quiz.wrong.slice() : null;
+        startQuiz(wr);
+      }
+      return;
+    }
+
+    var flipEl = t.closest("[data-flip]");
+    if(flipEl){ flip(); return; }
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+    if(state.view !== "card") return;
+    if(e.key === " " || e.key === "Spacebar" || e.key === "Enter"){
+      e.preventDefault();
+      flip();
+    }else if(e.key === "ArrowRight"){
+      advance(true);
+    }else if(e.key === "ArrowLeft"){
+      advance(false);
+    }
+  });
+
+  /* ── 시작 ── */
+  var dayBar = document.getElementById("dayBar");
+  function init(){
+    renderDayBar();
+    renderProgress();
+    buildDeck("new");
+    renderList();
+    if(!storageOK){
+      document.getElementById("storageNote").textContent = "지금 환경에서는 학습 기록을 저장할 수 없어요. 이번 학습만 기록됩니다.";
+    }
+  }
+  init();
+})();
+</script>
+</body>
+</html>

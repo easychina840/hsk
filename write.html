@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#fff8f1">
+<title>신HSK 3.0 서사한자 쓰기 연습</title>
+<style>
+  :root{
+    --bg1:#fff9f2;
+    --bg2:#fbeadb;
+    --card:#ffffff;
+    --ink:#2b211c;
+    --ink-soft:#7a685c;
+    --line:#efe0d2;
+    --accent:#c0392b;
+    --accent-deep:#9c2a1f;
+    --accent-soft:#fbe4de;
+    --ok:#1f7a4d;
+    --ok-soft:#e4f4ea;
+    --ink-pad:#2b211c;
+    --shadow:0 12px 32px rgba(122,84,55,.12), 0 2px 6px rgba(122,84,55,.06);
+    --hanzi:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Source Han Sans SC","Microsoft YaHei","Heiti SC",sans-serif;
+    --base:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--base);
+    color:var(--ink);
+    background:radial-gradient(120% 80% at 50% 0%, #fffdfa 0%, var(--bg1) 45%, var(--bg2) 100%);
+    background-attachment:fixed;
+    min-height:100vh;
+    -webkit-text-size-adjust:100%;
+    line-height:1.5;
+  }
+  .app{max-width:540px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 28px)}
+  h1,h2,h3,p,ul,li{margin:0;padding:0}
+  ul{list-style:none}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  input{font-family:inherit}
+
+  /* ── header ── */
+  .brand{display:flex;align-items:center;gap:10px}
+  .dot{width:34px;height:34px;border-radius:50%;flex:0 0 34px;
+    background:radial-gradient(circle at 32% 28%, #ff8b7e, var(--accent) 62%, var(--accent-deep));
+    box-shadow:0 4px 10px rgba(192,57,43,.28)}
+  h1{font-size:19px;font-weight:800;letter-spacing:-.02em}
+  .sub{font-size:13px;color:var(--ink-soft);margin-top:2px}
+  .prog{margin-top:14px}
+  .prog-bar{height:9px;border-radius:99px;background:#f2e2d5;overflow:hidden}
+  .prog-bar i{display:block;height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,#e0685c,var(--accent));transition:width .35s ease}
+  .prog-txt{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-soft);margin-top:6px;font-weight:700}
+
+  /* ── filters ── */
+  .filters{margin:14px 0 4px}
+  .row{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .row::-webkit-scrollbar{display:none}
+  .pill{
+    flex:0 0 auto;padding:9px 14px;border-radius:99px;font-size:13.5px;font-weight:700;
+    background:#fff;color:#7a685c;border:1.5px solid var(--line);white-space:nowrap;
+    transition:background .16s,color .16s,border-color .16s;
+  }
+  .pill.active{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 6px 14px rgba(192,57,43,.22)}
+  .row.day{margin-top:8px}
+  .row.day .pill{padding:7px 12px;font-size:12.5px;font-weight:700;background:#fdf3ea;border-color:#f0ddcb;color:#7d6a5b}
+  .row.day .pill.active{background:#6b4a37;border-color:#6b4a37;color:#fff;box-shadow:none}
+
+  /* ── tabs ── */
+  .tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;background:#f4e6d8;padding:5px;border-radius:16px;margin:14px 0 16px}
+  .tab{padding:12px 3px;border-radius:12px;font-size:14px;font-weight:700;color:#6f5b4b;transition:background .18s,color .18s,box-shadow .18s}
+  .tab.active{background:#fff;color:var(--accent);box-shadow:0 2px 8px rgba(122,84,55,.12)}
+  .view{display:none}
+  .view.active{display:block}
+
+  /* ── card ── */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:18px 16px 16px}
+  .whead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .lvlbadge{font-size:12px;font-weight:800;color:var(--accent-deep);background:var(--accent-soft);border:1px solid #f6d3cb;border-radius:99px;padding:4px 10px}
+  .widx{font-size:13px;font-weight:700;color:var(--ink-soft)}
+  .gridwrap{display:flex;justify-content:center}
+  #pad{
+    display:block;border-radius:16px;touch-action:none;cursor:crosshair;
+    background:#fffdfa;box-shadow:inset 0 0 0 1px #f0ddcb;
+  }
+  .charline{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:14px}
+  .h{font-family:var(--hanzi);font-size:34px;font-weight:700;letter-spacing:.02em}
+  .pinyin{font-size:21px;font-weight:800;color:var(--accent)}
+  .spk{width:40px;height:40px;border-radius:50%;background:var(--accent-soft);color:var(--accent-deep);font-size:17px;
+    display:inline-flex;align-items:center;justify-content:center;border:1px solid #f6d3cb;flex:0 0 40px}
+  .spk:active{background:#f8d7cf}
+  .meaning{text-align:center;font-size:15.5px;color:#4a3a30;margin-top:2px;line-height:1.55}
+  .words{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px}
+  .wchip{background:#fdf4ec;border:1px solid #f0ddcb;border-radius:12px;padding:6px 10px;text-align:center;line-height:1.25}
+  .wchip b{font-family:var(--hanzi);font-size:16px;font-weight:600;display:block}
+  .wchip span{font-size:11.5px;color:#8b7666;font-weight:600}
+  .ctrls{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:7px;margin-top:14px}
+  .ctrls .btn{font-size:12.5px;padding:6px 4px}
+  .actions{display:grid;grid-template-columns:1fr 1.5fr 1fr;gap:7px;margin-top:8px}
+  .btn{min-height:52px;border-radius:16px;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:5px;
+    transition:transform .12s,filter .12s;padding:6px 8px;line-height:1.2}
+  .btn:active{transform:scale(.975)}
+  .btn.primary{background:linear-gradient(180deg,#cf4437,var(--accent));color:#fff;box-shadow:0 8px 18px rgba(192,57,43,.24)}
+  .btn.primary.done{background:linear-gradient(180deg,#2b8f5e,var(--ok));box-shadow:0 8px 18px rgba(31,122,77,.22)}
+  .btn.ghost{background:#fff;color:var(--accent-deep);border:1.5px solid #f0cec6;box-shadow:0 2px 8px rgba(122,84,55,.06)}
+  .btn.soft{background:#f4e8dc;color:#6b5647;border:1px solid #ecdbcb;min-height:44px;font-size:13px;border-radius:13px}
+  .btn.soft.on{background:#e8f2ec;border-color:#cfe6d8;color:#1f6a48}
+  .btn[disabled]{opacity:.4;pointer-events:none}
+  .tiny{font-size:12px;color:#a89584;text-align:center;margin-top:14px;line-height:1.6}
+
+  /* ── grid view ── */
+  .search{width:100%;padding:13px 16px;border-radius:14px;border:1.5px solid var(--line);background:#fff;
+    font-size:15px;color:var(--ink);outline:none;box-shadow:0 2px 8px rgba(122,84,55,.05)}
+  .search:focus{border-color:#e8c3b8}
+  .chips{display:flex;gap:7px;margin:10px 0 12px}
+  .chip{flex:1;text-align:center;padding:9px 0;border-radius:12px;background:#fff;border:1.5px solid var(--line);
+    font-size:13px;font-weight:700;color:#7a685c}
+  .chip.active{background:#6b4a37;border-color:#6b4a37;color:#fff}
+  .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px}
+  .cell{background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px 4px 7px;text-align:center;position:relative;
+    box-shadow:0 2px 6px rgba(122,84,55,.05);transition:transform .12s}
+  .cell:active{transform:scale(.96)}
+  .cell b{font-family:var(--hanzi);font-size:27px;font-weight:600;display:block;line-height:1.2}
+  .cell span{font-size:10.5px;color:#8b7666;font-weight:600;display:block;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .cell .ck{position:absolute;top:4px;right:5px;width:15px;height:15px;border-radius:50%;background:var(--ok);
+    color:#fff;font-size:10px;line-height:15px;display:none;font-weight:800}
+  .cell.done{border-color:#cfe6d8;background:#f6fbf8}
+  .cell.done .ck{display:block}
+  .cell.lv3 b{color:#8a4b2a}
+  .empty{text-align:center;color:#a89584;font-size:14px;padding:34px 0}
+
+  /* ── quiz ── */
+  .qhead{display:flex;justify-content:space-between;font-size:13px;font-weight:800;color:var(--ink-soft);margin-bottom:12px}
+  .qhead .sc{color:var(--accent)}
+  .qprompt{text-align:center;padding:18px 8px 6px}
+  .qprompt .qz{font-family:var(--hanzi);font-size:clamp(56px,18vw,86px);font-weight:600;line-height:1.15}
+  .qprompt .qp{font-size:26px;font-weight:800;color:var(--accent)}
+  .qprompt .qm{font-size:22px;font-weight:800;margin-top:4px;letter-spacing:-.01em}
+  .qprompt .qn{font-size:13px;color:#8b7666;margin-top:10px;font-weight:700}
+  .qopts{display:grid;gap:8px;margin-top:16px}
+  .opt{min-height:56px;border-radius:14px;border:1.5px solid var(--line);background:#fff;font-size:17px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 12px;transition:background .15s,border-color .15s}
+  .opt .oh{font-family:var(--hanzi);font-size:25px;font-weight:600}
+  .opt .op{font-size:12px;color:#8b7666;font-weight:700;margin-left:4px}
+  .opt.right{background:#eaf7ef;border-color:#8fce9f;color:#175f3a}
+  .opt.wrong{background:#fdecea;border-color:#f0b1a7;color:#9c2a1f}
+  .opt[disabled]{opacity:1}
+  .qfb{min-height:26px;text-align:center;font-size:14px;font-weight:800;margin-top:12px}
+  .qfb.ok{color:var(--ok)}
+  .qfb.no{color:#9c2a1f}
+  .qres{text-align:center;padding:20px 6px 4px}
+  .qres .big{font-size:44px;font-weight:800;color:var(--accent)}
+  .qres .msg{font-size:15.5px;font-weight:700;margin-top:6px}
+  .qres .det{font-size:13px;color:#8b7666;margin-top:8px;line-height:1.6}
+  .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);transform:translate(-50%,20px);
+    background:#3a2b22;color:#fff;font-size:13.5px;font-weight:700;padding:11px 18px;border-radius:99px;
+    opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:50;max-width:88vw;text-align:center}
+  .toast.show{opacity:.95;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="head">
+    <div class="brand">
+      <div class="dot"></div>
+      <div>
+        <h1>신HSK 3.0 서사한자</h1>
+        <div class="sub">1~2급 100자 + 3급 150자 = 250자 쓰기 연습</div>
+      </div>
+    </div>
+    <div class="prog">
+      <div class="prog-bar"><i id="progBar"></i></div>
+      <div class="prog-txt"><span id="progTxt">연습 완료 0자 / 250자</span><span id="progPct">0%</span></div>
+    </div>
+  </header>
+
+  <div class="filters">
+    <div class="row" id="lvlRow">
+      <button class="pill active" data-lvl="all">전체 250자</button>
+      <button class="pill" data-lvl="1-2">1~2급 100자</button>
+      <button class="pill" data-lvl="3">3급 150자</button>
+    </div>
+    <div class="row day" id="dayRow"></div>
+  </div>
+
+  <nav class="tabs">
+    <button class="tab active" data-view="write">✍️ 쓰기</button>
+    <button class="tab" data-view="grid">📖 한자표</button>
+    <button class="tab" data-view="quiz">✏️ 퀴즈</button>
+  </nav>
+
+  <main>
+    <!-- ── 쓰기 연습 ── -->
+    <section class="view active" id="view-write">
+      <div class="card">
+        <div class="whead">
+          <span class="lvlbadge" id="wLvl">1~2급</span>
+          <span class="widx" id="wIdx">1 / 250</span>
+        </div>
+        <div class="gridwrap"><canvas id="pad" width="600" height="600" aria-label="한자 쓰기 판"></canvas></div>
+        <div class="charline">
+          <span class="h" id="wChar">爱</span>
+          <span class="pinyin" id="wPy">ài</span>
+          <button class="spk" id="wSpk" aria-label="발음 듣기">🔊</button>
+        </div>
+        <div class="meaning" id="wMean">사랑하다; 사랑</div>
+        <div class="words" id="wWords"></div>
+        <div class="ctrls">
+          <button class="btn soft on" id="btnTrace">흐린 본보기 ON</button>
+          <button class="btn soft" id="btnUndo">↩️ 되돌리기</button>
+          <button class="btn soft" id="btnClear">🗑️ 지우기</button>
+        </div>
+        <div class="actions">
+          <button class="btn ghost" id="btnPrev">← 이전</button>
+          <button class="btn primary" id="btnDone">✅ 연습 완료</button>
+          <button class="btn ghost" id="btnNext">다음 →</button>
+        </div>
+      </div>
+      <p class="tiny">손가락이나 마우스로 田자 칸에 따라 써 보세요. 획이 마음에 안 들면 <b>되돌리기</b>로 한 획씩 지울 수 있어요.</p>
+    </section>
+
+    <!-- ── 전체 한자표 ── -->
+    <section class="view" id="view-grid">
+      <input class="search" id="q" type="search" placeholder="한자 · 병음 · 뜻으로 찾기 (예: 爱, ai, 사랑)" autocomplete="off">
+      <div class="chips" id="gridFilter">
+        <button class="chip active" data-f="all">전체</button>
+        <button class="chip" data-f="todo">미완료</button>
+        <button class="chip" data-f="done">완료</button>
+      </div>
+      <p class="tiny" style="margin:0 0 10px">한자를 누르면 쓰기 화면으로 바로 이동해요. 갈색 글자는 3급 150자입니다.</p>
+      <div class="cgrid" id="charGrid"></div>
+      <div class="empty" id="gridEmpty" style="display:none">찾는 한자가 없어요.</div>
+    </section>
+
+    <!-- ── 퀴즈 ── -->
+    <section class="view" id="view-quiz">
+      <div class="card" id="quizCard">
+        <div class="qhead"><span id="qProg">1 / 10</span><span class="sc" id="qScore">0점</span></div>
+        <div id="quizBody"></div>
+      </div>
+    </section>
+  </main>
+
+  <p class="tiny note">출처: 《HSK 考试大纲》(2025년 11월 발표 · 2026년 7월 시행) 공식 <b>书写字</b> 목록 — HSK(1~2급) 100자 + HSK(3급) 150자. 병음은 단어장 매뉴얼 규칙(경성·성조 변화)을 따랐습니다. 완료 표시는 이 기기 브라우저에만 저장됩니다.</p>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+/* ══════════════════════════════════════════════════════════════
+   신HSK 3.0 서사한자(书写字) 쓰기 연습 — 단일 파일 오프라인 앱
+   · 데이터: 《HSK考试大纲》 2025-11 공식 书写字 목록
+     HSK(一~二级) 100자 + HSK(三级) 150자 = 250자
+   · 저장 키: xinhsk3_write_known_v1
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── 1. 데이터 ───────────────────────────────────────────── */
+/* c: 한자 / p: 병음 / m: 뜻 / w: 대표 단어 [한자, 병음] — 앞 100자가 1~2급, 뒤 150자가 3급 */
+var DATA = [{c:"爱",p:"ài",m:"사랑하다; 사랑",lvl:"1-2",w:[["爱","ài"],["爱好","àihào"],["爱人","àiren"]]},
+{c:"八",p:"bā",m:"여덟, 8",lvl:"1-2",w:[["八","bā"],["十八","shí bā"],["八月","bā yuè"]]},
+{c:"爸",p:"bà",m:"아빠, 아버지",lvl:"1-2",w:[["爸爸","bàba"],["爸妈","bà mā"]]},
+{c:"百",p:"bǎi",m:"백, 100",lvl:"1-2",w:[["百","bǎi"],["一百","yì bǎi"],["几百","jǐ bǎi"]]},
+{c:"半",p:"bàn",m:"반, 절반",lvl:"1-2",w:[["半","bàn"],["一半","yíbàn"],["半天","bàntiān"]]},
+{c:"比",p:"bǐ",m:"비교하다, ~보다",lvl:"1-2",w:[["比","bǐ"],["比较","bǐjiào"],["比如","bǐrú"]]},
+{c:"边",p:"biān",m:"가장자리, 변; (bian) 경성 — 外边 wàibian",lvl:"1-2",w:[["边","biān"],["那边","nàbiān"],["外边","wàibian"]]},
+{c:"不",p:"bù",m:"아니다, ~하지 않다",lvl:"1-2",w:[["不","bù"],["不要","búyào"],["不客气","bú kèqi"]]},
+{c:"茶",p:"chá",m:"차(음료)",lvl:"1-2",w:[["茶","chá"],["红茶","hóngchá"],["绿茶","lǜchá"]]},
+{c:"打",p:"dǎ",m:"때리다, 치다; (전화를) 걸다",lvl:"1-2",w:[["打","dǎ"],["打电话","dǎ diànhuà"],["打车","dǎchē"]]},
+{c:"大",p:"dà",m:"크다; (dài) 대부(大夫)",lvl:"1-2",w:[["大","dà"],["大家","dàjiā"],["大学","dàxué"]]},
+{c:"地",p:"dì",m:"땅, 장소; (de) 부사어 표지",lvl:"1-2",w:[["地","dì"],["地铁","dìtiě"],["地方","dìfang"]]},
+{c:"的",p:"de",m:"~의 (관형 조사); (dí) 확실히(的确)",lvl:"1-2",w:[["的","de"],["有的","yǒude"],["的话","dehuà"]]},
+{c:"点",p:"diǎn",m:"점, 시각; 조금",lvl:"1-2",w:[["点","diǎn"],["一点儿","yìdiǎnr"],["有点儿","yǒudiǎnr"]]},
+{c:"对",p:"duì",m:"맞다, 옳다; ~에게",lvl:"1-2",w:[["对","duì"],["对不起","duìbuqǐ"],["对话","duìhuà"]]},
+{c:"多",p:"duō",m:"많다; 얼마",lvl:"1-2",w:[["多","duō"],["多少","duōshao"],["好多","hǎoduō"]]},
+{c:"儿",p:"ér",m:"아이, 아들",lvl:"1-2",w:[["儿子","érzi"],["女儿","nǚ’ér"],["哪儿","nǎr"]]},
+{c:"二",p:"èr",m:"둘, 2",lvl:"1-2",w:[["二","èr"],["十二","shí èr"],["二月","èr yuè"]]},
+{c:"分",p:"fēn",m:"나누다, 분; (fèn) 몫",lvl:"1-2",w:[["分","fēn"],["分钟","fēnzhōng"],["分开","fēnkāi"]]},
+{c:"哥",p:"gē",m:"형, 오빠",lvl:"1-2",w:[["哥哥","gēge"],["大哥","dà gē"]]},
+{c:"个",p:"ge",m:"개 (양사)",lvl:"1-2",w:[["个","ge"],["这个","zhè ge"],["一个","yí ge"]]},
+{c:"工",p:"gōng",m:"일, 노동",lvl:"1-2",w:[["工作","gōngzuò"],["工作日","gōngzuòrì"],["打工","dǎgōng"]]},
+{c:"口",p:"kǒu",m:"입, 구; 사람 수 세는 단위",lvl:"1-2",w:[["口","kǒu"],["门口","ménkǒu"],["路口","lùkǒu"]]},
+{c:"国",p:"guó",m:"나라",lvl:"1-2",w:[["国","guó"],["中国","Zhōngguó"],["出国","chūguó"]]},
+{c:"过",p:"guò",m:"건너다, 지나다; (guo) 경험 조사",lvl:"1-2",w:[["过","guò"],["过来","guòlái"],["过年","guònián"]]},
+{c:"还",p:"hái",m:"아직, 여전히; (huán) 돌려주다",lvl:"1-2",w:[["还","hái"],["还是","háishi"],["还有","hái yǒu"]]},
+{c:"汉",p:"hàn",m:"한(족), 중국",lvl:"1-2",w:[["汉语","Hànyǔ"],["汉字","Hànzì"]]},
+{c:"好",p:"hǎo",m:"좋다; (hào) 좋아하다",lvl:"1-2",w:[["好","hǎo"],["好吃","hǎochī"],["好看","hǎokàn"]]},
+{c:"和",p:"hé",m:"~와·과, 화하다; (huò) 섞다",lvl:"1-2",w:[["和","hé"],["和平","hépíng"],["和好","héhǎo"]]},
+{c:"很",p:"hěn",m:"매우, 아주",lvl:"1-2",w:[["很","hěn"],["很好","hěn hǎo"],["很多","hěn duō"]]},
+{c:"后",p:"hòu",m:"뒤, 후",lvl:"1-2",w:[["后","hòu"],["后面","hòumiàn"],["后来","hòulái"]]},
+{c:"会",p:"huì",m:"~할 수 있다; 모임",lvl:"1-2",w:[["会","huì"],["会议","huìyì"],["一会儿","yíhuìr"]]},
+{c:"几",p:"jǐ",m:"몇; (jī) 거의(几乎)",lvl:"1-2",w:[["几","jǐ"],["几个","jǐ ge"],["几乎","jīhū"]]},
+{c:"家",p:"jiā",m:"집, 가정; 전문가",lvl:"1-2",w:[["家","jiā"],["家人","jiārén"],["大家","dàjiā"]]},
+{c:"间",p:"jiān",m:"사이; 칸 (양사)",lvl:"1-2",w:[["时间","shíjiān"],["房间","fángjiān"],["洗手间","xǐshǒujiān"]]},
+{c:"叫",p:"jiào",m:"부르다, ~라고 하다",lvl:"1-2",w:[["叫","jiào"],["叫作","jiàozuò"]]},
+{c:"姐",p:"jiě",m:"누나, 언니",lvl:"1-2",w:[["姐姐","jiějie"],["姐妹","jiěmèi"]]},
+{c:"今",p:"jīn",m:"이제, 오늘",lvl:"1-2",w:[["今天","jīntiān"],["今年","jīnnián"],["今后","jīnhòu"]]},
+{c:"男",p:"nán",m:"남자",lvl:"1-2",w:[["男","nán"],["男朋友","nánpéngyou"],["男孩儿","nánháir"]]},
+{c:"九",p:"jiǔ",m:"아홉, 9",lvl:"1-2",w:[["九","jiǔ"],["九月","jiǔ yuè"],["九十","jiǔ shí"]]},
+{c:"可",p:"kě",m:"~할 수 있다; 그러나",lvl:"1-2",w:[["可以","kěyǐ"],["可能","kěnéng"],["可爱","kě’ài"]]},
+{c:"来",p:"lái",m:"오다",lvl:"1-2",w:[["来","lái"],["出来","chūlái"],["回来","huílái"]]},
+{c:"了",p:"le",m:"(완료·변화) ~했다; (liǎo) 알다",lvl:"1-2",w:[["了","le"],["了解","liǎojiě"],["除了","chúle"]]},
+{c:"两",p:"liǎng",m:"둘, 2; 량(50g)",lvl:"1-2",w:[["两","liǎng"],["两个","liǎng ge"],["两百","liǎng bǎi"]]},
+{c:"六",p:"liù",m:"여섯, 6",lvl:"1-2",w:[["六","liù"],["六月","liù yuè"],["十六","shí liù"]]},
+{c:"妈",p:"mā",m:"엄마",lvl:"1-2",w:[["妈妈","māma"],["爸妈","bà mā"]]},
+{c:"吗",p:"ma",m:"(의문 조사) ~인가요",lvl:"1-2",w:[["吗","ma"],["好吗","hǎo ma"],["是吗","shì ma"]]},
+{c:"么",p:"me",m:"(접미사) 무엇",lvl:"1-2",w:[["什么","shénme"],["怎么","zěnme"],["那么","nàme"]]},
+{c:"没",p:"méi",m:"없다, 아직 ~하지 않다",lvl:"1-2",w:[["没","méi"],["没有","méiyǒu"],["没事","méishì"]]},
+{c:"们",p:"men",m:"(복수 접미사) ~들",lvl:"1-2",w:[["们","men"],["你们","nǐmen"],["我们","wǒmen"]]},
+{c:"名",p:"míng",m:"이름; 사람 수 세는 단위",lvl:"1-2",w:[["名","míng"],["名字","míngzi"],["姓名","xìngmíng"]]},
+{c:"那",p:"nà",m:"저, 그것",lvl:"1-2",w:[["那","nà"],["那个","nà ge"],["那边","nàbiān"]]},
+{c:"你",p:"nǐ",m:"너",lvl:"1-2",w:[["你","nǐ"],["你好","nǐ hǎo"],["你们","nǐmen"]]},
+{c:"年",p:"nián",m:"해, 년",lvl:"1-2",w:[["年","nián"],["今年","jīnnián"],["明年","míngnián"]]},
+{c:"七",p:"qī",m:"일곱, 7",lvl:"1-2",w:[["七","qī"],["七月","qī yuè"],["十七","shí qī"]]},
+{c:"去",p:"qù",m:"가다",lvl:"1-2",w:[["去","qù"],["去年","qùnián"],["出去","chūqù"]]},
+{c:"人",p:"rén",m:"사람",lvl:"1-2",w:[["人","rén"],["家人","jiārén"],["别人","biérén"]]},
+{c:"日",p:"rì",m:"날, 해; 일",lvl:"1-2",w:[["日","rì"],["生日","shēngrì"],["星期日","xīngqīrì"]]},
+{c:"三",p:"sān",m:"셋, 3",lvl:"1-2",w:[["三","sān"],["三月","sān yuè"],["三个","sān ge"]]},
+{c:"少",p:"shǎo",m:"적다; (shào) 젊다",lvl:"1-2",w:[["少","shǎo"],["多少","duōshao"],["很少","hěn shǎo"]]},
+{c:"上",p:"shàng",m:"위, 오르다",lvl:"1-2",w:[["上","shàng"],["上班","shàngbān"],["上课","shàngkè"]]},
+{c:"什",p:"shén",m:"무엇(什么)",lvl:"1-2",w:[["什么","shénme"],["为什么","wèi shénme"]]},
+{c:"生",p:"shēng",m:"나다, 살다; 학생",lvl:"1-2",w:[["生","shēng"],["学生","xuéshēng"],["先生","xiānsheng"]]},
+{c:"十",p:"shí",m:"열, 10",lvl:"1-2",w:[["十","shí"],["三十","sān shí"],["十六","shí liù"]]},
+{c:"时",p:"shí",m:"때, 시간",lvl:"1-2",w:[["时","shí"],["时候","shíhou"],["时间","shíjiān"]]},
+{c:"是",p:"shì",m:"~이다, 맞다",lvl:"1-2",w:[["是","shì"],["但是","dànshì"],["还是","háishi"]]},
+{c:"书",p:"shū",m:"책; 쓰다",lvl:"1-2",w:[["书","shū"],["书店","shūdiàn"],["读书","dúshū"]]},
+{c:"说",p:"shuō",m:"말하다; (shuì) 설득하다",lvl:"1-2",w:[["说","shuō"],["说话","shuōhuà"],["听说","tīngshuō"]]},
+{c:"四",p:"sì",m:"넷, 4",lvl:"1-2",w:[["四","sì"],["四十","sì shí"],["四月","sì yuè"]]},
+{c:"岁",p:"suì",m:"살 (나이)",lvl:"1-2",w:[["岁","suì"],["几岁","jǐ suì"],["十岁","shí suì"]]},
+{c:"他",p:"tā",m:"그, 그 남자",lvl:"1-2",w:[["他","tā"],["他们","tāmen"],["其他","qítā"]]},
+{c:"她",p:"tā",m:"그녀",lvl:"1-2",w:[["她","tā"],["她们","tāmen"]]},
+{c:"天",p:"tiān",m:"하늘, 날",lvl:"1-2",w:[["天","tiān"],["天气","tiānqì"],["明天","míngtiān"]]},
+{c:"同",p:"tóng",m:"같다, 함께",lvl:"1-2",w:[["同学","tóngxué"],["同事","tóngshì"],["同意","tóngyì"]]},
+{c:"为",p:"wèi",m:"~을 위해; (wéi) ~이다, 되다",lvl:"1-2",w:[["为","wèi"],["因为","yīnwèi"],["为什么","wèi shénme"]]},
+{c:"文",p:"wén",m:"글, 문",lvl:"1-2",w:[["中文","Zhōngwén"],["文化","wénhuà"],["课文","kèwén"]]},
+{c:"我",p:"wǒ",m:"나",lvl:"1-2",w:[["我","wǒ"],["我们","wǒmen"]]},
+{c:"五",p:"wǔ",m:"다섯, 5",lvl:"1-2",w:[["五","wǔ"],["五十","wǔ shí"],["五月","wǔ yuè"]]},
+{c:"午",p:"wǔ",m:"정오, 낮 열두 시",lvl:"1-2",w:[["午饭","wǔfàn"],["上午","shàngwǔ"],["下午","xiàwǔ"]]},
+{c:"习",p:"xí",m:"익히다, 배우다",lvl:"1-2",w:[["学习","xuéxí"],["习惯","xíguàn"],["复习","fùxí"]]},
+{c:"下",p:"xià",m:"아래, 내리다",lvl:"1-2",w:[["下","xià"],["下班","xiàbān"],["下课","xiàkè"]]},
+{c:"小",p:"xiǎo",m:"작다, 어리다",lvl:"1-2",w:[["小","xiǎo"],["小时","xiǎoshí"],["小学","xiǎoxué"]]},
+{c:"现",p:"xiàn",m:"나타나다, 현재",lvl:"1-2",w:[["现在","xiànzài"],["发现","fāxiàn"]]},
+{c:"写",p:"xiě",m:"쓰다, 베껴 쓰다",lvl:"1-2",w:[["写","xiě"],["写作","xiězuò"]]},
+{c:"学",p:"xué",m:"배우다, 학문",lvl:"1-2",w:[["学","xué"],["学生","xuéshēng"],["学习","xuéxí"]]},
+{c:"要",p:"yào",m:"필요하다, ~할 것이다; (yāo) 요구하다",lvl:"1-2",w:[["要","yào"],["不要","búyào"],["快要","kuàiyào"]]},
+{c:"也",p:"yě",m:"~도, 역시",lvl:"1-2",w:[["也","yě"],["也好","yěhǎo"]]},
+{c:"一",p:"yī",m:"하나, 1; (yí·yì) 성조 변화",lvl:"1-2",w:[["一","yī"],["一起","yìqǐ"],["一些","yìxiē"]]},
+{c:"以",p:"yǐ",m:"~으로, ~을 가지고",lvl:"1-2",w:[["可以","kěyǐ"],["所以","suǒyǐ"],["以后","yǐhòu"]]},
+{c:"有",p:"yǒu",m:"있다, 가지다",lvl:"1-2",w:[["有","yǒu"],["有的","yǒude"],["没有","méiyǒu"]]},
+{c:"语",p:"yǔ",m:"말, 언어",lvl:"1-2",w:[["汉语","Hànyǔ"],["语言","yǔyán"],["外语","wàiyǔ"]]},
+{c:"月",p:"yuè",m:"달, 월",lvl:"1-2",w:[["月","yuè"],["月亮","yuèliang"],["几月","jǐ yuè"]]},
+{c:"在",p:"zài",m:"있다, ~에서",lvl:"1-2",w:[["在","zài"],["现在","xiànzài"],["正在","zhèngzài"]]},
+{c:"长",p:"cháng",m:"길다; (zhǎng) 자라다, 어른",lvl:"1-2",w:[["长","cháng"],["校长","xiàozhǎng"],["长大","zhǎng dà"]]},
+{c:"这",p:"zhè",m:"이, 이것",lvl:"1-2",w:[["这","zhè"],["这个","zhè ge"],["这边","zhèbiān"]]},
+{c:"中",p:"zhōng",m:"가운데, 중국",lvl:"1-2",w:[["中国","Zhōngguó"],["中文","Zhōngwén"],["中午","zhōngwǔ"]]},
+{c:"子",p:"zi",m:"(접미사) ~자",lvl:"1-2",w:[["儿子","érzi"],["椅子","yǐzi"],["桌子","zhuōzi"]]},
+{c:"女",p:"nǚ",m:"여자, 딸",lvl:"1-2",w:[["女","nǚ"],["女儿","nǚ’ér"],["女士","nǚshì"]]},
+{c:"字",p:"zì",m:"글자",lvl:"1-2",w:[["字","zì"],["名字","míngzi"],["汉字","Hànzì"]]},
+{c:"作",p:"zuò",m:"하다, 짓다; 작품",lvl:"1-2",w:[["工作","gōngzuò"],["作业","zuòyè"],["作家","zuòjiā"]]},
+{c:"安",p:"ān",m:"편안하다, 안전하다",lvl:"3",w:[["安","ān"],["安静","ānjìng"],["安全","ānquán"]]},
+{c:"把",p:"bǎ",m:"(전치사) ~을; 자루 (양사)",lvl:"3",w:[["把","bǎ"],["把手","bǎshou"]]},
+{c:"般",p:"bān",m:"종류, ~처럼",lvl:"3",w:[["一般","yìbān"],["这般","zhè bān"],["那般","nà bān"]]},
+{c:"板",p:"bǎn",m:"널빤지, 판",lvl:"3",w:[["黑板","hēibǎn"],["老板","lǎobǎn"]]},
+{c:"办",p:"bàn",m:"처리하다, 하다",lvl:"3",w:[["办","bàn"],["办法","bànfǎ"],["办公室","bàngōngshì"]]},
+{c:"饱",p:"bǎo",m:"배부르다",lvl:"3",w:[["饱","bǎo"],["吃饱","chī bǎo"],["饱和","bǎohé"]]},
+{c:"报",p:"bào",m:"신고하다; 신문",lvl:"3",w:[["报","bào"],["报纸","bàozhǐ"],["报名","bàomíng"]]},
+{c:"北",p:"běi",m:"북, 북쪽",lvl:"3",w:[["北","běi"],["北方","běifāng"],["东北","dōngběi"]]},
+{c:"被",p:"bèi",m:"(피동) ~에게; 이불",lvl:"3",w:[["被","bèi"],["被子","bèizi"],["被动","bèidòng"]]},
+{c:"必",p:"bì",m:"반드시, 꼭",lvl:"3",w:[["必","bì"],["必须","bìxū"],["不必","búbì"]]},
+{c:"变",p:"biàn",m:"변하다, 바뀌다",lvl:"3",w:[["变","biàn"],["变成","biànchéng"],["变化","biànhuà"]]},
+{c:"冰",p:"bīng",m:"얼음; 차갑다",lvl:"3",w:[["冰","bīng"],["冰箱","bīngxiāng"],["冰激凌","bīngjīlíng"]]},
+{c:"才",p:"cái",m:"겨우, 비로소; 재능",lvl:"3",w:[["才","cái"],["刚才","gāngcái"],["人才","réncái"]]},
+{c:"参",p:"cān",m:"참여하다; (shēn) 인삼",lvl:"3",w:[["参加","cānjiā"],["参观","cānguān"],["参考","cānkǎo"]]},
+{c:"草",p:"cǎo",m:"풀, 초",lvl:"3",w:[["草","cǎo"],["草地","cǎodì"]]},
+{c:"层",p:"céng",m:"층, 겹",lvl:"3",w:[["层","céng"],["楼层","lóu céng"]]},
+{c:"查",p:"chá",m:"조사하다, 찾아보다",lvl:"3",w:[["查","chá"],["检查","jiǎnchá"],["查找","cházhǎo"]]},
+{c:"差",p:"chà",m:"다르다, 나쁘다; (chā) 차이; (chāi) 출장(出差)",lvl:"3",w:[["差","chà"],["差不多","chàbuduō"],["出差","chūchāi"]]},
+{c:"成",p:"chéng",m:"이루다, 되다",lvl:"3",w:[["成绩","chéngjì"],["变成","biànchéng"],["完成","wánchéng"]]},
+{c:"城",p:"chéng",m:"성, 도시",lvl:"3",w:[["城市","chéngshì"],["长城","Chángchéng"]]},
+{c:"除",p:"chú",m:"제거하다, 빼다",lvl:"3",w:[["除","chú"],["除了","chúle"]]},
+{c:"处",p:"chù",m:"곳; (chǔ) 처리하다",lvl:"3",w:[["到处","dàochù"],["好处","hǎochù"],["坏处","huàichù"]]},
+{c:"春",p:"chūn",m:"봄",lvl:"3",w:[["春天","chūntiān"],["春节","Chūnjié"]]},
+{c:"答",p:"dá",m:"대답하다; (dā) 응답하다",lvl:"3",w:[["答","dá"],["回答","huídá"],["答应","dāying"]]},
+{c:"带",p:"dài",m:"가지고 다니다; 띠",lvl:"3",w:[["带","dài"],["带来","dài lái"],["皮带","pídài"]]},
+{c:"单",p:"dān",m:"홑, 단일; (shàn) 성씨",lvl:"3",w:[["菜单","càidān"],["简单","jiǎndān"],["名单","míngdān"]]},
+{c:"当",p:"dāng",m:"~할 때, ~이 되다; (dàng) 여기다",lvl:"3",w:[["当","dāng"],["当然","dāngrán"],["当时","dāngshí"]]},
+{c:"灯",p:"dēng",m:"등, 전등",lvl:"3",w:[["灯","dēng"],["红绿灯","hóng-lǜdēng"],["开灯","kāi dēng"]]},
+{c:"典",p:"diǎn",m:"전(책), 법칙",lvl:"3",w:[["词典","cídiǎn"],["字典","zìdiǎn"],["经典","jīngdiǎn"]]},
+{c:"调",p:"diào",m:"조사하다, 옮기다; (tiáo) 조절하다",lvl:"3",w:[["空调","kōngtiáo"],["调查","diàochá"],["调整","tiáozhěng"]]},
+{c:"定",p:"dìng",m:"정하다, 정해지다",lvl:"3",w:[["定","dìng"],["一定","yídìng"],["决定","juédìng"]]},
+{c:"丢",p:"diū",m:"잃어버리다, 버리다",lvl:"3",w:[["丢","diū"],["丢人","diūrén"]]},
+{c:"冬",p:"dōng",m:"겨울",lvl:"3",w:[["冬天","dōngtiān"],["冬季","dōngjì"]]},
+{c:"段",p:"duàn",m:"단, 구간",lvl:"3",w:[["段","duàn"],["一段","yí duàn"],["手段","shǒuduàn"]]},
+{c:"而",p:"ér",m:"그리고, 그러나",lvl:"3",w:[["而","ér"],["而且","érqiě"],["然而","rán’ér"]]},
+{c:"耳",p:"ěr",m:"귀",lvl:"3",w:[["耳朵","ěrduo"],["耳机","ěrjī"]]},
+{c:"发",p:"fā",m:"보내다, 나다; (fà) 머리카락",lvl:"3",w:[["发","fā"],["发烧","fāshāo"],["发生","fāshēng"]]},
+{c:"法",p:"fǎ",m:"법, 방법",lvl:"3",w:[["法","fǎ"],["办法","bànfǎ"],["方法","fāngfǎ"]]},
+{c:"方",p:"fāng",m:"방향, 방법; 네모",lvl:"3",w:[["方便","fāngbiàn"],["方法","fāngfǎ"],["方向","fāngxiàng"]]},
+{c:"放",p:"fàng",m:"놓다, 놓아주다",lvl:"3",w:[["放","fàng"],["放假","fàngjià"],["放心","fàngxīn"]]},
+{c:"风",p:"fēng",m:"바람",lvl:"3",w:[["风","fēng"],["大风","dàfēng"],["刮风","guā fēng"]]},
+{c:"复",p:"fù",m:"다시, 회복하다",lvl:"3",w:[["复习","fùxí"],["回复","huífù"],["重复","chóngfù"]]},
+{c:"该",p:"gāi",m:"~해야 한다, 마땅히",lvl:"3",w:[["该","gāi"],["应该","yīnggāi"],["不该","bù gāi"]]},
+{c:"干",p:"gān",m:"마르다; (gàn) 하다, 일",lvl:"3",w:[["干","gān"],["干净","gānjìng"],["干杯","gānbēi"]]},
+{c:"刚",p:"gāng",m:"방금, 막",lvl:"3",w:[["刚","gāng"],["刚才","gāngcái"],["刚刚","gānggāng"]]},
+{c:"更",p:"gèng",m:"더, 더욱; (gēng) 바꾸다",lvl:"3",w:[["更","gèng"],["更加","gèngjiā"],["更换","gēnghuàn"]]},
+{c:"共",p:"gòng",m:"함께, 모두",lvl:"3",w:[["共","gòng"],["一共","yígòng"],["共同","gòngtóng"]]},
+{c:"故",p:"gù",m:"까닭, 옛; 일부러",lvl:"3",w:[["故事","gùshi"],["故意","gùyì"]]},
+{c:"瓜",p:"guā",m:"오이·참외·수박류",lvl:"3",w:[["西瓜","xīguā"],["冬瓜","dōngguā"],["黄瓜","huángguā"]]},
+{c:"海",p:"hǎi",m:"바다",lvl:"3",w:[["海","hǎi"],["大海","dàhǎi"],["海边","hǎibiān"]]},
+{c:"合",p:"hé",m:"합하다, 맞다",lvl:"3",w:[["合","hé"],["合适","héshì"],["适合","shìhé"]]},
+{c:"河",p:"hé",m:"강, 하천",lvl:"3",w:[["河","hé"],["河边","hébiān"]]},
+{c:"护",p:"hù",m:"보호하다, 돕다",lvl:"3",w:[["护","hù"],["护照","hùzhào"],["护士","hùshi"]]},
+{c:"化",p:"huà",m:"되다, 변화하다; ~화",lvl:"3",w:[["化","huà"],["变化","biànhuà"],["文化","wénhuà"]]},
+{c:"换",p:"huàn",m:"바꾸다, 교환하다",lvl:"3",w:[["换","huàn"],["换钱","huàn qián"],["交换","jiāohuàn"]]},
+{c:"活",p:"huó",m:"살다; 일, 활동",lvl:"3",w:[["活","huó"],["生活","shēnghuó"],["活动","huódòng"]]},
+{c:"或",p:"huò",m:"혹은, 또는",lvl:"3",w:[["或","huò"],["或者","huòzhě"]]},
+{c:"级",p:"jí",m:"급, 등급",lvl:"3",w:[["级","jí"],["年级","niánjí"],["班级","bānjí"]]},
+{c:"急",p:"jí",m:"급하다, 조급하다",lvl:"3",w:[["急","jí"],["着急","zháojí"],["急忙","jímáng"]]},
+{c:"加",p:"jiā",m:"더하다, 추가하다",lvl:"3",w:[["加","jiā"],["参加","cānjiā"],["加上","jiāshàng"]]},
+{c:"假",p:"jiǎ",m:"가짜, 거짓; (jià) 휴가",lvl:"3",w:[["假","jiǎ"],["放假","fàngjià"],["假期","jiàqī"]]},
+{c:"讲",p:"jiǎng",m:"말하다, 강의하다",lvl:"3",w:[["讲","jiǎng"],["讲课","jiǎng kè"],["讲话","jiǎnghuà"]]},
+{c:"角",p:"jiǎo",m:"뿔, 각도; (jué) 역할",lvl:"3",w:[["角","jiǎo"],["三角形","sānjiǎoxíng"],["角色","juésè"]]},
+{c:"饺",p:"jiǎo",m:"만두",lvl:"3",w:[["饺子","jiǎozi"],["水饺","shuǐjiǎo"]]},
+{c:"节",p:"jié",m:"마디, 명절; 절약하다",lvl:"3",w:[["节","jié"],["节日","jiérì"],["节目","jiémù"]]},
+{c:"结",p:"jié",m:"맺다, 끝나다; (jiē) 열매 맺다",lvl:"3",w:[["结","jié"],["结婚","jiéhūn"],["结束","jiéshù"]]},
+{c:"借",p:"jiè",m:"빌리다, 빌려주다",lvl:"3",w:[["借","jiè"],["借钱","jiè qián"],["借书","jiè shū"]]},
+{c:"斤",p:"jīn",m:"근 (500g)",lvl:"3",w:[["斤","jīn"],["公斤","gōngjīn"],["半斤","bàn jīn"]]},
+{c:"净",p:"jìng",m:"깨끗하다, 순수하다",lvl:"3",w:[["净","jìng"],["干净","gānjìng"]]},
+{c:"久",p:"jiǔ",m:"오래다",lvl:"3",w:[["久","jiǔ"],["不久","bùjiǔ"],["好久","hǎojiǔ"]]},
+{c:"句",p:"jù",m:"문장, 마디",lvl:"3",w:[["句","jù"],["句子","jùzi"],["一句话","yí jù huà"]]},
+{c:"卡",p:"kǎ",m:"카드; (qiǎ) 끼다, 멈추다",lvl:"3",w:[["卡","kǎ"],["信用卡","xìnyòngkǎ"],["银行卡","yínhángkǎ"]]},
+{c:"渴",p:"kě",m:"목마르다",lvl:"3",w:[["渴","kě"],["口渴","kǒu kě"]]},
+{c:"刻",p:"kè",m:"새기다; ~분(15분)",lvl:"3",w:[["刻","kè"],["时刻","shíkè"],["片刻","piànkè"]]},
+{c:"空",p:"kōng",m:"비다, 하늘; (kòng) 틈, 빈 자리",lvl:"3",w:[["空","kōng"],["空调","kōngtiáo"],["空气","kōngqì"]]},
+{c:"哭",p:"kū",m:"울다",lvl:"3",w:[["哭","kū"],["大哭","dà kū"]]},
+{c:"礼",p:"lǐ",m:"예의, 선물",lvl:"3",w:[["礼物","lǐwù"],["婚礼","hūnlǐ"],["典礼","diǎnlǐ"]]},
+{c:"李",p:"lǐ",m:"오얏나무; 성씨 이",lvl:"3",w:[["李","Lǐ"],["行李","xíngli"],["姓李","xìng Lǐ"]]},
+{c:"力",p:"lì",m:"힘, 능력",lvl:"3",w:[["力","lì"],["努力","nǔlì"],["力气","lìqi"]]},
+{c:"练",p:"liàn",m:"연습하다, 단련하다",lvl:"3",w:[["练","liàn"],["练习","liànxí"],["教练","jiàoliàn"]]},
+{c:"凉",p:"liáng",m:"서늘하다, 시원하다",lvl:"3",w:[["凉","liáng"],["凉快","liángkuai"],["着凉","zháoliáng"]]},
+{c:"马",p:"mǎ",m:"말 (동물)",lvl:"3",w:[["马","mǎ"],["马路","mǎlù"],["马上","mǎshàng"]]},
+{c:"毛",p:"máo",m:"털, 깃; 모(10전)",lvl:"3",w:[["毛","máo"],["羽毛球","yǔmáoqiú"],["毛衣","máoyī"]]},
+{c:"目",p:"mù",m:"눈; 목록, 항목",lvl:"3",w:[["目","mù"],["节目","jiémù"],["目前","mùqián"]]},
+{c:"南",p:"nán",m:"남, 남쪽",lvl:"3",w:[["南","nán"],["南方","nánfāng"],["东南","dōngnán"]]},
+{c:"难",p:"nán",m:"어렵다; (nàn) 재난",lvl:"3",w:[["难","nán"],["难过","nánguò"],["难题","nántí"]]},
+{c:"努",p:"nǔ",m:"힘쓰다, 애쓰다",lvl:"3",w:[["努","nǔ"],["努力","nǔlì"]]},
+{c:"怕",p:"pà",m:"두려워하다, 무섭다",lvl:"3",w:[["怕","pà"],["害怕","hàipà"],["可怕","kěpà"]]},
+{c:"胖",p:"pàng",m:"뚱뚱하다",lvl:"3",w:[["胖","pàng"],["发胖","fā pàng"],["胖子","pàngzi"]]},
+{c:"片",p:"piàn",m:"조각, 편; 엽서·사진",lvl:"3",w:[["片","piàn"],["照片","zhàopiàn"],["图片","túpiàn"]]},
+{c:"平",p:"píng",m:"평평하다, 평등하다",lvl:"3",w:[["平","píng"],["平时","píngshí"],["水平","shuǐpíng"]]},
+{c:"瓶",p:"píng",m:"병",lvl:"3",w:[["瓶","píng"],["瓶子","píngzi"],["一瓶","yì píng"]]},
+{c:"其",p:"qí",m:"그, 그것; 그중",lvl:"3",w:[["其","qí"],["其他","qítā"],["其实","qíshí"]]},
+{c:"汽",p:"qì",m:"증기, 기",lvl:"3",w:[["汽","qì"],["汽车","qìchē"],["汽水","qìshuǐ"]]},
+{c:"且",p:"qiě",m:"또한, 게다가",lvl:"3",w:[["且","qiě"],["而且","érqiě"],["并且","bìngqiě"]]},
+{c:"轻",p:"qīng",m:"가볍다, 가볍게",lvl:"3",w:[["轻","qīng"],["年轻","niánqīng"],["轻易","qīngyì"]]},
+{c:"秋",p:"qiū",m:"가을",lvl:"3",w:[["秋天","qiūtiān"],["秋季","qiūjì"]]},
+{c:"求",p:"qiú",m:"구하다, 청하다",lvl:"3",w:[["求","qiú"],["要求","yāoqiú"],["请求","qǐngqiú"]]},
+{c:"区",p:"qū",m:"구역, 지역",lvl:"3",w:[["区","qū"],["小区","xiǎoqū"],["区别","qūbié"]]},
+{c:"全",p:"quán",m:"전부, 온전하다",lvl:"3",w:[["全","quán"],["安全","ānquán"],["全球","quánqiú"]]},
+{c:"如",p:"rú",m:"같다, 만약",lvl:"3",w:[["如","rú"],["如果","rúguǒ"],["比如","bǐrú"]]},
+{c:"伞",p:"sǎn",m:"우산",lvl:"3",w:[["伞","sǎn"],["雨伞","yǔsǎn"],["打伞","dǎ sǎn"]]},
+{c:"山",p:"shān",m:"산",lvl:"3",w:[["山","shān"],["爬山","pá shān"],["山区","shānqū"]]},
+{c:"勺",p:"sháo",m:"숟가락; 한 숟가락",lvl:"3",w:[["勺","sháo"],["勺子","sháozi"]]},
+{c:"声",p:"shēng",m:"소리, 목소리",lvl:"3",w:[["声","shēng"],["声音","shēngyīn"],["大声","dà shēng"]]},
+{c:"实",p:"shí",m:"실하다, 실제; 열매",lvl:"3",w:[["实","shí"],["其实","qíshí"],["实在","shízài"]]},
+{c:"适",p:"shì",m:"적합하다, 알맞다",lvl:"3",w:[["适","shì"],["合适","héshì"],["适合","shìhé"]]},
+{c:"收",p:"shōu",m:"받다, 거두다, 수입",lvl:"3",w:[["收","shōu"],["收到","shōudào"],["收听","shōutīng"]]},
+{c:"受",p:"shòu",m:"받다, 당하다",lvl:"3",w:[["受","shòu"],["受到","shòudào"],["感受","gǎnshòu"]]},
+{c:"树",p:"shù",m:"나무; 세우다",lvl:"3",w:[["树","shù"],["大树","dàshù"],["树叶","shùyè"]]},
+{c:"特",p:"tè",m:"특별하다, 특히",lvl:"3",w:[["特","tè"],["特别","tèbié"],["特点","tèdiǎn"]]},
+{c:"挺",p:"tǐng",m:"꽤, 상당히; 곧게 펴다",lvl:"3",w:[["挺","tǐng"],["挺好","tǐng hǎo"]]},
+{c:"图",p:"tú",m:"그림, 지도; 도모하다",lvl:"3",w:[["图","tú"],["地图","dìtú"],["图书馆","túshūguǎn"]]},
+{c:"闻",p:"wén",m:"듣다, 냄새 맡다",lvl:"3",w:[["闻","wén"],["新闻","xīnwén"],["闻名","wénmíng"]]},
+{c:"务",p:"wù",m:"일, 업무; 힘쓰다",lvl:"3",w:[["务","wù"],["服务","fúwù"],["业务","yèwù"]]},
+{c:"物",p:"wù",m:"물건, 사물",lvl:"3",w:[["物","wù"],["动物","dòngwù"],["礼物","lǐwù"]]},
+{c:"夏",p:"xià",m:"여름",lvl:"3",w:[["夏天","xiàtiān"],["夏季","xiàjì"]]},
+{c:"相",p:"xiāng",m:"서로; (xiàng) 모양, 사진",lvl:"3",w:[["相","xiāng"],["相信","xiāngxìn"],["照相","zhàoxiàng"]]},
+{c:"香",p:"xiāng",m:"향기롭다, 맛있다",lvl:"3",w:[["香","xiāng"],["香蕉","xiāngjiāo"],["香水","xiāngshuǐ"]]},
+{c:"响",p:"xiǎng",m:"소리 나다, 울리다",lvl:"3",w:[["响","xiǎng"],["影响","yǐngxiǎng"],["响声","xiǎngshēng"]]},
+{c:"向",p:"xiàng",m:"향하다, ~에게",lvl:"3",w:[["向","xiàng"],["方向","fāngxiàng"],["向上","xiàngshàng"]]},
+{c:"心",p:"xīn",m:"마음, 심장",lvl:"3",w:[["心","xīn"],["担心","dānxīn"],["放心","fàngxīn"]]},
+{c:"信",p:"xìn",m:"믿다; 편지",lvl:"3",w:[["信","xìn"],["相信","xiāngxìn"],["信用卡","xìnyòngkǎ"]]},
+{c:"行",p:"xíng",m:"가다, 괜찮다; (háng) 줄, 업종",lvl:"3",w:[["行","xíng"],["不行","bùxíng"],["行李","xíngli"]]},
+{c:"须",p:"xū",m:"반드시 ~해야 한다; 수염",lvl:"3",w:[["须","xū"],["必须","bìxū"],["须知","xūzhī"]]},
+{c:"选",p:"xuǎn",m:"고르다, 선택하다",lvl:"3",w:[["选","xuǎn"],["选择","xuǎnzé"],["选手","xuǎnshǒu"]]},
+{c:"牙",p:"yá",m:"이, 치아",lvl:"3",w:[["牙","yá"],["牙刷","yáshuā"],["牙医","yáyī"]]},
+{c:"言",p:"yán",m:"말, 말하다",lvl:"3",w:[["言","yán"],["语言","yǔyán"],["发言","fāyán"]]},
+{c:"羊",p:"yáng",m:"양",lvl:"3",w:[["羊","yáng"],["羊肉","yángròu"],["小羊","xiǎo yáng"]]},
+{c:"阳",p:"yáng",m:"볕, 태양; 양(음양)",lvl:"3",w:[["阳","yáng"],["太阳","tàiyáng"],["阳台","yángtái"]]},
+{c:"养",p:"yǎng",m:"기르다, 양육하다",lvl:"3",w:[["养","yǎng"],["养花","yǎng huā"],["养成","yǎngchéng"]]},
+{c:"业",p:"yè",m:"업, 일; 업적",lvl:"3",w:[["业","yè"],["作业","zuòyè"],["业务","yèwù"]]},
+{c:"页",p:"yè",m:"쪽, 페이지",lvl:"3",w:[["页","yè"],["网页","wǎngyè"],["主页","zhǔyè"]]},
+{c:"音",p:"yīn",m:"소리, 음",lvl:"3",w:[["音","yīn"],["音乐","yīnyuè"],["声音","shēngyīn"]]},
+{c:"饮",p:"yǐn",m:"마시다; (yìn) 물을 먹이다",lvl:"3",w:[["饮","yǐn"],["饮料","yǐnliào"],["饮食","yǐnshí"]]},
+{c:"应",p:"yīng",m:"마땅히 ~해야; (yìng) 응하다",lvl:"3",w:[["应该","yīnggāi"],["答应","dāying"]]},
+{c:"用",p:"yòng",m:"쓰다, 사용하다",lvl:"3",w:[["用","yòng"],["不用","búyòng"],["有用","yǒuyòng"]]},
+{c:"又",p:"yòu",m:"또, 다시",lvl:"3",w:[["又","yòu"],["又一次","yòu yí cì"]]},
+{c:"于",p:"yú",m:"~에, ~에서, ~보다",lvl:"3",w:[["于","yú"],["关于","guānyú"],["终于","zhōngyú"]]},
+{c:"育",p:"yù",m:"기르다, 교육하다",lvl:"3",w:[["育","yù"],["体育","tǐyù"],["体育馆","tǐyùguǎn"]]},
+{c:"咱",p:"zán",m:"우리",lvl:"3",w:[["咱","zán"],["咱们","zánmen"],["咱俩","zán liǎ"]]},
+{c:"张",p:"zhāng",m:"장 (양사); 펴다; 성씨 장",lvl:"3",w:[["张","zhāng"],["一张","yì zhāng"],["主张","zhǔzhāng"]]},
+{c:"者",p:"zhě",m:"~하는 사람, ~자",lvl:"3",w:[["者","zhě"],["或者","huòzhě"],["作者","zuòzhě"]]},
+{c:"直",p:"zhí",m:"곧다, 곧장, 계속",lvl:"3",w:[["直","zhí"],["一直","yìzhí"],["直到","zhídào"]]},
+{c:"纸",p:"zhǐ",m:"종이",lvl:"3",w:[["纸","zhǐ"],["报纸","bàozhǐ"],["白纸","bái zhǐ"]]},
+{c:"种",p:"zhǒng",m:"종류, 씨앗; (zhòng) 심다",lvl:"3",w:[["种","zhǒng"],["种子","zhǒngzi"],["种类","zhǒnglèi"]]},
+{c:"重",p:"zhòng",m:"무겁다, 중요하다; (chóng) 거듭",lvl:"3",w:[["重要","zhòngyào"],["重新","chóngxīn"],["体重","tǐzhòng"]]},
+{c:"主",p:"zhǔ",m:"주인, 주로; 주장하다",lvl:"3",w:[["主","zhǔ"],["主要","zhǔyào"],["主意","zhǔyi"]]},
+{c:"助",p:"zhù",m:"돕다, 원조하다",lvl:"3",w:[["助","zhù"],["帮助","bāngzhù"],["有助于","yǒuzhùyú"]]},
+{c:"总",p:"zǒng",m:"모두, 항상; 총",lvl:"3",w:[["总","zǒng"],["总是","zǒngshì"],["总结","zǒngjié"]]}];
+
+var LS_KEY = "xinhsk3_write_known_v1";
+var DAY_SIZE = 50;
+var QUIZ_LEN = 10;
+
+var LVL_LABEL = { "1-2": "1~2급", "3": "3급" };
+
+/* ── 2. 상태 ─────────────────────────────────────────────── */
+var state = {
+  lvl: "all",      // "all" | "1-2" | "3"
+  day: 0,          // 0 = 급수 전체, 1..n = 50자 단위
+  idx: 0,          // 현재 글자 위치 (현재 범위 안에서)
+  trace: true,
+  known: {},       // {한자: 1}
+  view: "write",
+  gridFilter: "all",
+  query: ""
+};
+
+/* ── 3. 순수 로직 (DOM 없이 동작) ─────────────────────────── */
+function levelOf(i){ var d = DATA[i]; return (d && d.lvl) ? d.lvl : (i < 100 ? "1-2" : "3"); }
+
+function scopeList(lvl, day){
+  var out = [], i, d = 1, n = 0;
+  lvl = lvl || "all";
+  day = day || 0;
+  for (i = 0; i < DATA.length; i++){
+    if (lvl !== "all" && levelOf(i) !== lvl) continue;
+    n++;
+    d = Math.floor((n - 1) / DAY_SIZE) + 1;
+    if (day > 0 && d !== day) continue;
+    out.push(i);
+  }
+  return out;
+}
+function dayCount(lvl){
+  var total = 0, i;
+  for (i = 0; i < DATA.length; i++) if (lvl === "all" || levelOf(i) === lvl) total++;
+  return Math.ceil(total / DAY_SIZE);
+}
+function globalIndexOf(ch){
+  for (var i = 0; i < DATA.length; i++) if (DATA[i].c === ch) return i;
+  return -1;
+}
+function indexInScope(ch){
+  var list = scopeList(state.lvl, state.day);
+  var g = globalIndexOf(ch);
+  return list.indexOf(g);
+}
+/* 검색: 한자 · 병음(성조 무시) · 한국어 뜻 */
+function searchList(query, filter, known){
+  var q = String(query || "").trim().toLowerCase();
+  var squeeze = function(s){
+    var t = String(s || "").toLowerCase().replace(/[\s'’\-]/g, "");
+    if (typeof t.normalize === "function"){
+      try { t = t.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); } catch (e) {}
+    }
+    return t;
+  };
+  var qq = squeeze(q);
+  var out = [];
+  for (var i = 0; i < DATA.length; i++){
+    var d = DATA[i], ok = true;
+    if (filter === "done" && !known[d.c]) ok = false;
+    if (filter === "todo" && known[d.c]) ok = false;
+    if (!ok) continue;
+    if (!qq) { out.push(i); continue; }
+    var hit = d.c.indexOf(q) >= 0 || squeeze(d.p).indexOf(qq) >= 0 || d.m.indexOf(q) >= 0;
+    if (!hit){
+      for (var j = 0; j < d.w.length; j++){
+        if (d.w[j][0].indexOf(q) >= 0 || squeeze(d.w[j][1]).indexOf(qq) >= 0) { hit = true; break; }
+      }
+    }
+    if (hit) out.push(i);
+  }
+  return out;
+}
+
+/* 획 기록: 점 배열의 배열 */
+function newStroke(p){ return [p]; }
+function pushPoint(stroke, p){ stroke.push(p); return stroke; }
+function undoStroke(strokes){ return strokes.slice(0, Math.max(0, strokes.length - 1)); }
+function clearStrokes(){ return []; }
+
+/* 저장 */
+function encodeKnown(known){
+  var out = [], k;
+  for (k in known) if (known[k]) out.push(k);
+  out.sort();
+  return JSON.stringify(out);
+}
+function decodeKnown(raw){
+  var out = {}, arr, i;
+  try { arr = JSON.parse(raw); } catch (e) { return out; }
+  if (Object.prototype.toString.call(arr) !== "[object Array]") return out;
+  for (i = 0; i < arr.length; i++){
+    if (typeof arr[i] === "string" && arr[i]) out[arr[i]] = 1;
+  }
+  return out;
+}
+function storageGet(key){
+  try { return window.localStorage.getItem(key); } catch (e) { return null; }
+}
+function storageSet(key, val){
+  try { window.localStorage.setItem(key, val); return true; } catch (e) { return false; }
+}
+
+/* 퀴즈 문항 만들기 */
+function shuffle(arr, rnd){
+  var a = arr.slice(), i, j, t;
+  rnd = rnd || Math.random;
+  for (i = a.length - 1; i > 0; i--){
+    j = Math.floor(rnd() * (i + 1));
+    t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function buildQuiz(pool, len, rnd){
+  rnd = rnd || Math.random;
+  pool = pool.slice();
+  len = Math.min(len || QUIZ_LEN, pool.length);
+  var picks = shuffle(pool, rnd).slice(0, len);
+  var qs = [], i;
+  for (i = 0; i < picks.length; i++){
+    var gi = picks[i], d = DATA[gi];
+    var type = (i % 2 === 0) ? "m2h" : "h2m";   // 병음+뜻 → 한자 / 한자 → 뜻
+    var opts = [], k, cand;
+    if (type === "m2h"){
+      opts.push(d.c);
+      var guard = 0;
+      while (opts.length < 4 && guard++ < 400){
+        cand = DATA[pool[Math.floor(rnd() * pool.length)]];
+        if (cand.c !== d.c && opts.indexOf(cand.c) < 0) opts.push(cand.c);
+      }
+    } else {
+      opts.push(d.m);
+      var guard2 = 0;
+      while (opts.length < 4 && guard2++ < 400){
+        cand = DATA[pool[Math.floor(rnd() * pool.length)]];
+        if (cand.m !== d.m && opts.indexOf(cand.m) < 0) opts.push(cand.m);
+      }
+    }
+    opts = shuffle(opts.slice(0, 4), rnd);
+    qs.push({ gi: gi, type: type, answer: (type === "m2h" ? d.c : d.m), opts: opts, picked: null });
+  }
+  return qs;
+}
+
+/* ── 4. DOM 준비 ─────────────────────────────────────────── */
+var el = {};
+var pad, pctx, padReady = false;
+var strokes = [];
+var drawing = false;
+var curStroke = null;
+var quiz = null, qIndex = 0, qScore = 0, quizRunning = false;
+var advanceTimer = null;
+
+function $(id){ return document.getElementById(id); }
+
+function toast(msg){
+  var t = el.toast;
+  if (!t) return;
+  t.textContent = msg;
+  t.className = "toast show";
+  clearTimeout(t._tm);
+  t._tm = setTimeout(function(){ t.className = "toast"; }, 1800);
+}
+
+/* ── 5. 저장/진행률 ───────────────────────────────────────── */
+function loadKnown(){
+  state.known = decodeKnown(storageGet(LS_KEY));
+}
+function saveKnown(){
+  if (!storageSet(LS_KEY, encodeKnown(state.known))) {
+    // 저장 실패(사생활 보호 모드 등)해도 학습은 계속되도록 조용히 넘어간다
+  }
+  updateProgress();
+  if (state.view === "grid") renderGrid();
+}
+function updateProgress(){
+  var done = 0, i;
+  for (i = 0; i < DATA.length; i++) if (state.known[DATA[i].c]) done++;
+  var pct = Math.round(done / DATA.length * 100);
+  if (el.progBar) el.progBar.style.width = pct + "%";
+  if (el.progTxt) el.progTxt.textContent = "연습 완료 " + done + "자 / " + DATA.length + "자";
+  if (el.progPct) el.progPct.textContent = pct + "%";
+}
+
+/* ── 6. 필터 UI ──────────────────────────────────────────── */
+function renderDayRow(){
+  var n = dayCount(state.lvl), html = "", d;
+  html += '<button class="pill' + (state.day === 0 ? " active" : "") + '" data-day="0">전체</button>';
+  for (d = 1; d <= n; d++){
+    var from = (d - 1) * DAY_SIZE + 1;
+    var to = Math.min(d * DAY_SIZE, scopeList(state.lvl, 0).length);
+    html += '<button class="pill' + (state.day === d ? " active" : "") + '" data-day="' + d + '">Day ' + d + ' (' + from + "~" + to + ")</button>";
+  }
+  el.dayRow.innerHTML = html;
+}
+function setLevel(lvl){
+  state.lvl = lvl;
+  state.day = 0;
+  var pills = el.lvlRow.querySelectorAll(".pill"), i;
+  for (i = 0; i < pills.length; i++) pills[i].className = "pill" + (pills[i].getAttribute("data-lvl") === lvl ? " active" : "");
+  renderDayRow();
+  resetScope();
+}
+function setDay(day){
+  state.day = day;
+  var pills = el.dayRow.querySelectorAll(".pill"), i;
+  for (i = 0; i < pills.length; i++) pills[i].className = "pill" + (Number(pills[i].getAttribute("data-day")) === day ? " active" : "");
+  resetScope();
+}
+function resetScope(){
+  var list = scopeList(state.lvl, state.day);
+  state.idx = 0;
+  strokes = clearStrokes();
+  showChar(list.length ? list[0] : 0);
+  if (state.view === "quiz") startQuiz();
+}
+
+/* ── 7. 쓰기 화면 ─────────────────────────────────────────── */
+function currentGlobal(){
+  var list = scopeList(state.lvl, state.day);
+  if (!list.length) return 0;
+  if (state.idx < 0) state.idx = 0;
+  if (state.idx >= list.length) state.idx = list.length - 1;
+  return list[state.idx];
+}
+function showChar(gi){
+  var d = DATA[gi];
+  if (!d) return;
+  if (advanceTimer){ clearTimeout(advanceTimer); advanceTimer = null; }
+  var list = scopeList(state.lvl, state.day);
+  var pos = list.indexOf(gi);
+  state.idx = pos < 0 ? 0 : pos;
+  el.wChar.textContent = d.c;
+  el.wPy.textContent = d.p;
+  el.wMean.textContent = d.m;
+  el.wLvl.textContent = LVL_LABEL[levelOf(gi)] + (state.known[d.c] ? " · 완료" : "");
+  el.wIdx.textContent = (state.idx + 1) + " / " + list.length;
+  var html = "", i;
+  for (i = 0; i < d.w.length; i++){
+    html += '<button class="wchip" data-w="' + d.w[i][0] + '"><b>' + d.w[i][0] + '</b><span>' + d.w[i][1] + "</span></button>";
+  }
+  el.wWords.innerHTML = html;
+  updateDoneBtn();
+  strokes = clearStrokes();
+  renderPad();
+}
+function updateDoneBtn(){
+  var d = DATA[currentGlobal()];
+  var done = d && state.known[d.c];
+  el.btnDone.className = "btn primary" + (done ? " done" : "");
+  el.btnDone.textContent = done ? "✅ 완료됨 (해제)" : "✅ 연습 완료";
+  el.wLvl.textContent = LVL_LABEL[levelOf(currentGlobal())] + (done ? " · 완료" : "");
+}
+function toggleDone(){
+  var d = DATA[currentGlobal()];
+  if (!d) return;
+  var wasDone = !!state.known[d.c];
+  if (wasDone) { delete state.known[d.c]; toast(d.c + " 완료를 해제했어요"); }
+  else { state.known[d.c] = 1; toast(d.c + " — 연습 완료!"); }
+  saveKnown();
+  updateDoneBtn();
+  if (state.view === "grid") renderGrid();
+  /* 방금 완료했다면 다음 글자로 자연스럽게 넘어간다 */
+  if (!wasDone && state.view === "write"){
+    var list = scopeList(state.lvl, state.day);
+    var pos = list.indexOf(currentGlobal());
+    if (pos >= 0 && pos < list.length - 1){
+      advanceTimer = setTimeout(function(){ advanceTimer = null; if (state.view === "write") moveChar(1); }, 420);
+    }
+  }
+}
+function moveChar(delta){
+  var list = scopeList(state.lvl, state.day);
+  var pos = list.indexOf(currentGlobal());
+  var next = pos + delta;
+  if (next < 0 || next >= list.length){
+    toast(delta < 0 ? "이 범위의 첫 글자예요" : "이 범위의 마지막 글자예요");
+    return;
+  }
+  state.idx = next;
+  showChar(list[next]);
+}
+function speak(text){
+  try {
+    if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) { toast("이 기기에서는 음성 재생이 지원되지 않아요"); return; }
+    window.speechSynthesis.cancel();
+    var u = new window.SpeechSynthesisUtterance(text || DATA[currentGlobal()].c);
+    u.lang = "zh-CN";
+    u.rate = 0.75;
+    window.speechSynthesis.speak(u);
+  } catch (e) { toast("음성을 재생할 수 없어요"); }
+}
+
+/* ── 8. 田자 칸 캔버스 ───────────────────────────────────── */
+function padSize(){
+  var wrap = pad.parentNode;
+  var w = (wrap && wrap.clientWidth) || 320;
+  return Math.max(220, Math.min(w, 360));
+}
+function setupPad(){
+  var s = padSize();
+  var dpr = window.devicePixelRatio || 1;
+  pad.style.width = s + "px";
+  pad.style.height = s + "px";
+  pad.width = Math.round(s * dpr);
+  pad.height = Math.round(s * dpr);
+  pctx = pad.getContext("2d");
+  if (pctx && pctx.setTransform) pctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  padReady = true;
+  renderPad();
+}
+function renderPad(){
+  if (!padReady || !pctx) return;
+  var S = pad.clientWidth || padSize();
+  pctx.clearRect(0, 0, S, S);
+
+  /* 종이 */
+  pctx.fillStyle = "#fffdfa";
+  pctx.fillRect(0, 0, S, S);
+
+  /* 바깥 테두리 */
+  pctx.strokeStyle = "#d9bfa8";
+  pctx.lineWidth = 2;
+  pctx.strokeRect(1, 1, S - 2, S - 2);
+
+  /* 십자 보조선 */
+  pctx.setLineDash([6, 6]);
+  pctx.lineWidth = 1;
+  pctx.strokeStyle = "#dfc3aa";
+  pctx.beginPath();
+  pctx.moveTo(S / 2, 0); pctx.lineTo(S / 2, S);
+  pctx.moveTo(0, S / 2); pctx.lineTo(S, S / 2);
+  pctx.stroke();
+
+  /* 대각 점선 */
+  pctx.strokeStyle = "#ecdcc8";
+  pctx.beginPath();
+  pctx.moveTo(0, 0); pctx.lineTo(S, S);
+  pctx.moveTo(S, 0); pctx.lineTo(0, S);
+  pctx.stroke();
+  pctx.setLineDash([]);
+
+  /* 흐린 본보기 */
+  var d = DATA[currentGlobal()];
+  if (state.trace && d){
+    pctx.save();
+    pctx.fillStyle = "rgba(43,33,28,0.13)";
+    pctx.textAlign = "center";
+    pctx.textBaseline = "middle";
+    var fam = '"PingFang SC","Hiragino Sans GB","Noto Sans SC","Source Han Sans SC","Microsoft YaHei","Heiti SC",sans-serif';
+    pctx.font = "600 " + Math.round(S * 0.74) + "px " + fam;
+    pctx.fillText(d.c, S / 2, S * 0.53);
+    pctx.restore();
+  }
+
+  /* 손글씨 */
+  pctx.strokeStyle = "#2b211c";
+  pctx.lineWidth = Math.max(6, S * 0.05);
+  pctx.lineCap = "round";
+  pctx.lineJoin = "round";
+  for (var i = 0; i < strokes.length; i++) drawStroke(strokes[i], S);
+}
+/* 좌표는 칸 크기와 무관하도록 0~1 비율로 저장한다 (화면 회전·크기 변경에도 그림 유지) */
+function drawStroke(st, S){
+  if (!st || !st.length) return;
+  pctx.beginPath();
+  if (st.length === 1){
+    pctx.arc(st[0].x * S, st[0].y * S, Math.max(3, S * 0.025), 0, Math.PI * 2);
+    pctx.fillStyle = "#2b211c";
+    pctx.fill();
+    return;
+  }
+  pctx.moveTo(st[0].x * S, st[0].y * S);
+  for (var i = 1; i < st.length; i++) pctx.lineTo(st[i].x * S, st[i].y * S);
+  pctx.stroke();
+}
+function padPoint(ev){
+  var r = pad.getBoundingClientRect();
+  var w = r.width || padSize(), h = r.height || padSize();
+  var x = (ev && ev.clientX !== undefined ? ev.clientX : 0) - r.left;
+  var y = (ev && ev.clientY !== undefined ? ev.clientY : 0) - r.top;
+  return { x: Math.max(0, Math.min(1, x / w)), y: Math.max(0, Math.min(1, y / h)) };
+}
+function onDown(ev){
+  if (ev && ev.preventDefault) ev.preventDefault();
+  drawing = true;
+  curStroke = newStroke(padPoint(ev));
+  strokes.push(curStroke);
+  renderPad();
+}
+function onMove(ev){
+  if (!drawing || !curStroke) return;
+  if (ev && ev.preventDefault) ev.preventDefault();
+  var p = padPoint(ev);
+  var last = curStroke[curStroke.length - 1];
+  var S = pad.clientWidth || padSize();
+  var eps = 1.2 / S;
+  if (last && Math.abs(last.x - p.x) < eps && Math.abs(last.y - p.y) < eps) return;
+  pushPoint(curStroke, p);
+  /* 마지막 두 점만 이어 그려 반응을 빠르게 */
+  pctx.strokeStyle = "#2b211c";
+  pctx.lineWidth = Math.max(6, S * 0.05);
+  pctx.lineCap = "round";
+  pctx.lineJoin = "round";
+  pctx.beginPath();
+  pctx.moveTo(last.x * S, last.y * S);
+  pctx.lineTo(p.x * S, p.y * S);
+  pctx.stroke();
+}
+function onUp(ev){
+  if (!drawing) return;
+  drawing = false;
+  curStroke = null;
+  renderPad();
+}
+
+/* ── 9. 한자표 ───────────────────────────────────────────── */
+function renderGrid(){
+  var idxs = searchList(state.query, state.gridFilter, state.known);
+  var html = "", i;
+  for (i = 0; i < idxs.length; i++){
+    var gi = idxs[i], d = DATA[gi];
+    html += '<button class="cell' + (state.known[d.c] ? " done" : "") + (levelOf(gi) === "3" ? " lv3" : "") +
+      '" data-gi="' + gi + '"><i class="ck">✓</i><b>' + d.c + "</b><span>" + d.p + "</span></button>";
+  }
+  el.charGrid.innerHTML = html;
+  el.gridEmpty.style.display = idxs.length ? "none" : "block";
+  el.gridEmpty.textContent = state.query || state.gridFilter !== "all"
+    ? "조건에 맞는 한자가 없어요."
+    : "한자를 불러오지 못했어요.";
+}
+function jumpTo(gi){
+  showView("write");
+  var lvl = levelOf(gi);
+  if (state.lvl !== "all" && state.lvl !== lvl) { setLevel(lvl); }
+  /* 해당 급수 안에서 몇 번째인지 계산해 Day를 맞춘다 */
+  var posInLevel = 0, i;
+  for (i = 0; i < DATA.length; i++){
+    if (levelOf(i) === lvl){ if (i === gi) break; posInLevel++; }
+  }
+  var day = Math.floor(posInLevel / DAY_SIZE) + 1;
+  if (state.day !== 0 && state.day !== day){ state.day = day; renderDayRow(); }
+  state.idx = indexInScope(DATA[gi].c);
+  if (state.idx < 0) state.idx = 0;
+  showChar(gi);
+}
+
+/* ── 10. 퀴즈 ────────────────────────────────────────────── */
+function startQuiz(){
+  var pool = scopeList(state.lvl, state.day);
+  if (pool.length < 4){ toast("퀴즈를 풀 한자가 부족해요"); return; }
+  quiz = buildQuiz(pool, QUIZ_LEN, Math.random);
+  qIndex = 0; qScore = 0; quizRunning = true;
+  renderQuiz();
+}
+function renderQuiz(){
+  if (!quiz || !quiz.length){ el.quizBody.innerHTML = ""; return; }
+  if (qIndex >= quiz.length){ renderQuizResult(); return; }
+  var q = quiz[qIndex], d = DATA[q.gi];
+  el.qProg.textContent = (qIndex + 1) + " / " + quiz.length;
+  el.qScore.textContent = qScore + "점";
+  var head, opts = "", i;
+  if (q.type === "m2h"){
+    head = '<div class="qp">' + d.p + '</div><div class="qm">' + d.m + '</div><div class="qn">이 병음·뜻에 맞는 한자를 고르세요</div>';
+    for (i = 0; i < q.opts.length; i++){
+      opts += '<button class="opt" data-i="' + i + '"><span class="oh">' + q.opts[i] + "</span></button>";
+    }
+  } else {
+    head = '<div class="qz">' + d.c + '</div><div class="qn">이 한자의 뜻을 고르세요</div>';
+    for (i = 0; i < q.opts.length; i++){
+      opts += '<button class="opt" data-i="' + i + '">' + q.opts[i] + "</button>";
+    }
+  }
+  el.quizBody.innerHTML = '<div class="qprompt">' + head + '</div><div class="qopts">' + opts +
+    '</div><div class="qfb" id="qFb"></div>' +
+    '<div class="actions"><button class="btn ghost" id="qSkip">← 그만두기</button>' +
+    '<button class="btn primary" id="qNext" disabled>다음 문제 →</button></div>';
+  bindQuiz();
+}
+function bindQuiz(){
+  var btns = el.quizBody.querySelectorAll(".opt"), i;
+  for (i = 0; i < btns.length; i++){
+    btns[i].onclick = function(){
+      var q = quiz[qIndex];
+      if (q.picked !== null) return;
+      var val = q.opts[Number(this.getAttribute("data-i"))];
+      q.picked = val;
+      var ok = (val === q.answer);
+      if (ok) qScore++;
+      var all = el.quizBody.querySelectorAll(".opt"), k;
+      for (k = 0; k < all.length; k++){
+        var v = q.opts[Number(all[k].getAttribute("data-i"))];
+        if (v === q.answer) all[k].className = "opt right";
+        else if (v === val) all[k].className = "opt wrong";
+        all[k].disabled = true;
+      }
+      var fb = $("qFb");
+      var d = DATA[q.gi];
+      if (ok) fb.className = "qfb ok";
+      else fb.className = "qfb no";
+      fb.textContent = ok ? "정답이에요! " + d.c + " " + d.p + " — " + d.m
+        : "아쉬워요. 정답은 " + d.c + " " + d.p + " — " + d.m;
+      $("qScore").textContent = qScore + "점";
+      $("qNext").disabled = false;
+      $("qNext").textContent = (qIndex === quiz.length - 1) ? "결과 보기 →" : "다음 문제 →";
+    };
+  }
+  $("qNext").onclick = function(){ qIndex++; renderQuiz(); };
+  $("qSkip").onclick = function(){ quizRunning = false; renderQuizStart(); };
+}
+function renderQuizResult(){
+  var total = quiz.length;
+  var pct = Math.round(qScore / total * 100);
+  var msg = pct >= 90 ? "완벽해요! 이 범위는 다 외웠네요 🎉"
+    : pct >= 70 ? "좋아요! 조금만 더 다듬으면 완벽해요 👍"
+    : pct >= 40 ? "절반은 넘었어요. 틀린 한자를 다시 써 봐요 ✍️"
+    : "괜찮아요, 한 자씩 다시 써 보면 금방 늘어요 💪";
+  el.qProg.textContent = "결과";
+  el.qScore.textContent = qScore + "점";
+  el.quizBody.innerHTML = '<div class="qres"><div class="big">' + qScore + " / " + total + "</div>" +
+    '<div class="msg">' + msg + '</div><div class="det">정답률 ' + pct + "%</div></div>" +
+    '<div class="actions"><button class="btn ghost" id="qRetry">다시 풀기</button>' +
+    '<button class="btn primary" id="qAgain">📖 한자표로</button></div>';
+  if ($("qRetry")) $("qRetry").onclick = function(){ startQuiz(); };
+  if ($("qAgain")) $("qAgain").onclick = function(){ showView("grid"); };
+}
+function renderQuizStart(){
+  var pool = scopeList(state.lvl, state.day);
+  el.qProg.textContent = "퀴즈";
+  el.qScore.textContent = "0점";
+  el.quizBody.innerHTML = '<div class="qres"><div class="msg">' + pool.length + "자 범위에서 10문제를 풀어요</div>" +
+    '<div class="det">병음·뜻 → 한자, 한자 → 뜻 두 가지 유형이 번갈아 나옵니다.</div></div>' +
+    '<div class="actions"><button class="btn primary" id="qStart" style="grid-column:1 / -1">퀴즈 시작</button></div>';
+  if ($("qStart")) $("qStart").onclick = function(){ startQuiz(); };
+}
+
+/* ── 11. 화면 전환 ───────────────────────────────────────── */
+function showView(name){
+  state.view = name;
+  var views = document.querySelectorAll(".view"), i;
+  for (i = 0; i < views.length; i++) views[i].className = "view" + (views[i].id === "view-" + name ? " active" : "");
+  var tabs = document.querySelectorAll(".tab");
+  for (i = 0; i < tabs.length; i++) tabs[i].className = "tab" + (tabs[i].getAttribute("data-view") === name ? " active" : "");
+  if (name === "grid") renderGrid();
+  if (name === "quiz"){
+    if (!quizRunning) renderQuizStart();
+    else renderQuiz();
+  }
+  if (name === "write"){ setupPad(); }
+}
+
+/* ── 12. 초기화 ──────────────────────────────────────────── */
+function init(){
+  el.toast = $("toast");
+  el.progBar = $("progBar"); el.progTxt = $("progTxt"); el.progPct = $("progPct");
+  el.lvlRow = $("lvlRow"); el.dayRow = $("dayRow");
+  el.wChar = $("wChar"); el.wPy = $("wPy"); el.wMean = $("wMean"); el.wWords = $("wWords");
+  el.wLvl = $("wLvl"); el.wIdx = $("wIdx");
+  el.btnDone = $("btnDone"); el.btnTrace = $("btnTrace");
+  el.btnPrev = $("btnPrev"); el.btnNext = $("btnNext");
+  el.btnUndo = $("btnUndo"); el.btnClear = $("btnClear");
+  el.wSpk = $("wSpk"); el.gridFilter = $("gridFilter");
+  el.charGrid = $("charGrid"); el.gridEmpty = $("gridEmpty"); el.q = $("q");
+  el.quizBody = $("quizBody"); el.qProg = $("qProg"); el.qScore = $("qScore");
+  pad = $("pad");
+
+  loadKnown();
+  updateProgress();
+  renderDayRow();
+
+  el.lvlRow.onclick = function(e){
+    var t = e.target;
+    if (t && t.getAttribute && t.getAttribute("data-lvl")) setLevel(t.getAttribute("data-lvl"));
+  };
+  el.dayRow.onclick = function(e){
+    var t = e.target;
+    if (t && t.getAttribute && t.getAttribute("data-day") !== null && t.getAttribute("data-day") !== undefined && t.getAttribute("data-day") !== "")
+      setDay(Number(t.getAttribute("data-day")));
+  };
+  el.btnPrev.onclick = function(){ moveChar(-1); };
+  el.btnNext.onclick = function(){ moveChar(1); };
+  el.btnDone.onclick = toggleDone;
+  el.wSpk.onclick = function(){ speak(DATA[currentGlobal()].c); };
+  el.wWords.onclick = function(e){
+    var t = e.target;
+    while (t && t !== el.wWords && !(t.getAttribute && t.getAttribute("data-w"))) t = t.parentNode;
+    if (t && t !== el.wWords) speak(t.getAttribute("data-w"));
+  };
+  el.btnTrace.onclick = function(){
+    state.trace = !state.trace;
+    el.btnTrace.className = "btn soft" + (state.trace ? " on" : "");
+    el.btnTrace.textContent = "흐린 본보기 " + (state.trace ? "ON" : "OFF");
+    renderPad();
+  };
+  el.btnUndo.onclick = function(){
+    if (!strokes.length){ toast("지울 획이 없어요"); return; }
+    strokes = undoStroke(strokes);
+    renderPad();
+  };
+  el.btnClear.onclick = function(){
+    if (!strokes.length){ toast("이미 깨끗해요"); return; }
+    strokes = clearStrokes();
+    renderPad();
+  };
+  $("gridFilter").onclick = function(e){
+    var t = e.target;
+    if (!t || !t.getAttribute) return;
+    var f = t.getAttribute("data-f");
+    if (!f) return;
+    state.gridFilter = f;
+    var chips = this.querySelectorAll(".chip"), i;
+    for (i = 0; i < chips.length; i++) chips[i].className = "chip" + (chips[i].getAttribute("data-f") === f ? " active" : "");
+    renderGrid();
+  };
+  el.q.oninput = function(){ state.query = this.value; renderGrid(); };
+  el.charGrid.onclick = function(e){
+    var t = e.target;
+    while (t && t !== el.charGrid && !(t.getAttribute && t.getAttribute("data-gi"))) t = t.parentNode;
+    if (t && t !== el.charGrid) jumpTo(Number(t.getAttribute("data-gi")));
+  };
+  var tabs = document.querySelectorAll(".tab"), i;
+  for (i = 0; i < tabs.length; i++){
+    tabs[i].onclick = function(){ showView(this.getAttribute("data-view")); };
+  }
+
+  /* 캔버스 이벤트 (터치 + 마우스: 포인터 이벤트가 없는 환경은 터치/마우스로 대체) */
+  if (window.PointerEvent || ("onpointerdown" in document)){
+    pad.addEventListener("pointerdown", function(e){ if (pad.setPointerCapture && e.pointerId !== undefined){ try { pad.setPointerCapture(e.pointerId); } catch (err) {} } onDown(e); });
+    pad.addEventListener("pointermove", onMove);
+    pad.addEventListener("pointerup", onUp);
+    pad.addEventListener("pointercancel", onUp);
+    pad.addEventListener("pointerleave", function(e){ if (drawing) onUp(e); });
+  } else {
+    pad.addEventListener("touchstart", function(e){ onDown(e.touches[0]); }, { passive: false });
+    pad.addEventListener("touchmove", function(e){ if (e.cancelable) e.preventDefault(); onMove(e.touches[0]); }, { passive: false });
+    pad.addEventListener("touchend", onUp);
+    pad.addEventListener("mousedown", onDown);
+    pad.addEventListener("mousemove", function(e){ if (drawing) onMove(e); });
+    pad.addEventListener("mouseup", onUp);
+    pad.addEventListener("mouseleave", function(e){ if (drawing) onUp(e); });
+  }
+  pad.addEventListener("contextmenu", function(e){ if (e.preventDefault) e.preventDefault(); });
+
+  window.addEventListener("resize", function(){ if (state.view === "write") setupPad(); });
+  window.addEventListener("orientationchange", function(){ setTimeout(function(){ if (state.view === "write") setupPad(); }, 220); });
+
+  setupPad();
+  showChar(0);
+  updateDoneBtn();
+}
+
+/* 테스트/디버깅용 노출 (앱 동작에는 영향 없음) */
+window.APP = {
+  DATA: DATA, state: state, LS_KEY: LS_KEY, DAY_SIZE: DAY_SIZE, QUIZ_LEN: QUIZ_LEN,
+  levelOf: levelOf, scopeList: scopeList, dayCount: dayCount, globalIndexOf: globalIndexOf,
+  indexInScope: indexInScope, searchList: searchList, buildQuiz: buildQuiz, shuffle: shuffle,
+  newStroke: newStroke, pushPoint: pushPoint, undoStroke: undoStroke, clearStrokes: clearStrokes,
+  encodeKnown: encodeKnown, decodeKnown: decodeKnown, setLevel: setLevel, setDay: setDay,
+  showChar: showChar, jumpTo: jumpTo, toggleDone: toggleDone, moveChar: moveChar,
+  startQuiz: startQuiz, renderPad: renderPad,
+  getStrokes: function(){ return strokes; },
+  setStrokes: function(s){ strokes = s; },
+  getPad: function(){ return pad; },
+  renderGrid: renderGrid
+};
+
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+else init();
+</script>
+</body>
+</html>

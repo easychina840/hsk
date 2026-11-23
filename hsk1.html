@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#fff8f1">
+<title>신HSK 3.0 1급 단어 암기 · 300단어</title>
+<style>
+  :root{
+    --bg1:#fff9f2;
+    --bg2:#fbeadb;
+    --card:#ffffff;
+    --ink:#2b211c;
+    --ink-soft:#7a685c;
+    --line:#efe0d2;
+    --accent:#c0392b;
+    --accent-deep:#9c2a1f;
+    --accent-soft:#fbe4de;
+    --ok:#1f7a4d;
+    --ok-soft:#e4f4ea;
+    --warn:#b3541e;
+    --shadow:0 12px 32px rgba(122,84,55,.12), 0 2px 6px rgba(122,84,55,.06);
+    --hanzi:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Source Han Sans SC","Microsoft YaHei","Heiti SC",sans-serif;
+    --base:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--base);
+    color:var(--ink);
+    background:
+      radial-gradient(120% 80% at 50% 0%, #fffdfa 0%, var(--bg1) 45%, var(--bg2) 100%);
+    background-attachment:fixed;
+    min-height:100vh;
+    -webkit-text-size-adjust:100%;
+    line-height:1.5;
+  }
+  .app{
+    max-width:540px;
+    margin:0 auto;
+    padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 28px);
+  }
+  h1,h2,h3,p,ul,li{margin:0;padding:0}
+  ul{list-style:none}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+
+  /* ── header ── */
+  .head{margin-bottom:12px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .dot{
+    width:34px;height:34px;border-radius:50%;flex:0 0 34px;
+    background:radial-gradient(circle at 32% 28%, #ff8b7e, var(--accent) 62%, var(--accent-deep));
+    box-shadow:0 4px 10px rgba(192,57,43,.28);
+  }
+  h1{font-size:19px;font-weight:800;letter-spacing:-.02em}
+  .sub{font-size:13px;color:var(--ink-soft);margin-top:2px}
+  .prog{margin-top:14px}
+  .prog-bar{height:9px;border-radius:99px;background:#f2e2d5;overflow:hidden}
+  .prog-bar i{display:block;height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,#e0685c,var(--accent));transition:width .35s ease}
+  .prog-txt{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-soft);margin-top:6px;font-weight:700}
+
+  /* ── tabs ── */
+  .tabs{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:5px;
+    background:#f4e6d8;padding:5px;border-radius:16px;margin:16px 0 12px;
+  }
+  .tab{
+    padding:12px 3px;border-radius:12px;font-size:14px;font-weight:700;color:#6f5b4b;
+    transition:background .18s,color .18s,box-shadow .18s;
+    font-family:var(--base);
+  }
+  .tab.active{background:#fff;color:var(--accent);box-shadow:0 2px 8px rgba(122,84,55,.12)}
+
+  /* ── Day 선택 ── */
+  .days{
+    display:flex;gap:7px;overflow-x:auto;margin:0 -16px 16px;padding:2px 16px 6px;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  }
+  .days::-webkit-scrollbar{display:none}
+  .day-btn{
+    flex:0 0 auto;display:flex;align-items:baseline;gap:5px;
+    padding:9px 13px;border-radius:99px;background:#fff;
+    border:1.5px solid var(--line);font-size:13px;font-weight:800;color:#6f5b4b;
+    white-space:nowrap;transition:background .16s,border-color .16s,color .16s,box-shadow .16s;
+  }
+  .day-btn small{font-size:10.5px;font-weight:700;color:#a89584;letter-spacing:-.01em}
+  .day-btn.active{
+    background:var(--accent);border-color:var(--accent);color:#fff;
+    box-shadow:0 4px 12px rgba(192,57,43,.24);
+  }
+  .day-btn.active small{color:#ffd8d0}
+  .day-btn:active{transform:scale(.98)}
+
+  .view{display:none}
+  .view.active{display:block}
+
+  /* ── flashcard ── */
+  #cardArea{min-height:330px}
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:26px;
+    box-shadow:var(--shadow);
+    padding:22px 20px;
+    min-height:330px;
+    display:flex;flex-direction:column;justify-content:center;
+    position:relative;
+    cursor:pointer;
+    transition:transform .12s ease;
+  }
+  .card:active{transform:scale(.995)}
+  .front{text-align:center;padding:14px 0}
+  .hanzi-xl{
+    font-family:var(--hanzi);
+    font-size:clamp(64px,22vw,104px);
+    line-height:1.15;
+    font-weight:600;
+    letter-spacing:.04em;
+    color:var(--ink);
+    word-break:keep-all;
+  }
+  .hint{font-size:14px;color:#8b7666;margin-top:20px}
+  .spk{
+    width:46px;height:46px;border-radius:50%;
+    background:var(--accent-soft);color:var(--accent-deep);
+    font-size:19px;display:inline-flex;align-items:center;justify-content:center;
+    flex:0 0 46px;transition:transform .12s ease,background .12s;
+    border:1px solid #f6d3cb;
+  }
+  .spk:active{transform:scale(.92);background:#f8d7cf}
+  .spk.sm{width:38px;height:38px;flex-basis:38px;font-size:16px}
+  .card>.spk{position:absolute;top:16px;right:16px}
+  .back{width:100%;text-align:left;animation:fade .2s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .back .h-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .back .h{font-family:var(--hanzi);font-size:clamp(38px,11vw,50px);font-weight:600;line-height:1.2;letter-spacing:.03em}
+  .pinyin{font-size:22px;font-weight:700;color:var(--accent);margin-top:6px;letter-spacing:.01em;word-break:keep-all}
+  .meaning{font-size:22px;font-weight:800;margin-top:8px;letter-spacing:-.01em}
+  .ex{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}
+  .ex-zh{font-family:var(--hanzi);font-size:19.5px;line-height:1.55}
+  .ex-py{font-size:14px;color:var(--ink-soft);margin-top:4px}
+  .ex-ko{font-size:16px;margin-top:7px;color:#4a3a30}
+
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .btn{
+    min-height:58px;border-radius:18px;font-size:16.5px;font-weight:800;
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    transition:transform .12s,filter .12s;
+    padding:8px 10px;
+  }
+  .btn:active{transform:scale(.975)}
+  .btn.primary{background:linear-gradient(180deg,#cf4437,var(--accent));color:#fff;box-shadow:0 8px 18px rgba(192,57,43,.24)}
+  .btn.ghost{background:#fff;color:var(--accent-deep);border:1.5px solid #f0cec6;box-shadow:0 2px 8px rgba(122,84,55,.06)}
+  .btn.soft{background:#f4e8dc;color:#6b5647;border:1px solid #ecdbcb}
+  .btn.small{min-height:46px;font-size:14px;border-radius:14px}
+  .btn[disabled]{opacity:.45}
+  .tiny{font-size:13px;color:#8b7666;text-align:center;margin-top:14px;line-height:1.65}
+  .tiny.note{font-size:12px;color:#a89584;margin-top:8px;line-height:1.55}
+
+  /* ── 딱지(경성 · 성조 변화 · 이합사 · 쓰기) ── */
+  .bdgs{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .bdg{
+    display:inline-flex;align-items:center;gap:2px;
+    font-size:11.5px;font-weight:800;line-height:1;letter-spacing:-.01em;
+    padding:5px 9px;border-radius:99px;border:1px solid transparent;white-space:nowrap;
+  }
+  .bdg.nt{background:#fdf2e2;color:#a2671c;border-color:#f0dcbe}
+  .bdg.ts{background:#ebf2fd;color:#2f5a94;border-color:#d5e3f7}
+  .bdg.lh{background:#e3f4ef;color:#186b57;border-color:#c6e7dc}
+  .bdg.wr{background:#f2ecfb;color:#5b4394;border-color:#e0d3f6}
+  .bdg.sm{font-size:10.5px;padding:4px 7px}
+  .row-top .bdg{align-self:center}
+  .legend{
+    display:flex;flex-direction:column;align-items:center;
+    gap:5px;margin-top:12px;line-height:1.5;
+  }
+  .legend .lg-row{display:flex;align-items:center;gap:6px;font-size:11.5px;color:#a89584}
+  .legend .bdg{pointer-events:none}
+  .legend.in-list{align-items:flex-start;margin:0 2px 10px}
+
+  .done{text-align:center;padding:34px 12px;background:var(--card);border:1px solid var(--line);border-radius:26px;box-shadow:var(--shadow);min-height:330px;display:flex;flex-direction:column;justify-content:center;gap:10px}
+  .done .emo{font-size:52px;line-height:1.1}
+  .done h2{font-size:21px;font-weight:800}
+  .done p{font-size:14.5px;color:var(--ink-soft)}
+  .done .actions{margin-top:8px}
+
+  /* ── quiz ── */
+  .quiz-top{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:700;color:var(--ink-soft);margin-bottom:10px}
+  .qcard{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:22px 18px;text-align:center;position:relative}
+  .q-label{font-size:13px;font-weight:700;color:#8b7666;letter-spacing:.02em}
+  .q-hanzi{font-family:var(--hanzi);font-size:clamp(52px,17vw,72px);font-weight:600;margin:10px 0 4px;letter-spacing:.04em}
+  .q-ko{font-size:24px;font-weight:800;margin:16px 0 8px;line-height:1.35}
+  .qcard .spk{position:absolute;top:14px;right:14px}
+  .choices{display:grid;gap:9px;margin-top:16px}
+  .choice{
+    background:#fff;border:1.5px solid var(--line);border-radius:16px;
+    padding:15px 14px;font-size:16.5px;font-weight:700;text-align:left;
+    display:flex;align-items:center;gap:10px;min-height:58px;
+    box-shadow:0 2px 6px rgba(122,84,55,.05);
+    transition:background .15s,border-color .15s,transform .12s;
+  }
+  .choice:active{transform:scale(.99)}
+  .choice .num{width:24px;height:24px;border-radius:50%;background:#f5ece2;color:#8a7361;font-size:12px;display:flex;align-items:center;justify-content:center;flex:0 0 24px;font-weight:800}
+  .choice.correct{background:var(--ok-soft);border-color:#8dc9a9;color:#125c39}
+  .choice.correct .num{background:#bfe6cd;color:#125c39}
+  .choice.wrong{background:#fdeae7;border-color:#e9a99f;color:#93271c}
+  .choice.wrong .num{background:#f6c9c1;color:#93271c}
+  .choice.dim{opacity:.55}
+  .feedback{margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 16px;text-align:left;animation:fade .2s}
+  .fb-head{font-size:15px;font-weight:800;margin-bottom:8px}
+  .fb-head.ok{color:var(--ok)}
+  .fb-head.no{color:var(--accent)}
+  .fb-row{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .fb-h{font-family:var(--hanzi);font-size:24px;font-weight:600}
+  .fb-p{font-size:14.5px;color:var(--accent);font-weight:700}
+  .fb-m{font-size:15px;font-weight:700}
+  .fb-ex{font-size:13.5px;color:var(--ink-soft);margin-top:7px;line-height:1.55}
+  .fb-ex .ko{display:block;color:#4a3a30;margin-top:2px}
+
+  .quiz-intro{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:26px 20px;text-align:center}
+  .quiz-intro h2{font-size:20px;font-weight:800;margin-bottom:6px}
+  .quiz-intro p{font-size:14px;color:var(--ink-soft);margin-bottom:18px;line-height:1.6}
+  .quiz-intro .btn{width:100%;margin-bottom:9px}
+  .scope-tag{display:inline-block;font-size:12px;font-weight:800;color:var(--accent-deep);background:var(--accent-soft);border-radius:99px;padding:4px 10px;margin-bottom:10px}
+
+  .result{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:26px 20px;text-align:center}
+  .score-big{font-size:44px;font-weight:900;color:var(--accent);line-height:1.1;margin:6px 0 2px}
+  .score-sub{font-size:14px;color:var(--ink-soft);font-weight:700}
+  .result h2{font-size:19px;font-weight:800;margin-bottom:4px}
+  .wrong-list{margin:16px 0;text-align:left;background:#fdf6ef;border-radius:14px;padding:10px 12px;border:1px solid #f2e3d3}
+  .wrong-list h3{font-size:12.5px;font-weight:800;color:var(--warn);margin-bottom:6px}
+  .wrong-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid #f4e6d8;font-size:14px}
+  .wrong-item:first-of-type{border-top:none}
+  .wrong-item .w-h{font-family:var(--hanzi);font-size:19px;font-weight:600}
+  .wrong-item .w-p{font-size:12.5px;color:var(--accent);font-weight:700}
+  .wrong-item .w-m{font-size:13px;color:var(--ink-soft);margin-left:auto;text-align:right}
+  .result .btn{width:100%;margin-top:8px}
+
+  /* ── list ── */
+  .search-wrap{position:relative;margin-bottom:10px}
+  #search{
+    width:100%;height:50px;border-radius:15px;border:1.5px solid var(--line);
+    background:#fff;padding:0 14px 0 42px;font-size:16px;font-family:var(--base);color:var(--ink);
+    outline:none;-webkit-appearance:none;appearance:none;
+  }
+  #search:focus{border-color:#e2a99c;box-shadow:0 0 0 3px rgba(192,57,43,.08)}
+  #search::placeholder{color:#b3a091}
+  .search-wrap::before{content:"🔍";position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;opacity:.7}
+  .chips{display:flex;gap:7px;margin-bottom:10px}
+  .chip{
+    padding:11px 12px;border-radius:99px;background:#fff;border:1.5px solid var(--line);
+    font-size:14px;font-weight:700;color:#6f5b4b;flex:1;
+  }
+  .chip.active{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 4px 10px rgba(192,57,43,.2)}
+  .list-count{font-size:13px;color:#8b7666;margin:2px 2px 8px;font-weight:600}
+  .rows{display:flex;flex-direction:column;gap:8px}
+  .row{
+    display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);
+    border-radius:16px;padding:11px 12px;box-shadow:0 2px 6px rgba(122,84,55,.04);
+  }
+  .row.done{background:#fbfdfb;border-color:#dcece2}
+  .row-main{flex:1;min-width:0}
+  .row-top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .row-h{font-family:var(--hanzi);font-size:23px;font-weight:600;line-height:1.25}
+  .row-p{font-size:13.5px;color:var(--accent);font-weight:700}
+  .row-m{font-size:15px;color:#54423a;margin-top:2px}
+  .row.done .row-m{color:#7d8f84}
+  .mark{
+    width:34px;height:34px;border-radius:50%;border:2px solid #e2cdbb;background:#fff;
+    flex:0 0 34px;display:flex;align-items:center;justify-content:center;
+    font-size:16px;font-weight:800;color:#fff;transition:background .15s,border-color .15s;
+  }
+  .mark.on{background:var(--ok);border-color:var(--ok)}
+  .row .spk{border-color:#f0d8d0}
+  .empty{text-align:center;color:var(--ink-soft);font-size:14px;padding:26px 0}
+  #resetBtn{width:100%;margin-top:16px}
+
+  /* ── toast ── */
+  .toast{
+    position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);
+    transform:translate(-50%,20px);max-width:86%;width:max-content;
+    background:rgba(43,33,28,.94);color:#fff;font-size:13.5px;line-height:1.5;
+    padding:11px 16px;border-radius:14px;opacity:0;pointer-events:none;
+    transition:opacity .22s,transform .22s;z-index:50;text-align:center;
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="head">
+    <div class="brand">
+      <span class="dot" aria-hidden="true"></span>
+      <div>
+        <h1>신HSK 3.0 · 1급 단어</h1>
+        <p class="sub">1급 · 전체 300단어 · Day별 50단어</p>
+      </div>
+    </div>
+    <div class="prog">
+      <div class="prog-bar"><i id="progFill"></i></div>
+      <div class="prog-txt"><span id="progTxt">외운 단어 0 / 0</span><span id="progPct">0%</span></div>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="학습 모드">
+    <button class="tab active" data-view="card" role="tab" aria-selected="true">🃏 플래시카드</button>
+    <button class="tab" data-view="quiz" role="tab" aria-selected="false">✏️ 4지선다</button>
+    <button class="tab" data-view="list" role="tab" aria-selected="false">📖 단어장</button>
+  </nav>
+
+  <div class="days" id="days" role="group" aria-label="Day 선택"></div>
+
+  <main>
+    <section id="view-card" class="view active" aria-label="플래시카드">
+      <div id="cardArea"></div>
+      <div class="actions" id="cardActions">
+        <button class="btn ghost" data-act="again">🔁 다시 볼래요</button>
+        <button class="btn primary" data-act="known">✅ 외웠어요</button>
+      </div>
+      <p class="tiny">카드를 누르면 병음 · 뜻 · 예문이 나와요.<br>🔊 를 누르면 중국어 발음을 들려줘요.</p>
+      <p class="legend">
+        <span class="lg-row"><span class="bdg nt">⚠️ 경성 주의</span>힘 빼고 가볍게</span>
+        <span class="lg-row"><span class="bdg ts">🔄 성조 변화</span>앞뒤 성조에 따라 달라짐</span>
+        <span class="lg-row"><span class="bdg lh">✂️ 이합사</span>동사+목적어 — 사이에 了·个·횟수를 넣어요</span>
+        <span class="lg-row"><span class="bdg wr">✍️ 쓰기</span>공식 서사한자(직접 써야 하는 한자)가 포함된 단어</span>
+      </p>
+      <p class="tiny note">기계 음성은 참고용이에요. 경성·얼화는 병음 표기를 기준으로 보세요.<br>一·不는 실제 발음대로(一个 yí ge), 3성+3성은 사전대로(你好 → 실제 ní hǎo) 적었어요.</p>
+    </section>
+
+    <section id="view-quiz" class="view" aria-label="4지선다 퀴즈">
+      <div id="quizArea"></div>
+    </section>
+
+    <section id="view-list" class="view" aria-label="단어장">
+      <div class="search-wrap">
+        <input id="search" type="search" placeholder="한자 · 병음 · 뜻으로 찾기" autocomplete="off" autocapitalize="off" spellcheck="false">
+      </div>
+      <div class="chips" id="chips">
+        <button class="chip active" data-filter="all">전체</button>
+        <button class="chip" data-filter="new">미암기</button>
+        <button class="chip" data-filter="known">암기완료</button>
+      </div>
+      <p class="list-count" id="listCount"></p>
+      <p class="legend in-list">
+        <span class="lg-row"><span class="bdg nt">⚠️ 경성 주의</span>힘 빼고 가볍게</span>
+        <span class="lg-row"><span class="bdg ts">🔄 성조 변화</span>앞뒤 성조에 따라 달라짐</span>
+        <span class="lg-row"><span class="bdg lh">✂️ 이합사</span>동사+목적어 — 사이에 了·个·횟수를 넣어요</span>
+        <span class="lg-row"><span class="bdg wr">✍️ 쓰기</span>공식 서사한자(직접 써야 하는 한자)가 포함된 단어</span>
+      </p>
+      <ul class="rows" id="listRows"></ul>
+      <button class="btn soft small" id="resetBtn">학습 기록 초기화</button>
+      <p class="tiny" id="storageNote">이 앱은 인터넷 없이도 열립니다. 학습 기록은 이 브라우저에만 저장돼요.</p>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ───────────────────────────────────────────
+     신HSK 3.0 1급 어휘 — 《HSK考试大纲》(2025-11 발표 / 2026-07 시행)
+     어휘표 1~300번 전체
+     · 한자/병음은 공식 어휘표 기준 (개정 규칙: 个는 양사일 때 경성 ge, 모든 이합사 띄어쓰기)
+     · 예문은 1급 수준 어휘·문형으로 구성
+     ─────────────────────────────────────────── */
+  var WORDS = [
+    {"w": "爱", "p": "ài", "m": "사랑하다", "e": "我爱我的妈妈。", "ep": "Wǒ ài wǒ de māma.", "em": "나는 우리 엄마를 사랑해요.", "wr": "1~2급 공통: 爱"},
+    {"w": "八", "p": "bā", "m": "여덟, 8", "e": "我们八点上课。", "ep": "Wǒmen bā diǎn shàng kè.", "em": "우리는 8시에 수업해요.", "wr": "1~2급 공통: 八"},
+    {"w": "爸爸", "p": "bàba", "m": "아빠, 아버지", "e": "我爸爸是医生。", "ep": "Wǒ bàba shì yīshēng.", "em": "우리 아빠는 의사예요.", "nt": "ba", "wr": "1~2급 공통: 爸"},
+    {"w": "吧", "p": "ba", "m": "~하세요, ~죠 (권유·추측 조사)", "e": "我们走吧。", "ep": "Wǒmen zǒu ba.", "em": "우리 가요."},
+    {"w": "白天", "p": "báitiān", "m": "낮, 대낮", "e": "白天我在公司。", "ep": "Báitiān wǒ zài gōngsī.", "em": "낮에는 회사에 있어요.", "wr": "1~2급 공통: 天"},
+    {"w": "百", "p": "bǎi", "m": "백, 100", "e": "这本书一百块。", "ep": "Zhè běn shū yì bǎi kuài.", "em": "이 책은 100위안이에요.", "wr": "1~2급 공통: 百"},
+    {"w": "半", "p": "bàn", "m": "반, 절반", "e": "我七点半起床。", "ep": "Wǒ qī diǎn bàn qǐ chuáng.", "em": "나는 7시 반에 일어나요.", "wr": "1~2급 공통: 半"},
+    {"w": "包子", "p": "bāozi", "m": "바오쯔 (찐빵)", "e": "我早饭吃包子。", "ep": "Wǒ zǎofàn chī bāozi.", "em": "나는 아침으로 바오쯔를 먹어요.", "nt": "zi", "wr": "1~2급 공통: 子"},
+    {"w": "杯子", "p": "bēizi", "m": "컵", "e": "桌子上有一个杯子。", "ep": "Zhuōzi shàng yǒu yí ge bēizi.", "em": "책상 위에 컵이 하나 있어요.", "nt": "zi", "wr": "1~2급 공통: 子"},
+    {"w": "本", "p": "běn", "m": "권 (책의 양사)", "e": "我买了两本书。", "ep": "Wǒ mǎi le liǎng běn shū.", "em": "나는 책 두 권을 샀어요."},
+    {"w": "边", "p": "biān", "m": "쪽, 변; (접미사) ~쪽", "e": "这边请。", "ep": "Zhèbiān qǐng.", "em": "이쪽으로 오세요.", "wr": "1~2급 공통: 边"},
+    {"w": "病", "p": "bìng", "m": "병; 앓다", "e": "我的病好了。", "ep": "Wǒ de bìng hǎo le.", "em": "내 병이 나았어요."},
+    {"w": "不", "p": "bù", "m": "안, ~아니다", "e": "我不喝茶。", "ep": "Wǒ bù hē chá.", "em": "나는 차를 안 마셔요.", "ts": "뒤 음절이 4성이면 bú, 1·2·3성이면 bù (단독은 bù)", "wr": "1~2급 공통: 不"},
+    {"w": "不客气", "p": "bú kèqi", "m": "천만에요", "e": "不客气，请坐。", "ep": "Bú kèqi, qǐng zuò.", "em": "천만에요, 앉으세요.", "nt": "qi", "ts": "不 + 4성(客 kè) → bú (bú kèqi)", "wr": "1~2급 공통: 不"},
+    {"w": "不要", "p": "búyào", "m": "~하지 마라; 필요 없다", "e": "不要买太贵的东西。", "ep": "Búyào mǎi tài guì de dōngxi.", "em": "너무 비싼 물건은 사지 마세요.", "ts": "不 + 4성(要 yào) → bú (búyào)", "wr": "1~2급 공통: 不·要"},
+    {"w": "菜", "p": "cài", "m": "요리, 반찬, 채소", "e": "这个菜很好吃。", "ep": "Zhè ge cài hěn hǎochī.", "em": "이 요리는 아주 맛있어요."},
+    {"w": "茶", "p": "chá", "m": "차", "e": "你喝茶吗？", "ep": "Nǐ hē chá ma?", "em": "차 마실래요?", "wr": "1~2급 공통: 茶"},
+    {"w": "唱", "p": "chàng", "m": "(노래를) 부르다", "e": "她唱歌很好听。", "ep": "Tā chàng gē hěn hǎotīng.", "em": "그녀는 노래를 아주 잘 불러요."},
+    {"w": "超市", "p": "chāoshì", "m": "슈퍼마켓", "e": "我去超市买水果。", "ep": "Wǒ qù chāoshì mǎi shuǐguǒ.", "em": "나는 슈퍼마켓에 과일을 사러 가요."},
+    {"w": "车", "p": "chē", "m": "차, 자동차", "e": "这是我的车。", "ep": "Zhè shì wǒ de chē.", "em": "이건 제 차예요."},
+    {"w": "吃", "p": "chī", "m": "먹다", "e": "我们一起吃饭吧。", "ep": "Wǒmen yìqǐ chī fàn ba.", "em": "우리 같이 밥 먹어요."},
+    {"w": "出租车", "p": "chūzūchē", "m": "택시", "e": "我们坐出租车去。", "ep": "Wǒmen zuò chūzūchē qù.", "em": "우리 택시 타고 가요."},
+    {"w": "穿", "p": "chuān", "m": "(옷을) 입다, 신다", "e": "今天很冷，多穿衣服。", "ep": "Jīntiān hěn lěng, duō chuān yīfu.", "em": "오늘 추우니 옷을 많이 입으세요."},
+    {"w": "打电话", "p": "dǎ diànhuà", "m": "전화하다", "e": "我晚上给你打电话。", "ep": "Wǒ wǎnshang gěi nǐ dǎ diànhuà.", "em": "저녁에 전화할게요.", "lh": "동사+목적어 — 打了个电话, 打三次电话", "wr": "1~2급 공통: 打"},
+    {"w": "大", "p": "dà", "m": "크다 (大夫 dàifu＝의사일 때는 dài)", "e": "这个苹果很大。", "ep": "Zhè ge píngguǒ hěn dà.", "em": "이 사과는 아주 커요.", "wr": "1~2급 공통: 大"},
+    {"w": "大家", "p": "dàjiā", "m": "여러분, 모두", "e": "大家好！", "ep": "Dàjiā hǎo!", "em": "여러분 안녕하세요!", "wr": "1~2급 공통: 大·家"},
+    {"w": "大学", "p": "dàxué", "m": "대학교", "e": "我在大学学习汉语。", "ep": "Wǒ zài dàxué xuéxí Hànyǔ.", "em": "나는 대학에서 중국어를 공부해요.", "wr": "1~2급 공통: 大·学"},
+    {"w": "大学生", "p": "dàxuéshēng", "m": "대학생", "e": "我姐姐是大学生。", "ep": "Wǒ jiějie shì dàxuéshēng.", "em": "우리 언니는 대학생이에요.", "wr": "1~2급 공통: 大·学·生"},
+    {"w": "到", "p": "dào", "m": "도착하다, ~까지", "e": "火车九点到。", "ep": "Huǒchē jiǔ diǎn dào.", "em": "기차는 9시에 도착해요."},
+    {"w": "的", "p": "de", "m": "~의 (목적 dì, 目的)", "e": "这是我的书。", "ep": "Zhè shì wǒ de shū.", "em": "이건 제 책이에요.", "wr": "1~2급 공통: 的"},
+    {"w": "第", "p": "dì", "m": "제~ (서수 접두사)", "e": "今天是我第一天上班。", "ep": "Jīntiān shì wǒ dì yī tiān shàng bān.", "em": "오늘은 내가 출근하는 첫날이에요."},
+    {"w": "弟弟", "p": "dìdi", "m": "남동생", "e": "我弟弟今年八岁。", "ep": "Wǒ dìdi jīnnián bā suì.", "em": "내 남동생은 올해 여덟 살이에요.", "nt": "di"},
+    {"w": "点", "p": "diǎn", "m": "시 (시각); 점 (点2는 点菜 diǎn cài처럼 '고르다' 동사)", "e": "现在几点？", "ep": "Xiànzài jǐ diǎn?", "em": "지금 몇 시예요?", "wr": "1~2급 공통: 点"},
+    {"w": "店", "p": "diàn", "m": "가게", "e": "这家店的东西很便宜。", "ep": "Zhè jiā diàn de dōngxi hěn piányi.", "em": "이 가게 물건은 아주 싸요."},
+    {"w": "电话", "p": "diànhuà", "m": "전화", "e": "你的电话是多少？", "ep": "Nǐ de diànhuà shì duōshao?", "em": "네 전화번호는 뭐예요?"},
+    {"w": "电脑", "p": "diànnǎo", "m": "컴퓨터", "e": "我用电脑工作。", "ep": "Wǒ yòng diànnǎo gōngzuò.", "em": "나는 컴퓨터로 일해요."},
+    {"w": "电视", "p": "diànshì", "m": "텔레비전", "e": "晚上我看电视。", "ep": "Wǎnshang wǒ kàn diànshì.", "em": "저녁에 TV를 봐요."},
+    {"w": "电影", "p": "diànyǐng", "m": "영화", "e": "我们看电影吧。", "ep": "Wǒmen kàn diànyǐng ba.", "em": "우리 영화 봐요."},
+    {"w": "电影院", "p": "diànyǐngyuàn", "m": "영화관", "e": "电影院在学校前边。", "ep": "Diànyǐngyuàn zài xuéxiào qiánbian.", "em": "영화관은 학교 앞쪽에 있어요."},
+    {"w": "东西", "p": "dōngxi", "m": "물건, 것", "e": "我要买东西。", "ep": "Wǒ yào mǎi dōngxi.", "em": "나는 물건을 사야 해요.", "nt": "xi"},
+    {"w": "都", "p": "dōu", "m": "모두, 다 (수도 dū, 首都)", "e": "我们都喜欢中国菜。", "ep": "Wǒmen dōu xǐhuan Zhōngguó cài.", "em": "우리 모두 중국 음식을 좋아해요."},
+    {"w": "读", "p": "dú", "m": "읽다, 소리 내어 읽다", "e": "请读这个汉字。", "ep": "Qǐng dú zhè ge Hànzì.", "em": "이 한자를 읽어 보세요."},
+    {"w": "读书", "p": "dú shū", "m": "책을 읽다, 공부하다", "e": "我喜欢读书。", "ep": "Wǒ xǐhuan dú shū.", "em": "나는 독서를 좋아해요.", "lh": "동사+목적어 — 读过书, 读了一本书", "wr": "1~2급 공통: 书"},
+    {"w": "对", "p": "duì", "m": "맞다; ~에게(대하여)", "e": "对，这是我的书。", "ep": "Duì, zhè shì wǒ de shū.", "em": "맞아요, 이건 제 책이에요.", "wr": "1~2급 공통: 对"},
+    {"w": "对不起", "p": "duìbuqǐ", "m": "미안합니다", "e": "对不起，我来晚了。", "ep": "Duìbuqǐ, wǒ lái wǎn le.", "em": "미안해요, 제가 늦었어요.", "nt": "bu", "wr": "1~2급 공통: 对·不"},
+    {"w": "多", "p": "duō", "m": "많다", "e": "我们学校学生很多。", "ep": "Wǒmen xuéxiào xuésheng hěn duō.", "em": "우리 학교는 학생이 많아요.", "wr": "1~2급 공통: 多"},
+    {"w": "多少", "p": "duōshao", "m": "얼마, 몇", "e": "这个多少钱？", "ep": "Zhè ge duōshao qián?", "em": "이거 얼마예요?", "nt": "shao", "wr": "1~2급 공통: 多·少"},
+    {"w": "儿子", "p": "érzi", "m": "아들", "e": "我有一个儿子。", "ep": "Wǒ yǒu yí ge érzi.", "em": "나는 아들이 한 명 있어요.", "nt": "zi", "wr": "1~2급 공통: 儿·子"},
+    {"w": "二", "p": "èr", "m": "둘, 2 (숫자)", "e": "我弟弟今年十二岁。", "ep": "Wǒ dìdi jīnnián shí'èr suì.", "em": "내 남동생은 올해 열두 살이에요.", "wr": "1~2급 공통: 二"},
+    {"w": "饭", "p": "fàn", "m": "밥, 식사", "e": "我们吃饭吧。", "ep": "Wǒmen chī fàn ba.", "em": "우리 밥 먹어요."},
+    {"w": "饭店", "p": "fàndiàn", "m": "식당; 호텔", "e": "我们去饭店吃饭。", "ep": "Wǒmen qù fàndiàn chī fàn.", "em": "우리 식당에 밥 먹으러 가요."},
+    {"w": "房间", "p": "fángjiān", "m": "방", "e": "我的房间不大。", "ep": "Wǒ de fángjiān bú dà.", "em": "내 방은 크지 않아요.", "wr": "1~2급 공통: 间"},
+    {"w": "非常", "p": "fēicháng", "m": "매우, 대단히", "e": "今天非常冷。", "ep": "Jīntiān fēicháng lěng.", "em": "오늘은 매우 추워요."},
+    {"w": "飞机", "p": "fēijī", "m": "비행기", "e": "我坐飞机去中国。", "ep": "Wǒ zuò fēijī qù Zhōngguó.", "em": "나는 비행기 타고 중국에 가요."},
+    {"w": "分", "p": "fēn", "m": "분 (시간 단위); 나누다 (성분·몫은 fèn)", "e": "现在九点十分。", "ep": "Xiànzài jiǔ diǎn shí fēn.", "em": "지금 9시 10분이에요.", "wr": "1~2급 공통: 分"},
+    {"w": "分钟", "p": "fēnzhōng", "m": "분 (60초)", "e": "请等一分钟。", "ep": "Qǐng děng yì fēnzhōng.", "em": "1분만 기다려 주세요.", "wr": "1~2급 공통: 分"},
+    {"w": "高兴", "p": "gāoxìng", "m": "기쁘다, 즐겁다", "e": "很高兴认识你。", "ep": "Hěn gāoxìng rènshi nǐ.", "em": "만나서 반가워요."},
+    {"w": "歌", "p": "gē", "m": "노래", "e": "我喜欢听歌。", "ep": "Wǒ xǐhuan tīng gē.", "em": "나는 노래 듣는 것을 좋아해요."},
+    {"w": "哥哥", "p": "gēge", "m": "형, 오빠", "e": "我哥哥在公司工作。", "ep": "Wǒ gēge zài gōngsī gōngzuò.", "em": "우리 형은 회사에서 일해요.", "nt": "ge", "wr": "1~2급 공통: 哥"},
+    {"w": "个", "p": "ge", "m": "개 (일반 양사)", "e": "我要一个包子。", "ep": "Wǒ yào yí ge bāozi.", "em": "바오쯔 하나 주세요.", "nt": "ge", "wr": "1~2급 공통: 个"},
+    {"w": "给", "p": "gěi", "m": "주다; ~에게", "e": "请给我一本书。", "ep": "Qǐng gěi wǒ yì běn shū.", "em": "저에게 책 한 권 주세요."},
+    {"w": "公司", "p": "gōngsī", "m": "회사", "e": "这个公司很大。", "ep": "Zhè ge gōngsī hěn dà.", "em": "이 회사는 아주 커요."},
+    {"w": "工作", "p": "gōngzuò", "m": "일하다; 일, 직업", "e": "我的工作很忙。", "ep": "Wǒ de gōngzuò hěn máng.", "em": "제 일은 아주 바빠요.", "wr": "1~2급 공통: 工·作"},
+    {"w": "狗", "p": "gǒu", "m": "개", "e": "我家有一只狗。", "ep": "Wǒ jiā yǒu yì zhī gǒu.", "em": "우리 집에 강아지가 한 마리 있어요."},
+    {"w": "贵", "p": "guì", "m": "비싸다", "e": "这个太贵了。", "ep": "Zhè ge tài guì le.", "em": "이건 너무 비싸요."},
+    {"w": "国", "p": "guó", "m": "나라", "e": "中国是一个大国。", "ep": "Zhōngguó shì yí ge dà guó.", "em": "중국은 큰 나라예요.", "wr": "1~2급 공통: 国"},
+    {"w": "还", "p": "hái", "m": "아직, 또 (돌려주다는 huán)", "e": "他还在家。", "ep": "Tā hái zài jiā.", "em": "그는 아직 집에 있어요.", "wr": "1~2급 공통: 还"},
+    {"w": "孩子", "p": "háizi", "m": "아이, 자녀", "e": "这个孩子是我儿子。", "ep": "Zhè ge háizi shì wǒ érzi.", "em": "이 아이는 내 아들이에요.", "nt": "zi", "wr": "1~2급 공통: 子"},
+    {"w": "汉语", "p": "Hànyǔ", "m": "중국어", "e": "我在学习汉语。", "ep": "Wǒ zài xuéxí Hànyǔ.", "em": "나는 중국어를 공부하고 있어요.", "wr": "1~2급 공통: 汉·语"},
+    {"w": "汉字", "p": "Hànzì", "m": "한자", "e": "这个汉字怎么写？", "ep": "Zhè ge Hànzì zěnme xiě?", "em": "이 한자 어떻게 써요?", "wr": "1~2급 공통: 汉·字"},
+    {"w": "好", "p": "hǎo", "m": "좋다; 안녕 (좋아하다는 hào, 爱好)", "e": "今天天气很好。", "ep": "Jīntiān tiānqì hěn hǎo.", "em": "오늘 날씨가 아주 좋아요.", "wr": "1~2급 공통: 好"},
+    {"w": "好吃", "p": "hǎochī", "m": "맛있다", "e": "这个菜很好吃。", "ep": "Zhè ge cài hěn hǎochī.", "em": "이 요리 아주 맛있어요.", "wr": "1~2급 공통: 好"},
+    {"w": "好看", "p": "hǎokàn", "m": "보기 좋다, 예쁘다", "e": "你的衣服很好看。", "ep": "Nǐ de yīfu hěn hǎokàn.", "em": "네 옷 아주 예뻐요.", "wr": "1~2급 공통: 好"},
+    {"w": "好听", "p": "hǎotīng", "m": "듣기 좋다", "e": "中国的歌很好听。", "ep": "Zhōngguó de gē hěn hǎotīng.", "em": "중국 노래는 듣기 좋아요.", "wr": "1~2급 공통: 好"},
+    {"w": "好玩儿", "p": "hǎowánr", "m": "재미있다", "e": "中国很好玩儿。", "ep": "Zhōngguó hěn hǎowánr.", "em": "중국은 아주 재미있어요.", "wr": "1~2급 공통: 好·儿"},
+    {"w": "号", "p": "hào", "m": "(날짜) ~일; 번호", "e": "今天几号？", "ep": "Jīntiān jǐ hào?", "em": "오늘 며칠이에요?"},
+    {"w": "喝", "p": "hē", "m": "마시다", "e": "我想喝一杯茶。", "ep": "Wǒ xiǎng hē yì bēi chá.", "em": "나는 차 한 잔 마시고 싶어요."},
+    {"w": "和", "p": "hé", "m": "~와/과, 그리고 (따라 부르다는 hè)", "e": "我和他是朋友。", "ep": "Wǒ hé tā shì péngyou.", "em": "나와 그는 친구예요.", "wr": "1~2급 공통: 和"},
+    {"w": "很", "p": "hěn", "m": "매우, 아주", "e": "我很喜欢中国。", "ep": "Wǒ hěn xǐhuan Zhōngguó.", "em": "나는 중국을 아주 좋아해요.", "wr": "1~2급 공통: 很"},
+    {"w": "后", "p": "hòu", "m": "뒤, 후", "e": "三天后我回家。", "ep": "Sān tiān hòu wǒ huí jiā.", "em": "사흘 후에 집에 가요.", "wr": "1~2급 공통: 后"},
+    {"w": "回", "p": "huí", "m": "돌아가다, 돌아오다", "e": "我下午回家。", "ep": "Wǒ xiàwǔ huí jiā.", "em": "나는 오후에 집에 가요."},
+    {"w": "会", "p": "huì", "m": "~할 수 있다, ~하게 되다", "e": "我会说汉语。", "ep": "Wǒ huì shuō Hànyǔ.", "em": "나는 중국어를 할 수 있어요.", "wr": "1~2급 공통: 会"},
+    {"w": "火车", "p": "huǒchē", "m": "기차", "e": "我们坐火车去。", "ep": "Wǒmen zuò huǒchē qù.", "em": "우리 기차 타고 가요."},
+    {"w": "鸡蛋", "p": "jīdàn", "m": "계란", "e": "我早饭吃鸡蛋。", "ep": "Wǒ zǎofàn chī jīdàn.", "em": "나는 아침으로 계란을 먹어요."},
+    {"w": "几", "p": "jǐ", "m": "몇, 몇 개", "e": "你家有几个人？", "ep": "Nǐ jiā yǒu jǐ ge rén?", "em": "집에 몇 명이에요?", "wr": "1~2급 공통: 几"},
+    {"w": "家", "p": "jiā", "m": "집, 가족", "e": "我家有四个人。", "ep": "Wǒ jiā yǒu sì ge rén.", "em": "우리 집은 네 식구예요.", "wr": "1~2급 공통: 家"},
+    {"w": "家人", "p": "jiārén", "m": "가족, 식구", "e": "我的家人都很好。", "ep": "Wǒ de jiārén dōu hěn hǎo.", "em": "우리 가족은 모두 잘 지내요.", "wr": "1~2급 공통: 家·人"},
+    {"w": "见", "p": "jiàn", "m": "만나다, 보다", "e": "明天见！", "ep": "Míngtiān jiàn!", "em": "내일 봐요!"},
+    {"w": "件", "p": "jiàn", "m": "벌, 건 (옷·일의 양사)", "e": "我买了一件衣服。", "ep": "Wǒ mǎi le yí jiàn yīfu.", "em": "나는 옷 한 벌을 샀어요."},
+    {"w": "饺子", "p": "jiǎozi", "m": "만두", "e": "我们晚上吃饺子。", "ep": "Wǒmen wǎnshang chī jiǎozi.", "em": "우리 저녁에 만두 먹어요.", "nt": "zi", "wr": "1~2급 공통: 子"},
+    {"w": "叫", "p": "jiào", "m": "~라고 부르다, 부르다", "e": "你叫什么名字？", "ep": "Nǐ jiào shénme míngzi?", "em": "이름이 뭐예요?", "wr": "1~2급 공통: 叫"},
+    {"w": "姐姐", "p": "jiějie", "m": "언니, 누나", "e": "我姐姐是老师。", "ep": "Wǒ jiějie shì lǎoshī.", "em": "우리 언니는 선생님이에요.", "nt": "jie", "wr": "1~2급 공통: 姐"},
+    {"w": "今年", "p": "jīnnián", "m": "올해", "e": "我今年二十岁。", "ep": "Wǒ jīnnián èrshí suì.", "em": "저는 올해 스무 살이에요.", "wr": "1~2급 공통: 今·年"},
+    {"w": "今天", "p": "jīntiān", "m": "오늘", "e": "今天是我的生日。", "ep": "Jīntiān shì wǒ de shēngrì.", "em": "오늘은 제 생일이에요.", "wr": "1~2급 공통: 今·天"},
+    {"w": "九", "p": "jiǔ", "m": "아홉, 9", "e": "现在九点。", "ep": "Xiànzài jiǔ diǎn.", "em": "지금 9시예요.", "wr": "1~2급 공통: 九"},
+    {"w": "觉得", "p": "juéde", "m": "~라고 느끼다, 생각하다 (觉 jiào＝잠, 睡觉)", "e": "我觉得这个很好。", "ep": "Wǒ juéde zhè ge hěn hǎo.", "em": "나는 이게 좋다고 생각해요.", "nt": "de"},
+    {"w": "开", "p": "kāi", "m": "열다; (차를) 운전하다", "e": "商店几点开门？", "ep": "Shāngdiàn jǐ diǎn kāi mén?", "em": "가게 몇 시에 문을 열어요?"},
+    {"w": "开车", "p": "kāi chē", "m": "운전하다", "e": "我爸爸开车上班。", "ep": "Wǒ bàba kāi chē shàng bān.", "em": "우리 아빠는 차로 출근해요.", "lh": "동사+목적어 — 开着车, 开过车"},
+    {"w": "看", "p": "kàn", "m": "보다, 읽다", "e": "我看电视。", "ep": "Wǒ kàn diànshì.", "em": "나는 TV를 봐요."},
+    {"w": "看病", "p": "kàn bìng", "m": "진찰받다, 진료하다", "e": "我明天去医院看病。", "ep": "Wǒ míngtiān qù yīyuàn kàn bìng.", "em": "나는 내일 병원에 진찰받으러 가요.", "lh": "동사+목적어 — 看了病, 看了一次病"},
+    {"w": "看见", "p": "kànjiàn", "m": "(눈에) 보이다, 보다", "e": "我看见老师了。", "ep": "Wǒ kànjiàn lǎoshī le.", "em": "선생님을 봤어요."},
+    {"w": "可以", "p": "kěyǐ", "m": "~해도 된다, ~할 수 있다", "e": "我可以坐这儿吗？", "ep": "Wǒ kěyǐ zuò zhèr ma?", "em": "여기 앉아도 돼요?", "ts": "3성+3성 → 앞 글자가 2성: kěyǐ → ké yǐ", "wr": "1~2급 공통: 可·以"},
+    {"w": "课", "p": "kè", "m": "수업, 과", "e": "我们上午有课。", "ep": "Wǒmen shàngwǔ yǒu kè.", "em": "우리는 오전에 수업이 있어요."},
+    {"w": "口", "p": "kǒu", "m": "입; 식구 (양사)", "e": "我家有三口人。", "ep": "Wǒ jiā yǒu sān kǒu rén.", "em": "우리 집은 세 식구예요.", "wr": "1~2급 공통: 口"},
+    {"w": "块", "p": "kuài", "m": "위안 (구어 화폐 단위); 덩어리", "e": "这个面包三块钱。", "ep": "Zhè ge miànbāo sān kuài qián.", "em": "이 빵은 3위안이에요."},
+    {"w": "来", "p": "lái", "m": "오다", "e": "请来我家。", "ep": "Qǐng lái wǒ jiā.", "em": "우리 집에 오세요.", "wr": "1~2급 공통: 来"},
+    {"w": "老师", "p": "lǎoshī", "m": "선생님", "e": "李老师，您好！", "ep": "Lǐ lǎoshī, nín hǎo!", "em": "리 선생님, 안녕하세요!"},
+    {"w": "了", "p": "le", "m": "~했다, ~하게 되었다 (완료·변화 조사; 끝나다는 liǎo)", "e": "我吃饭了。", "ep": "Wǒ chī fàn le.", "em": "나는 밥 먹었어요.", "wr": "1~2급 공통: 了"},
+    {"w": "冷", "p": "lěng", "m": "춥다, 차갑다", "e": "今天很冷。", "ep": "Jīntiān hěn lěng.", "em": "오늘 아주 추워요."},
+    {"w": "里", "p": "lǐ", "m": "안, 속", "e": "杯子里有水。", "ep": "Bēizi lǐ yǒu shuǐ.", "em": "컵 안에 물이 있어요."},
+    {"w": "两", "p": "liǎng", "m": "둘, 2 (양사 앞)", "e": "我有两本书。", "ep": "Wǒ yǒu liǎng běn shū.", "em": "나는 책이 두 권 있어요.", "wr": "1~2급 공통: 两"},
+    {"w": "零", "p": "líng", "m": "영, 0", "e": "一百减一百是零。", "ep": "Yì bǎi jiǎn yì bǎi shì líng.", "em": "100 빼기 100은 0이에요."},
+    {"w": "六", "p": "liù", "m": "여섯, 6", "e": "我六点起床。", "ep": "Wǒ liù diǎn qǐ chuáng.", "em": "나는 6시에 일어나요.", "wr": "1~2급 공통: 六"},
+    {"w": "妈妈", "p": "māma", "m": "엄마, 어머니", "e": "我妈妈很忙。", "ep": "Wǒ māma hěn máng.", "em": "우리 엄마는 아주 바빠요.", "nt": "ma", "wr": "1~2급 공통: 妈"},
+    {"w": "吗", "p": "ma", "m": "~입니까? (의문 조사)", "e": "你忙吗？", "ep": "Nǐ máng ma?", "em": "바빠요?", "wr": "1~2급 공통: 吗"},
+    {"w": "买", "p": "mǎi", "m": "사다", "e": "我买水果。", "ep": "Wǒ mǎi shuǐguǒ.", "em": "나는 과일을 사요."},
+    {"w": "卖", "p": "mài", "m": "팔다", "e": "这个店卖水果。", "ep": "Zhè ge diàn mài shuǐguǒ.", "em": "이 가게는 과일을 팔아요."},
+    {"w": "忙", "p": "máng", "m": "바쁘다", "e": "他今天很忙。", "ep": "Tā jīntiān hěn máng.", "em": "그는 오늘 아주 바빠요."},
+    {"w": "猫", "p": "māo", "m": "고양이", "e": "我家有一只猫。", "ep": "Wǒ jiā yǒu yì zhī māo.", "em": "우리 집에 고양이가 한 마리 있어요."},
+    {"w": "没关系", "p": "méi guānxi", "m": "괜찮아요, 상관없어요", "e": "没关系，再见！", "ep": "Méi guānxi, zàijiàn!", "em": "괜찮아요, 안녕히 계세요!", "nt": "xi", "wr": "1~2급 공통: 没"},
+    {"w": "没事", "p": "méishì", "m": "괜찮아요; 일이 없어요", "e": "没事，我在家。", "ep": "Méishì, wǒ zài jiā.", "em": "괜찮아요, 저는 집에 있어요.", "wr": "1~2급 공통: 没"},
+    {"w": "没有", "p": "méiyǒu", "m": "없다, ~하지 않았다", "e": "他没有哥哥。", "ep": "Tā méiyǒu gēge.", "em": "그는 형이 없어요.", "wr": "1~2급 공통: 没·有"},
+    {"w": "妹妹", "p": "mèimei", "m": "여동생", "e": "我妹妹是学生。", "ep": "Wǒ mèimei shì xuésheng.", "em": "내 여동생은 학생이에요.", "nt": "mei"},
+    {"w": "们", "p": "men", "m": "~들 (사람 복수 접미사)", "e": "我们都是学生。", "ep": "Wǒmen dōu shì xuésheng.", "em": "우리는 모두 학생이에요.", "nt": "men", "wr": "1~2급 공통: 们"},
+    {"w": "米饭", "p": "mǐfàn", "m": "쌀밥", "e": "我想吃米饭。", "ep": "Wǒ xiǎng chī mǐfàn.", "em": "나는 쌀밥을 먹고 싶어요."},
+    {"w": "面包", "p": "miànbāo", "m": "빵", "e": "我早饭吃面包。", "ep": "Wǒ zǎofàn chī miànbāo.", "em": "나는 아침으로 빵을 먹어요."},
+    {"w": "面条儿", "p": "miàntiáor", "m": "국수", "e": "面条儿很好吃。", "ep": "Miàntiáor hěn hǎochī.", "em": "국수 아주 맛있어요.", "wr": "1~2급 공통: 儿"},
+    {"w": "明年", "p": "míngnián", "m": "내년", "e": "明年我去中国。", "ep": "Míngnián wǒ qù Zhōngguó.", "em": "내년에 중국에 가요.", "wr": "1~2급 공통: 年"},
+    {"w": "明天", "p": "míngtiān", "m": "내일", "e": "明天见！", "ep": "Míngtiān jiàn!", "em": "내일 봐요!", "wr": "1~2급 공통: 天"},
+    {"w": "名字", "p": "míngzi", "m": "이름", "e": "这个名字很好听。", "ep": "Zhè ge míngzi hěn hǎotīng.", "em": "이 이름 참 예쁘네요.", "nt": "zi", "wr": "1~2급 공통: 名·字"},
+    {"w": "哪", "p": "nǎ", "m": "어느", "e": "你是哪国人？", "ep": "Nǐ shì nǎ guó rén?", "em": "어느 나라 사람이에요?"},
+    {"w": "哪个", "p": "nǎ ge", "m": "어느 것", "e": "你要哪个？", "ep": "Nǐ yào nǎ ge?", "em": "어느 것 원해요?", "wr": "1~2급 공통: 个"},
+    {"w": "哪里", "p": "nǎlǐ", "m": "어디 (표준)", "e": "你的家在哪里？", "ep": "Nǐ de jiā zài nǎlǐ?", "em": "네 집은 어디예요?", "ts": "3성+3성 → 앞 글자가 2성: nǎlǐ → ná lǐ"},
+    {"w": "哪儿", "p": "nǎr", "m": "어디 (구어)", "e": "你去哪儿？", "ep": "Nǐ qù nǎr?", "em": "어디 가요?", "wr": "1~2급 공통: 儿"},
+    {"w": "哪些", "p": "nǎxiē", "m": "어느 것들, 어떤 것들", "e": "你喜欢哪些水果？", "ep": "Nǐ xǐhuan nǎxiē shuǐguǒ?", "em": "어떤 과일을 좋아해요?"},
+    {"w": "那", "p": "nà", "m": "저, 그것", "e": "那是我的电脑。", "ep": "Nà shì wǒ de diànnǎo.", "em": "저건 제 컴퓨터예요.", "wr": "1~2급 공통: 那"},
+    {"w": "那边", "p": "nàbiān", "m": "저쪽", "e": "商店在那边。", "ep": "Shāngdiàn zài nàbiān.", "em": "가게는 저쪽에 있어요.", "wr": "1~2급 공통: 那·边"},
+    {"w": "那个", "p": "nà ge", "m": "저것 (양사와 함께)", "e": "我要那个。", "ep": "Wǒ yào nà ge.", "em": "저것 주세요.", "wr": "1~2급 공통: 那·个"},
+    {"w": "那里", "p": "nàlǐ", "m": "거기, 그곳 (표준)", "e": "我在那里工作。", "ep": "Wǒ zài nàlǐ gōngzuò.", "em": "나는 거기서 일해요.", "wr": "1~2급 공통: 那"},
+    {"w": "那儿", "p": "nàr", "m": "거기 (구어)", "e": "他去那儿了。", "ep": "Tā qù nàr le.", "em": "그는 거기 갔어요.", "wr": "1~2급 공통: 那·儿"},
+    {"w": "那些", "p": "nàxiē", "m": "저것들, 그것들", "e": "那些书是我的。", "ep": "Nàxiē shū shì wǒ de.", "em": "저 책들은 제 거예요.", "wr": "1~2급 공통: 那"},
+    {"w": "男", "p": "nán", "m": "남자, 남성", "e": "那个男老师是我爸爸。", "ep": "Nà ge nán lǎoshī shì wǒ bàba.", "em": "저 남자 선생님은 우리 아빠예요.", "wr": "1~2급 공통: 男"},
+    {"w": "男朋友", "p": "nánpéngyou", "m": "남자친구", "e": "我姐姐有男朋友。", "ep": "Wǒ jiějie yǒu nánpéngyou.", "em": "우리 언니는 남자친구가 있어요.", "nt": "you", "wr": "1~2급 공통: 男"},
+    {"w": "呢", "p": "ne", "m": "~은? (되물음 조사)", "e": "我很好，你呢？", "ep": "Wǒ hěn hǎo, nǐ ne?", "em": "나는 잘 지내, 너는?"},
+    {"w": "能", "p": "néng", "m": "~할 수 있다", "e": "你能来吗？", "ep": "Nǐ néng lái ma?", "em": "올 수 있어요?"},
+    {"w": "你", "p": "nǐ", "m": "너, 당신", "e": "你好！", "ep": "Nǐ hǎo!", "em": "안녕하세요!", "wr": "1~2급 공통: 你"},
+    {"w": "你好", "p": "nǐ hǎo", "m": "안녕하세요", "e": "老师，你好！", "ep": "Lǎoshī, nǐ hǎo!", "em": "선생님, 안녕하세요!", "ts": "3성+3성 → 앞 글자가 2성: nǐ hǎo → ní hǎo", "wr": "1~2급 공통: 你·好"},
+    {"w": "你们", "p": "nǐmen", "m": "너희들, 여러분", "e": "你们好！", "ep": "Nǐmen hǎo!", "em": "여러분 안녕하세요!", "nt": "men", "wr": "1~2급 공통: 你·们"},
+    {"w": "年", "p": "nián", "m": "해, 년", "e": "我学汉语一年了。", "ep": "Wǒ xué Hànyǔ yì nián le.", "em": "나는 중국어를 배운 지 1년 됐어요.", "wr": "1~2급 공통: 年"},
+    {"w": "您", "p": "nín", "m": "당신 (존칭)", "e": "您好，请坐。", "ep": "Nín hǎo, qǐng zuò.", "em": "안녕하세요, 앉으세요."},
+    {"w": "牛奶", "p": "niúnǎi", "m": "우유", "e": "我早上喝牛奶。", "ep": "Wǒ zǎoshang hē niúnǎi.", "em": "나는 아침에 우유를 마셔요."},
+    {"w": "女", "p": "nǚ", "m": "여자, 여성", "e": "那个女学生是我妹妹。", "ep": "Nà ge nǚ xuésheng shì wǒ mèimei.", "em": "저 여학생은 내 여동생이에요.", "wr": "1~2급 공통: 女"},
+    {"w": "女儿", "p": "nǚ'ér", "m": "딸", "e": "我有一个女儿。", "ep": "Wǒ yǒu yí ge nǚ'ér.", "em": "나는 딸이 하나 있어요.", "wr": "1~2급 공통: 女·儿"},
+    {"w": "女朋友", "p": "nǚpéngyou", "m": "여자친구", "e": "我弟弟的女朋友是老师。", "ep": "Wǒ dìdi de nǚpéngyou shì lǎoshī.", "em": "내 남동생 여자친구는 선생님이에요.", "nt": "you", "wr": "1~2급 공통: 女"},
+    {"w": "女士", "p": "nǚshì", "m": "여성, 부인 (존칭)", "e": "女士，您好！", "ep": "Nǚshì, nín hǎo!", "em": "안녕하세요, 부인.", "wr": "1~2급 공통: 女"},
+    {"w": "朋友", "p": "péngyou", "m": "친구", "e": "他是我的朋友。", "ep": "Tā shì wǒ de péngyou.", "em": "그는 제 친구예요.", "nt": "you"},
+    {"w": "便宜", "p": "piányi", "m": "싸다 (편리하다는 biàn, 方便)", "e": "这儿的水果很便宜。", "ep": "Zhèr de shuǐguǒ hěn piányi.", "em": "이곳 과일은 아주 싸요.", "nt": "yi"},
+    {"w": "漂亮", "p": "piàoliang", "m": "예쁘다, 아름답다", "e": "你的衣服很漂亮。", "ep": "Nǐ de yīfu hěn piàoliang.", "em": "네 옷 아주 예뻐요.", "nt": "liang"},
+    {"w": "苹果", "p": "píngguǒ", "m": "사과", "e": "这个苹果很大。", "ep": "Zhè ge píngguǒ hěn dà.", "em": "이 사과는 아주 커요."},
+    {"w": "七", "p": "qī", "m": "일곱, 7", "e": "我七点吃早饭。", "ep": "Wǒ qī diǎn chī zǎofàn.", "em": "나는 7시에 아침을 먹어요.", "wr": "1~2급 공통: 七"},
+    {"w": "起床", "p": "qǐ chuáng", "m": "일어나다, 기상하다", "e": "我每天六点起床。", "ep": "Wǒ měi tiān liù diǎn qǐ chuáng.", "em": "나는 매일 6시에 일어나요.", "lh": "동사+목적어 — 起了床, 起得很早"},
+    {"w": "千", "p": "qiān", "m": "천, 1000", "e": "这个电脑三千块。", "ep": "Zhè ge diànnǎo sān qiān kuài.", "em": "이 컴퓨터는 3000위안이에요."},
+    {"w": "前", "p": "qián", "m": "앞, 전", "e": "三天前我去了中国。", "ep": "Sān tiān qián wǒ qù le Zhōngguó.", "em": "사흘 전에 중국에 갔어요."},
+    {"w": "钱", "p": "qián", "m": "돈", "e": "我没有钱。", "ep": "Wǒ méiyǒu qián.", "em": "나는 돈이 없어요."},
+    {"w": "请", "p": "qǐng", "m": "청하다; 부디 ~하세요", "e": "请坐。", "ep": "Qǐng zuò.", "em": "앉으세요."},
+    {"w": "请问", "p": "qǐngwèn", "m": "실례지만 ~, 말씀 좀 묻겠습니다", "e": "请问，医院在哪儿？", "ep": "Qǐngwèn, yīyuàn zài nǎr?", "em": "실례지만, 병원이 어디예요?"},
+    {"w": "去", "p": "qù", "m": "가다", "e": "我去学校。", "ep": "Wǒ qù xuéxiào.", "em": "나는 학교에 가요.", "wr": "1~2급 공통: 去"},
+    {"w": "去年", "p": "qùnián", "m": "작년", "e": "去年我在中国。", "ep": "Qùnián wǒ zài Zhōngguó.", "em": "작년에 나는 중국에 있었어요.", "wr": "1~2급 공통: 去·年"},
+    {"w": "热", "p": "rè", "m": "덥다, 뜨겁다", "e": "今天很热。", "ep": "Jīntiān hěn rè.", "em": "오늘 아주 더워요."},
+    {"w": "人", "p": "rén", "m": "사람", "e": "他是中国人。", "ep": "Tā shì Zhōngguó rén.", "em": "그는 중국 사람이에요.", "wr": "1~2급 공통: 人"},
+    {"w": "认识", "p": "rènshi", "m": "알다, 알게 되다", "e": "我认识他。", "ep": "Wǒ rènshi tā.", "em": "나는 그를 알아요.", "nt": "shi"},
+    {"w": "日", "p": "rì", "m": "날, 일; 해", "e": "今天是十月一日。", "ep": "Jīntiān shì shí yuè yī rì.", "em": "오늘은 10월 1일이에요.", "wr": "1~2급 공통: 日"},
+    {"w": "三", "p": "sān", "m": "셋, 3", "e": "我们家有三个人。", "ep": "Wǒmen jiā yǒu sān ge rén.", "em": "우리 집은 세 식구예요.", "wr": "1~2급 공통: 三"},
+    {"w": "商店", "p": "shāngdiàn", "m": "가게, 상점", "e": "商店几点开门？", "ep": "Shāngdiàn jǐ diǎn kāi mén?", "em": "가게는 몇 시에 문을 열어요?"},
+    {"w": "上", "p": "shàng", "m": "위; 오르다", "e": "书在桌子上。", "ep": "Shū zài zhuōzi shàng.", "em": "책은 책상 위에 있어요.", "wr": "1~2급 공통: 上"},
+    {"w": "上班", "p": "shàng bān", "m": "출근하다, 일하러 가다", "e": "我八点上班。", "ep": "Wǒ bā diǎn shàng bān.", "em": "나는 8시에 출근해요.", "lh": "동사+목적어 — 上了班, 上一天班", "wr": "1~2급 공통: 上"},
+    {"w": "上课", "p": "shàng kè", "m": "수업하다, 수업에 들어가다", "e": "我们九点上课。", "ep": "Wǒmen jiǔ diǎn shàng kè.", "em": "우리는 9시에 수업해요.", "lh": "동사+목적어 — 上了课, 上了一节课", "wr": "1~2급 공통: 上"},
+    {"w": "上午", "p": "shàngwǔ", "m": "오전", "e": "上午我有课。", "ep": "Shàngwǔ wǒ yǒu kè.", "em": "오전에 수업이 있어요.", "wr": "1~2급 공통: 上·午"},
+    {"w": "上学", "p": "shàng xué", "m": "학교에 다니다, 등교하다", "e": "我儿子今年上学。", "ep": "Wǒ érzi jīnnián shàng xué.", "em": "내 아들은 올해 학교에 가요.", "lh": "동사+목적어 — 上了学, 上过学", "wr": "1~2급 공통: 上·学"},
+    {"w": "少", "p": "shǎo", "m": "적다, 부족하다 (젊다는 shào, 少年)", "e": "这个店人很少。", "ep": "Zhè ge diàn rén hěn shǎo.", "em": "이 가게는 사람이 적어요.", "wr": "1~2급 공통: 少"},
+    {"w": "谁", "p": "shéi", "m": "누구", "e": "他是谁？", "ep": "Tā shì shéi?", "em": "그는 누구예요?"},
+    {"w": "什么", "p": "shénme", "m": "무엇, 뭐", "e": "你想吃什么？", "ep": "Nǐ xiǎng chī shénme?", "em": "뭐 먹고 싶어요?", "nt": "me", "wr": "1~2급 공통: 什·么"},
+    {"w": "生病", "p": "shēng bìng", "m": "병이 나다, 앓다", "e": "他今天生病了。", "ep": "Tā jīntiān shēng bìng le.", "em": "그는 오늘 병이 났어요.", "lh": "동사+목적어 — 生了一场病, 生过病", "wr": "1~2급 공통: 生"},
+    {"w": "十", "p": "shí", "m": "열, 10", "e": "我们十点上课。", "ep": "Wǒmen shí diǎn shàng kè.", "em": "우리는 10시에 수업해요.", "wr": "1~2급 공통: 十"},
+    {"w": "时候", "p": "shíhou", "m": "때, 시각", "e": "你什么时候来？", "ep": "Nǐ shénme shíhou lái?", "em": "언제 와요?", "nt": "hou", "wr": "1~2급 공통: 时"},
+    {"w": "时间", "p": "shíjiān", "m": "시간", "e": "我没有时间。", "ep": "Wǒ méiyǒu shíjiān.", "em": "나는 시간이 없어요.", "wr": "1~2급 공통: 时·间"},
+    {"w": "事", "p": "shì", "m": "일, 사건", "e": "我今天有事。", "ep": "Wǒ jīntiān yǒu shì.", "em": "나는 오늘 볼일이 있어요."},
+    {"w": "是", "p": "shì", "m": "~이다, 맞다", "e": "他是我的老师。", "ep": "Tā shì wǒ de lǎoshī.", "em": "그는 제 선생님이에요.", "wr": "1~2급 공통: 是"},
+    {"w": "手机", "p": "shǒujī", "m": "휴대전화", "e": "我的手机在哪儿？", "ep": "Wǒ de shǒujī zài nǎr?", "em": "내 휴대폰이 어디 있어요?"},
+    {"w": "书", "p": "shū", "m": "책", "e": "这是我的书。", "ep": "Zhè shì wǒ de shū.", "em": "이건 제 책이에요.", "wr": "1~2급 공통: 书"},
+    {"w": "书店", "p": "shūdiàn", "m": "서점", "e": "我去书店买书。", "ep": "Wǒ qù shūdiàn mǎi shū.", "em": "나는 서점에 책을 사러 가요.", "wr": "1~2급 공통: 书"},
+    {"w": "水", "p": "shuǐ", "m": "물", "e": "请给我一杯水。", "ep": "Qǐng gěi wǒ yì bēi shuǐ.", "em": "물 한 잔 주세요."},
+    {"w": "水果", "p": "shuǐguǒ", "m": "과일", "e": "我喜欢吃水果。", "ep": "Wǒ xǐhuan chī shuǐguǒ.", "em": "나는 과일 먹는 것을 좋아해요.", "ts": "3성+3성 → 앞 글자가 2성: shuǐguǒ → shuí guǒ"},
+    {"w": "睡", "p": "shuì", "m": "자다", "e": "我很想睡。", "ep": "Wǒ hěn xiǎng shuì.", "em": "나는 너무 자고 싶어요."},
+    {"w": "睡觉", "p": "shuì jiào", "m": "잠자다, 자다 (觉 jué＝느끼다, 觉得)", "e": "我晚上十点睡觉。", "ep": "Wǒ wǎnshang shí diǎn shuì jiào.", "em": "나는 밤 10시에 자요.", "lh": "동사+목적어 — 睡了一觉, 睡个好觉"},
+    {"w": "说", "p": "shuō", "m": "말하다", "e": "请再说一次。", "ep": "Qǐng zài shuō yí cì.", "em": "다시 한 번 말해 주세요.", "wr": "1~2급 공통: 说"},
+    {"w": "说话", "p": "shuō huà", "m": "말하다, 이야기하다", "e": "请不要说话。", "ep": "Qǐng búyào shuō huà.", "em": "말하지 마세요.", "lh": "동사+목적어 — 说了几句话, 说了一句话", "wr": "1~2급 공통: 说"},
+    {"w": "四", "p": "sì", "m": "넷, 4", "e": "我家有四个人。", "ep": "Wǒ jiā yǒu sì ge rén.", "em": "우리 집은 네 식구예요.", "wr": "1~2급 공통: 四"},
+    {"w": "岁", "p": "suì", "m": "살 (나이)", "e": "我今年二十岁。", "ep": "Wǒ jīnnián èrshí suì.", "em": "저는 올해 스무 살이에요.", "wr": "1~2급 공통: 岁"},
+    {"w": "他", "p": "tā", "m": "그, 그를", "e": "他是我的好朋友。", "ep": "Tā shì wǒ de hǎo péngyou.", "em": "그는 내 좋은 친구예요.", "wr": "1~2급 공통: 他"},
+    {"w": "它", "p": "tā", "m": "그것, 그 (사물)", "e": "它是我的猫。", "ep": "Tā shì wǒ de māo.", "em": "그건 내 고양이예요."},
+    {"w": "她", "p": "tā", "m": "그녀, 그녀를", "e": "她是我的老师。", "ep": "Tā shì wǒ de lǎoshī.", "em": "그녀는 제 선생님이에요.", "wr": "1~2급 공통: 她"},
+    {"w": "他们", "p": "tāmen", "m": "그들", "e": "他们都是学生。", "ep": "Tāmen dōu shì xuésheng.", "em": "그들은 모두 학생이에요.", "nt": "men", "wr": "1~2급 공통: 他·们"},
+    {"w": "它们", "p": "tāmen", "m": "그것들", "e": "它们是我的猫。", "ep": "Tāmen shì wǒ de māo.", "em": "그것들은 내 고양이예요.", "nt": "men", "wr": "1~2급 공통: 们"},
+    {"w": "她们", "p": "tāmen", "m": "그녀들", "e": "她们是我的朋友。", "ep": "Tāmen shì wǒ de péngyou.", "em": "그녀들은 내 친구예요.", "nt": "men", "wr": "1~2급 공통: 她·们"},
+    {"w": "太", "p": "tài", "m": "너무, 지나치게", "e": "太好了！", "ep": "Tài hǎo le!", "em": "너무 좋아요!"},
+    {"w": "天", "p": "tiān", "m": "날; 하늘", "e": "我住了三天。", "ep": "Wǒ zhù le sān tiān.", "em": "나는 3일 묵었어요.", "wr": "1~2급 공통: 天"},
+    {"w": "天气", "p": "tiānqì", "m": "날씨", "e": "明天天气怎么样？", "ep": "Míngtiān tiānqì zěnmeyàng?", "em": "내일 날씨 어때요?", "wr": "1~2급 공통: 天"},
+    {"w": "听", "p": "tīng", "m": "듣다", "e": "你在听什么？", "ep": "Nǐ zài tīng shénme?", "em": "뭐 듣고 있어요?"},
+    {"w": "听见", "p": "tīngjiàn", "m": "(소리가) 들리다", "e": "你听见了吗？", "ep": "Nǐ tīngjiàn le ma?", "em": "들렸어요?"},
+    {"w": "同学", "p": "tóngxué", "m": "반 친구, 학우", "e": "他是我的同学。", "ep": "Tā shì wǒ de tóngxué.", "em": "그는 내 반 친구예요.", "wr": "1~2급 공통: 同·学"},
+    {"w": "外", "p": "wài", "m": "밖, 바깥", "e": "门外有人。", "ep": "Mén wài yǒu rén.", "em": "문 밖에 사람이 있어요."},
+    {"w": "外边", "p": "wàibian", "m": "밖, 바깥쪽", "e": "外边下雨了。", "ep": "Wàibian xià yǔ le.", "em": "밖에 비가 와요.", "nt": "bian", "wr": "1~2급 공통: 边"},
+    {"w": "玩", "p": "wán", "m": "놀다", "e": "我们一起玩吧。", "ep": "Wǒmen yìqǐ wán ba.", "em": "우리 같이 놀아요."},
+    {"w": "晚", "p": "wǎn", "m": "늦다; 밤, 저녁", "e": "现在很晚了。", "ep": "Xiànzài hěn wǎn le.", "em": "지금 아주 늦었어요."},
+    {"w": "晚饭", "p": "wǎnfàn", "m": "저녁밥", "e": "我们六点吃晚饭。", "ep": "Wǒmen liù diǎn chī wǎnfàn.", "em": "우리는 6시에 저녁을 먹어요."},
+    {"w": "晚上", "p": "wǎnshang", "m": "저녁, 밤", "e": "晚上你做什么？", "ep": "Wǎnshang nǐ zuò shénme?", "em": "저녁에 뭐 해요?", "nt": "shang", "wr": "1~2급 공통: 上"},
+    {"w": "喂", "p": "wèi", "m": "여보세요 (전화); 어이", "e": "喂，你好！", "ep": "Wèi, nǐ hǎo!", "em": "여보세요, 안녕하세요!"},
+    {"w": "问", "p": "wèn", "m": "묻다, 질문하다", "e": "我问老师一个问题。", "ep": "Wǒ wèn lǎoshī yí ge wèntí.", "em": "나는 선생님께 질문 하나를 여쭤요."},
+    {"w": "问题", "p": "wèntí", "m": "질문; 문제", "e": "我有一个问题。", "ep": "Wǒ yǒu yí ge wèntí.", "em": "질문이 하나 있어요."},
+    {"w": "我", "p": "wǒ", "m": "나, 저", "e": "我是学生。", "ep": "Wǒ shì xuésheng.", "em": "저는 학생이에요.", "wr": "1~2급 공통: 我"},
+    {"w": "我们", "p": "wǒmen", "m": "우리, 저희", "e": "我们是朋友。", "ep": "Wǒmen shì péngyou.", "em": "우리는 친구예요.", "nt": "men", "wr": "1~2급 공통: 我·们"},
+    {"w": "五", "p": "wǔ", "m": "다섯, 5", "e": "我五点下班。", "ep": "Wǒ wǔ diǎn xià bān.", "em": "나는 5시에 퇴근해요.", "wr": "1~2급 공통: 五"},
+    {"w": "午饭", "p": "wǔfàn", "m": "점심밥", "e": "我们十二点吃午饭。", "ep": "Wǒmen shí'èr diǎn chī wǔfàn.", "em": "우리는 12시에 점심을 먹어요.", "wr": "1~2급 공통: 午"},
+    {"w": "喜欢", "p": "xǐhuan", "m": "좋아하다", "e": "我喜欢中国菜。", "ep": "Wǒ xǐhuan Zhōngguó cài.", "em": "나는 중국 음식을 좋아해요.", "nt": "huan"},
+    {"w": "下", "p": "xià", "m": "아래; 내리다", "e": "猫在桌子下。", "ep": "Māo zài zhuōzi xià.", "em": "고양이가 책상 아래에 있어요.", "wr": "1~2급 공통: 下"},
+    {"w": "下雨", "p": "xià yǔ", "m": "비가 오다", "e": "今天下雨了。", "ep": "Jīntiān xià yǔ le.", "em": "오늘 비가 왔어요.", "lh": "동사+목적어 — 下过雨, 下了一场雨", "wr": "1~2급 공통: 下"},
+    {"w": "下班", "p": "xià bān", "m": "퇴근하다", "e": "我六点下班。", "ep": "Wǒ liù diǎn xià bān.", "em": "나는 6시에 퇴근해요.", "lh": "동사+목적어 — 下了班", "wr": "1~2급 공통: 下"},
+    {"w": "下课", "p": "xià kè", "m": "수업이 끝나다", "e": "我们三点下课。", "ep": "Wǒmen sān diǎn xià kè.", "em": "우리는 3시에 수업이 끝나요.", "lh": "동사+목적어 — 下了课, 下了一节课", "wr": "1~2급 공통: 下"},
+    {"w": "下午", "p": "xiàwǔ", "m": "오후", "e": "下午我们去商店吧。", "ep": "Xiàwǔ wǒmen qù shāngdiàn ba.", "em": "오후에 가게에 가요.", "wr": "1~2급 공통: 下·午"},
+    {"w": "先生", "p": "xiānsheng", "m": "씨, 선생님; 남편", "e": "王先生在吗？", "ep": "Wáng xiānsheng zài ma?", "em": "왕 씨 계세요?", "nt": "sheng", "wr": "1~2급 공통: 生"},
+    {"w": "现在", "p": "xiànzài", "m": "지금, 현재", "e": "现在八点。", "ep": "Xiànzài bā diǎn.", "em": "지금 8시예요.", "wr": "1~2급 공통: 现·在"},
+    {"w": "想", "p": "xiǎng", "m": "~하고 싶다; 생각하다", "e": "我想去中国。", "ep": "Wǒ xiǎng qù Zhōngguó.", "em": "나는 중국에 가고 싶어요."},
+    {"w": "小", "p": "xiǎo", "m": "작다, 어리다", "e": "我的房间很小。", "ep": "Wǒ de fángjiān hěn xiǎo.", "em": "내 방은 아주 작아요.", "wr": "1~2급 공통: 小"},
+    {"w": "小朋友", "p": "xiǎopéngyǒu", "m": "어린이, 꼬마", "e": "小朋友，你几岁了？", "ep": "Xiǎopéngyǒu, nǐ jǐ suì le?", "em": "어린이, 몇 살이에요?", "nt": "you", "wr": "1~2급 공통: 小"},
+    {"w": "小时", "p": "xiǎoshí", "m": "시간 (60분)", "e": "我工作八小时。", "ep": "Wǒ gōngzuò bā xiǎoshí.", "em": "나는 8시간 일해요.", "wr": "1~2급 공통: 小·时"},
+    {"w": "小学", "p": "xiǎoxué", "m": "초등학교", "e": "我儿子在小学学习。", "ep": "Wǒ érzi zài xiǎoxué xuéxí.", "em": "내 아들은 초등학교에서 공부해요.", "wr": "1~2급 공통: 小·学"},
+    {"w": "小学生", "p": "xiǎoxuéshēng", "m": "초등학생", "e": "我妹妹是小学生。", "ep": "Wǒ mèimei shì xiǎoxuéshēng.", "em": "내 여동생은 초등학생이에요.", "nt": "sheng", "wr": "1~2급 공통: 小·学·生"},
+    {"w": "些", "p": "xiē", "m": "약간, 몇 (불특정 복수)", "e": "我买了一些水果。", "ep": "Wǒ mǎi le yìxiē shuǐguǒ.", "em": "나는 과일을 좀 샀어요."},
+    {"w": "写", "p": "xiě", "m": "쓰다", "e": "请写你的名字。", "ep": "Qǐng xiě nǐ de míngzi.", "em": "이름을 써 주세요.", "wr": "1~2급 공통: 写"},
+    {"w": "谢谢", "p": "xièxie", "m": "고맙습니다", "e": "谢谢你！", "ep": "Xièxie nǐ!", "em": "고마워요!", "nt": "xie"},
+    {"w": "新", "p": "xīn", "m": "새롭다", "e": "这是我的新手机。", "ep": "Zhè shì wǒ de xīn shǒujī.", "em": "이건 제 새 휴대폰이에요."},
+    {"w": "星期", "p": "xīngqī", "m": "주, 요일", "e": "今天星期几？", "ep": "Jīntiān xīngqī jǐ?", "em": "오늘 무슨 요일이에요?"},
+    {"w": "星期日", "p": "xīngqīrì", "m": "일요일", "e": "星期日我不上班。", "ep": "Xīngqīrì wǒ bú shàng bān.", "em": "일요일에는 출근하지 않아요.", "wr": "1~2급 공통: 日"},
+    {"w": "星期天", "p": "xīngqītiān", "m": "일요일", "e": "星期天我在家。", "ep": "Xīngqītiān wǒ zài jiā.", "em": "일요일에는 집에 있어요.", "wr": "1~2급 공통: 天"},
+    {"w": "休息", "p": "xiūxi", "m": "쉬다", "e": "请休息一下。", "ep": "Qǐng xiūxi yíxià.", "em": "잠깐 쉬세요.", "nt": "xi"},
+    {"w": "学", "p": "xué", "m": "배우다", "e": "我学汉语。", "ep": "Wǒ xué Hànyǔ.", "em": "나는 중국어를 배워요.", "wr": "1~2급 공통: 学"},
+    {"w": "学生", "p": "xuésheng", "m": "학생", "e": "他是我的学生。", "ep": "Tā shì wǒ de xuésheng.", "em": "그는 제 학생이에요.", "nt": "sheng", "wr": "1~2급 공통: 学·生"},
+    {"w": "学习", "p": "xuéxí", "m": "공부하다, 배우다", "e": "我在学习汉语。", "ep": "Wǒ zài xuéxí Hànyǔ.", "em": "나는 중국어를 공부하고 있어요.", "wr": "1~2급 공통: 学·习"},
+    {"w": "学校", "p": "xuéxiào", "m": "학교", "e": "我的学校很大。", "ep": "Wǒ de xuéxiào hěn dà.", "em": "우리 학교는 커요.", "wr": "1~2급 공통: 学"},
+    {"w": "雪", "p": "xuě", "m": "눈", "e": "今天下雪了。", "ep": "Jīntiān xià xuě le.", "em": "오늘 눈이 왔어요."},
+    {"w": "要", "p": "yào", "m": "원하다; ~해야 한다", "e": "我要一杯茶。", "ep": "Wǒ yào yì bēi chá.", "em": "차 한 잔 주세요.", "wr": "1~2급 공통: 要"},
+    {"w": "也", "p": "yě", "m": "~도, 역시", "e": "我也喜欢中国。", "ep": "Wǒ yě xǐhuan Zhōngguó.", "em": "나도 중국을 좋아해요.", "wr": "1~2급 공통: 也"},
+    {"w": "一", "p": "yī", "m": "하나, 1", "e": "我有一个哥哥。", "ep": "Wǒ yǒu yí ge gēge.", "em": "저는 형이 한 명 있어요.", "ts": "뒤 음절이 4성이면 yí, 1·2·3성이면 yì (단독·수 셀 때는 yī)", "wr": "1~2급 공통: 一"},
+    {"w": "衣服", "p": "yīfu", "m": "옷", "e": "这件衣服很漂亮。", "ep": "Zhè jiàn yīfu hěn piàoliang.", "em": "이 옷 아주 예뻐요.", "nt": "fu"},
+    {"w": "医生", "p": "yīshēng", "m": "의사", "e": "我妈妈是医生。", "ep": "Wǒ māma shì yīshēng.", "em": "우리 엄마는 의사예요.", "wr": "1~2급 공통: 生"},
+    {"w": "医院", "p": "yīyuàn", "m": "병원", "e": "医院在那边。", "ep": "Yīyuàn zài nàbiān.", "em": "병원은 저쪽에 있어요."},
+    {"w": "一半", "p": "yíbàn", "m": "절반, 반", "e": "我吃了一半。", "ep": "Wǒ chī le yíbàn.", "em": "나는 절반을 먹었어요.", "ts": "一 + 4성(半 bàn) → yí (yíbàn)", "wr": "1~2급 공통: 一·半"},
+    {"w": "一下", "p": "yíxià", "m": "잠깐, 한 번", "e": "请等一下。", "ep": "Qǐng děng yíxià.", "em": "잠깐 기다려 주세요.", "ts": "一 + 4성(下 xià) → yí (yíxià)", "wr": "1~2급 공통: 一·下"},
+    {"w": "椅子", "p": "yǐzi", "m": "의자", "e": "这个椅子很新。", "ep": "Zhè ge yǐzi hěn xīn.", "em": "이 의자는 아주 새것이에요.", "nt": "zi", "wr": "1~2급 공통: 子"},
+    {"w": "一点儿", "p": "yìdiǎnr", "m": "조금, 약간", "e": "我会说一点儿汉语。", "ep": "Wǒ huì shuō yìdiǎnr Hànyǔ.", "em": "나는 중국어를 조금 할 수 있어요.", "ts": "一 + 3성(点 diǎn) → yì (yìdiǎnr)", "wr": "1~2급 공통: 一·点·儿"},
+    {"w": "一些", "p": "yìxiē", "m": "약간, 몇몇", "e": "我买了一些书。", "ep": "Wǒ mǎi le yìxiē shū.", "em": "나는 책을 몇 권 샀어요.", "ts": "一 + 1성(些 xiē) → yì (yìxiē)", "wr": "1~2급 공통: 一"},
+    {"w": "有", "p": "yǒu", "m": "있다, 가지다", "e": "你有时间吗？", "ep": "Nǐ yǒu shíjiān ma?", "em": "시간 있어요?", "wr": "1~2급 공통: 有"},
+    {"w": "有的", "p": "yǒude", "m": "어떤 것은, 더러는", "e": "有的学生很忙，有的不忙。", "ep": "Yǒude xuésheng hěn máng, yǒude bù máng.", "em": "어떤 학생은 바쁘고, 어떤 학생은 안 바빠요.", "nt": "de", "wr": "1~2급 공통: 有·的"},
+    {"w": "有点儿", "p": "yǒudiǎnr", "m": "조금 ~하다", "e": "今天有点儿冷。", "ep": "Jīntiān yǒudiǎnr lěng.", "em": "오늘은 조금 추워요.", "ts": "3성+3성 → 앞 글자가 2성: yǒudiǎnr → yóu diǎnr", "wr": "1~2급 공통: 有·点·儿"},
+    {"w": "有些", "p": "yǒuxiē", "m": "어떤 것은; 좀", "e": "有些菜很贵。", "ep": "Yǒuxiē cài hěn guì.", "em": "어떤 요리는 아주 비싸요.", "wr": "1~2급 공통: 有"},
+    {"w": "雨", "p": "yǔ", "m": "비", "e": "雨很大。", "ep": "Yǔ hěn dà.", "em": "비가 많이 와요."},
+    {"w": "元", "p": "yuán", "m": "위안 (화폐 단위)", "e": "这个杯子十元。", "ep": "Zhè ge bēizi shí yuán.", "em": "이 컵은 10위안이에요."},
+    {"w": "月", "p": "yuè", "m": "달, 월", "e": "这个月我很忙。", "ep": "Zhè ge yuè wǒ hěn máng.", "em": "이번 달은 아주 바빠요.", "wr": "1~2급 공통: 月"},
+    {"w": "再", "p": "zài", "m": "다시, 또", "e": "请再说一次。", "ep": "Qǐng zài shuō yí cì.", "em": "다시 한 번 말해 주세요."},
+    {"w": "在", "p": "zài", "m": "있다; ~에서", "e": "我在家。", "ep": "Wǒ zài jiā.", "em": "나는 집에 있어요.", "wr": "1~2급 공통: 在"},
+    {"w": "再见", "p": "zàijiàn", "m": "안녕히 계세요, 또 봐요", "e": "老师，再见！", "ep": "Lǎoshī, zàijiàn!", "em": "선생님, 안녕히 계세요!"},
+    {"w": "早", "p": "zǎo", "m": "이르다; 안녕 (아침 인사)", "e": "你早！", "ep": "Nǐ zǎo!", "em": "안녕하세요! (아침 인사)"},
+    {"w": "早饭", "p": "zǎofàn", "m": "아침밥", "e": "我七点吃早饭。", "ep": "Wǒ qī diǎn chī zǎofàn.", "em": "나는 7시에 아침을 먹어요."},
+    {"w": "早上", "p": "zǎoshang", "m": "아침, 이른 아침", "e": "早上我喝牛奶。", "ep": "Zǎoshang wǒ hē niúnǎi.", "em": "아침에 우유를 마셔요.", "nt": "shang", "wr": "1~2급 공통: 上"},
+    {"w": "怎么", "p": "zěnme", "m": "어떻게, 왜", "e": "这个字怎么读？", "ep": "Zhè ge zì zěnme dú?", "em": "이 글자 어떻게 읽어요?", "nt": "me", "wr": "1~2급 공통: 么"},
+    {"w": "怎么样", "p": "zěnmeyàng", "m": "어떻습니까", "e": "今天天气怎么样？", "ep": "Jīntiān tiānqì zěnmeyàng?", "em": "오늘 날씨 어때요?", "wr": "1~2급 공통: 么"},
+    {"w": "找", "p": "zhǎo", "m": "찾다", "e": "我在找我的手机。", "ep": "Wǒ zài zhǎo wǒ de shǒujī.", "em": "나는 내 휴대폰을 찾고 있어요."},
+    {"w": "这", "p": "zhè", "m": "이, 이것", "e": "这是我的书。", "ep": "Zhè shì wǒ de shū.", "em": "이건 제 책이에요.", "wr": "1~2급 공통: 这"},
+    {"w": "这边", "p": "zhèbiān", "m": "이쪽", "e": "请这边坐。", "ep": "Qǐng zhèbiān zuò.", "em": "이쪽에 앉으세요.", "wr": "1~2급 공통: 这·边"},
+    {"w": "这个", "p": "zhè ge", "m": "이것 (양사와 함께)", "e": "这个多少钱？", "ep": "Zhè ge duōshao qián?", "em": "이거 얼마예요?", "wr": "1~2급 공통: 这·个"},
+    {"w": "这里", "p": "zhèlǐ", "m": "여기 (표준)", "e": "我在这里工作。", "ep": "Wǒ zài zhèlǐ gōngzuò.", "em": "나는 여기서 일해요.", "wr": "1~2급 공통: 这"},
+    {"w": "这儿", "p": "zhèr", "m": "여기 (구어)", "e": "这儿的水果很便宜。", "ep": "Zhèr de shuǐguǒ hěn piányi.", "em": "여기 과일은 아주 싸요.", "wr": "1~2급 공통: 这·儿"},
+    {"w": "这些", "p": "zhèxiē", "m": "이것들, 이", "e": "这些书都是我的。", "ep": "Zhèxiē shū dōu shì wǒ de.", "em": "이 책들은 모두 제 거예요.", "wr": "1~2급 공통: 这"},
+    {"w": "真", "p": "zhēn", "m": "정말, 참", "e": "这个真好吃！", "ep": "Zhè ge zhēn hǎochī!", "em": "이거 정말 맛있어요!"},
+    {"w": "正在", "p": "zhèngzài", "m": "~하는 중이다", "e": "我正在吃饭。", "ep": "Wǒ zhèngzài chī fàn.", "em": "나는 밥 먹는 중이에요.", "wr": "1~2급 공통: 在"},
+    {"w": "只", "p": "zhī", "m": "마리 (동물 양사; 단지는 zhǐ)", "e": "我有一只猫。", "ep": "Wǒ yǒu yì zhī māo.", "em": "나는 고양이가 한 마리 있어요."},
+    {"w": "知道", "p": "zhīdào", "m": "알다", "e": "我知道他的名字。", "ep": "Wǒ zhīdào tā de míngzi.", "em": "나는 그의 이름을 알아요."},
+    {"w": "中国", "p": "Zhōngguó", "m": "중국", "e": "中国很大。", "ep": "Zhōngguó hěn dà.", "em": "중국은 아주 넓어요.", "wr": "1~2급 공통: 中·国"},
+    {"w": "中文", "p": "Zhōngwén", "m": "중국어, 중국 문자", "e": "我在学习中文。", "ep": "Wǒ zài xuéxí Zhōngwén.", "em": "나는 중국어를 공부하고 있어요.", "wr": "1~2급 공통: 中·文"},
+    {"w": "中午", "p": "zhōngwǔ", "m": "정오, 점심때", "e": "中午我们吃米饭。", "ep": "Zhōngwǔ wǒmen chī mǐfàn.", "em": "점심때 우리는 쌀밥을 먹어요.", "wr": "1~2급 공통: 中·午"},
+    {"w": "中学", "p": "zhōngxué", "m": "중학교", "e": "我妹妹在中学学习。", "ep": "Wǒ mèimei zài zhōngxué xuéxí.", "em": "내 여동생은 중학교에서 공부해요.", "wr": "1~2급 공통: 中·学"},
+    {"w": "中学生", "p": "zhōngxuéshēng", "m": "중학생", "e": "我是中学生。", "ep": "Wǒ shì zhōngxuéshēng.", "em": "저는 중학생이에요.", "nt": "sheng", "wr": "1~2급 공통: 中·学·生"},
+    {"w": "住", "p": "zhù", "m": "살다, 거주하다", "e": "我住在学校。", "ep": "Wǒ zhù zài xuéxiào.", "em": "나는 학교에 살아요."},
+    {"w": "桌子", "p": "zhuōzi", "m": "책상, 탁자", "e": "桌子上有一个杯子。", "ep": "Zhuōzi shàng yǒu yí ge bēizi.", "em": "책상 위에 컵이 하나 있어요.", "nt": "zi", "wr": "1~2급 공통: 子"},
+    {"w": "字", "p": "zì", "m": "글자", "e": "这个字怎么写？", "ep": "Zhè ge zì zěnme xiě?", "em": "이 글자 어떻게 써요?", "wr": "1~2급 공통: 字"},
+    {"w": "昨天", "p": "zuótiān", "m": "어제", "e": "昨天我去了医院。", "ep": "Zuótiān wǒ qù le yīyuàn.", "em": "어제 나는 병원에 갔어요.", "wr": "1~2급 공통: 天"},
+    {"w": "坐", "p": "zuò", "m": "앉다; (탈것을) 타다", "e": "请坐。", "ep": "Qǐng zuò.", "em": "앉으세요."},
+    {"w": "做", "p": "zuò", "m": "하다, 만들다", "e": "你在做什么？", "ep": "Nǐ zài zuò shénme?", "em": "뭐 하고 있어요?"},
+    {"w": "做饭", "p": "zuò fàn", "m": "밥하다, 요리하다", "e": "我妈妈在做饭。", "ep": "Wǒ māma zài zuò fàn.", "em": "우리 엄마가 밥하고 있어요.", "lh": "동사+목적어 — 做了一顿饭, 做过饭"}
+  ];
+
+  var TOTAL = WORDS.length;
+  var DAY_SIZE = 50;
+  var DAY_COUNT = Math.ceil(TOTAL / DAY_SIZE);
+
+  /* ── 저장 (localStorage 안전 처리) ── */
+  var LS_KEY = "xinhsk3_1_known_v1";
+  var storageOK = true;
+  var known = {};
+
+  function loadKnown(){
+    var out = {};
+    try{
+      var raw = window.localStorage.getItem(LS_KEY);
+      if(!raw) return out;
+      var arr = JSON.parse(raw);
+      if(Object.prototype.toString.call(arr) === "[object Array]"){
+        for(var i=0;i<arr.length;i++){
+          if(typeof arr[i] === "string" && arr[i]) out[arr[i]] = 1;
+        }
+      }
+    }catch(e){
+      storageOK = false;
+      return {};
+    }
+    return out;
+  }
+  function saveKnown(){
+    try{
+      window.localStorage.setItem(LS_KEY, JSON.stringify(Object.keys(known)));
+    }catch(e){
+      storageOK = false;
+    }
+  }
+  known = loadKnown();
+
+  /* ── 공통 유틸 ── */
+  function esc(s){
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+  function shuffle(a){
+    for(var i=a.length-1;i>0;i--){
+      var j = Math.floor(Math.random()*(i+1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+  // 성조 부호를 떼고 비교해서 'ni'로도 'nǐ'를 찾을 수 있게 한다
+  function norm(s){
+    var v = String(s);
+    try{ v = v.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }catch(e){}
+    return v.toLowerCase();
+  }
+  /* ── 딱지: 경성 · 성조 변화 · 이합사 · 쓰기 (데이터 플래그만 보고 그린다) ── */
+  function badgeList(w, small){
+    var cls = small ? " sm" : "";
+    var out = "";
+    if(w.nt){
+      out += '<span class="bdg nt' + cls + '" data-bdg="nt" data-w="' + esc(w.w) + '" title="경성: ' + esc(w.nt) + '">⚠️ 경성 주의</span>';
+    }
+    if(w.ts){
+      out += '<span class="bdg ts' + cls + '" data-bdg="ts" data-w="' + esc(w.w) + '" title="성조 변화: ' + esc(w.ts) + '">🔄 성조 변화</span>';
+    }
+    if(w.lh){
+      out += '<span class="bdg lh' + cls + '" data-bdg="lh" data-w="' + esc(w.w) + '" title="이합사: ' + esc(w.lh) + '">✂️ 이합사</span>';
+    }
+    if(w.wr){
+      out += '<span class="bdg wr' + cls + '" data-bdg="wr" data-w="' + esc(w.w) + '" title="쓰기: ' + esc(w.wr) + '">✍️ 쓰기</span>';
+    }
+    return out;
+  }
+  function badges(w){
+    var s = badgeList(w, false);
+    return s ? '<div class="bdgs">' + s + '</div>' : "";
+  }
+
+  /* ── Day 범위 ── */
+  var state = { view:"card", day:0 };
+
+  function scopeIdx(){
+    var out = [];
+    var start = state.day ? (state.day - 1) * DAY_SIZE : 0;
+    var end = state.day ? Math.min(start + DAY_SIZE, TOTAL) : TOTAL;
+    for(var i=start;i<end;i++) out.push(i);
+    return out;
+  }
+  function scopeTotal(){ return scopeIdx().length; }
+  function scopeLabel(){
+    if(!state.day) return "전체 " + TOTAL + "단어";
+    var s = (state.day - 1) * DAY_SIZE + 1;
+    var e = Math.min(state.day * DAY_SIZE, TOTAL);
+    return "Day " + state.day + " · " + s + "~" + e + "번";
+  }
+  function knownCount(){
+    var n = 0, idx = scopeIdx();
+    for(var i=0;i<idx.length;i++){ if(known[WORDS[idx[i]].w]) n++; }
+    return n;
+  }
+
+  /* ── 진행률 ── */
+  var progFill = document.getElementById("progFill");
+  var progTxt = document.getElementById("progTxt");
+  var progPct = document.getElementById("progPct");
+  function renderProgress(){
+    var n = knownCount();
+    var t = scopeTotal();
+    var pct = t ? Math.round(n / t * 100) : 0;
+    progFill.style.width = pct + "%";
+    progTxt.textContent = (state.day ? "Day " + state.day + " · " : "") + "외운 단어 " + n + " / " + t;
+    progPct.textContent = pct + "%";
+  }
+
+  /* ── Day 버튼 ── */
+  var daysEl = document.getElementById("days");
+  function renderDays(){
+    var html = '<button class="day-btn' + (state.day === 0 ? " active" : "") + '" data-day="0" aria-pressed="' + (state.day === 0 ? "true" : "false") + '">전체 <small>' + TOTAL + '</small></button>';
+    for(var d=1; d<=DAY_COUNT; d++){
+      var s = (d - 1) * DAY_SIZE + 1;
+      var e = Math.min(d * DAY_SIZE, TOTAL);
+      html += '<button class="day-btn' + (state.day === d ? " active" : "") + '" data-day="' + d + '" aria-pressed="' + (state.day === d ? "true" : "false") + '">Day ' + d + ' <small>' + s + '~' + e + '</small></button>';
+    }
+    daysEl.innerHTML = html;
+  }
+  function setDay(d){
+    if(state.day === d) return;
+    state.day = d;
+    renderDays();
+    quiz = null;
+    buildDeck("new");
+    renderProgress();
+    renderList();
+    if(state.view === "quiz") renderQuiz();
+    if(state.view === "card" && cardArea) cardArea.scrollIntoView({block:"nearest"});
+    try{ window.scrollTo({top:0,behavior:"smooth"}); }catch(e){ window.scrollTo(0,0); }
+  }
+
+  /* ── 발음 (Web Speech API) ── */
+  var speechSupported = ("speechSynthesis" in window) && ("SpeechSynthesisUtterance" in window);
+  var voiceWarned = false;
+
+  function voiceList(){
+    try{ return window.speechSynthesis.getVoices() || []; }catch(e){ return []; }
+  }
+
+  function zhongVoice(list){
+    try{
+      var exact = null, any = null, named = null;
+      for(var i=0;i<list.length;i++){
+        var v = list[i];
+        var lang = String(v.lang || "").toLowerCase();
+        var name = String(v.name || "").toLowerCase();
+        if(lang === "zh-cn" || lang === "zh_cn" || lang.indexOf("zh-cn") === 0){
+          if(!exact) exact = v;
+          if(!named && (name.indexOf("ting") > -1 || name.indexOf("meijia") > -1 || name.indexOf("mei-jia") > -1 || name.indexOf("chinese") > -1)) named = v;
+        }else if(lang.indexOf("zh") === 0 && !any){
+          any = v;
+        }
+      }
+      return named || exact || any || null;
+    }catch(e){ return null; }
+  }
+
+  function speak(text){
+    if(!speechSupported){
+      toast("이 브라우저에서는 발음 듣기를 지원하지 않아요.");
+      return;
+    }
+    try{
+      window.speechSynthesis.cancel();
+      var list = voiceList();
+      var u = new SpeechSynthesisUtterance(String(text));
+      u.lang = "zh-CN";
+      u.rate = 0.85;
+      u.pitch = 1;
+      var v = zhongVoice(list);
+      if(v){ u.voice = v; }
+      else if(list.length && !voiceWarned){
+        voiceWarned = true;
+        toast("중국어 음성이 없어 발음이 부정확할 수 있어요. 설정에서 중국어 음성을 추가해 보세요.");
+      }
+      window.speechSynthesis.speak(u);
+    }catch(e){
+      toast("발음을 재생할 수 없어요.");
+    }
+  }
+  if(speechSupported){
+    try{ window.speechSynthesis.getVoices(); }catch(e){}
+  }
+
+  /* ── 토스트 ── */
+  var toastEl = document.getElementById("toast");
+  var toastTimer = null;
+  function toast(msg){
+    if(!toastEl) return;
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    if(toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove("show"); }, 2800);
+  }
+
+  /* ── 화면 전환 ── */
+  var tabs = document.querySelectorAll(".tab");
+  var views = { card:document.getElementById("view-card"), quiz:document.getElementById("view-quiz"), list:document.getElementById("view-list") };
+
+  function showView(name){
+    state.view = name;
+    for(var i=0;i<tabs.length;i++){
+      var on = tabs[i].getAttribute("data-view") === name;
+      tabs[i].classList.toggle("active", on);
+      tabs[i].setAttribute("aria-selected", on ? "true" : "false");
+    }
+    for(var k in views){
+      if(!Object.prototype.hasOwnProperty.call(views,k)) continue;
+      views[k].classList.toggle("active", k === name);
+    }
+    if(name !== "card" && speechSupported){ try{ window.speechSynthesis.cancel(); }catch(e){} }
+    if(name === "list"){ renderList(); }
+    if(name === "quiz"){ renderQuiz(); }
+  }
+  for(var ti=0; ti<tabs.length; ti++){
+    (function(btn){ btn.addEventListener("click", function(){ showView(btn.getAttribute("data-view")); }); })(tabs[ti]);
+  }
+
+  /* ═══════════════════════════════════════════
+     플래시카드
+     ═══════════════════════════════════════════ */
+  var cardArea = document.getElementById("cardArea");
+  var cardActions = document.getElementById("cardActions");
+  var deck = [];
+  var pos = 0;
+  var flipped = false;
+
+  function buildDeck(mode){
+    var all = scopeIdx();
+    if(mode === "new"){
+      var rest = all.filter(function(i){ return !known[WORDS[i].w]; });
+      if(rest.length) all = rest;
+    }
+    shuffle(all);
+    deck = all;
+    pos = 0;
+    flipped = false;
+    renderCard();
+  }
+
+  function renderCard(){
+    if(!deck.length){ buildDeck("new"); return; }
+    if(pos >= deck.length){
+      cardArea.innerHTML = doneHTML();
+      cardActions.setAttribute("hidden","");
+      return;
+    }
+    cardActions.removeAttribute("hidden");
+    var w = WORDS[deck[pos]];
+    var body;
+    if(!flipped){
+      body =
+        '<div class="front">' +
+          '<div class="hanzi-xl" lang="zh-CN">' + esc(w.w) + '</div>' +
+          '<div class="hint">카드를 눌러 뜻과 예문 보기</div>' +
+        '</div>' +
+        '<button class="spk" data-speak="' + esc(w.w) + '" aria-label="' + esc(w.w) + ' 발음 듣기">🔊</button>';
+    }else{
+      body =
+        '<div class="back">' +
+          '<div class="h-row">' +
+            '<div>' +
+              '<div class="h" lang="zh-CN">' + esc(w.w) + '</div>' +
+              '<div class="pinyin">' + esc(w.p) + '</div>' +
+              badges(w) +
+            '</div>' +
+            '<button class="spk" data-speak="' + esc(w.w) + '" aria-label="' + esc(w.w) + ' 발음 듣기">🔊</button>' +
+          '</div>' +
+          '<div class="meaning">' + esc(w.m) + '</div>' +
+          '<div class="ex">' +
+            '<div class="ex-zh" lang="zh-CN">' + esc(w.e) + '</div>' +
+            '<div class="ex-py">' + esc(w.ep) + '</div>' +
+            '<div class="ex-ko">' + esc(w.em) + '</div>' +
+          '</div>' +
+        '</div>';
+    }
+    cardArea.innerHTML = '<div class="card" data-flip="1" role="button" tabindex="0" aria-label="카드 뒤집기">' + body + '</div>';
+  }
+
+  function doneHTML(){
+    return '<div class="done">' +
+      '<div class="emo">🎉</div>' +
+      '<h2>' + (state.day ? "Day " + state.day + " 카드 다 봤어요!" : "이번 카드 다 봤어요!") + '</h2>' +
+      '<p>' + esc(scopeLabel()) + ' · 외운 단어 ' + knownCount() + '개 / ' + scopeTotal() + '개</p>' +
+      '<div class="actions" style="grid-template-columns:1fr">' +
+        '<button class="btn primary" data-act="quiz">✏️ 퀴즈로 확인하기</button>' +
+      '</div>' +
+      '<div class="actions">' +
+        '<button class="btn ghost" data-act="newdeck">못 외운 단어</button>' +
+        '<button class="btn ghost" data-act="alldeck">이 범위 다시</button>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function flip(){ flipped = !flipped; renderCard(); }
+
+  function advance(didKnow){
+    if(pos >= deck.length) return;
+    var w = WORDS[deck[pos]];
+    if(didKnow){
+      known[w.w] = 1;
+    }else{
+      delete known[w.w];
+      if(deck.length < TOTAL * 3) deck.push(deck[pos]);
+    }
+    saveKnown();
+    pos++;
+    flipped = false;
+    renderProgress();
+    renderCard();
+  }
+
+  /* ═══════════════════════════════════════════
+     4지선다 퀴즈
+     ═══════════════════════════════════════════ */
+  var quizArea = document.getElementById("quizArea");
+  var quiz = null;
+
+  function labelOf(i, dir){ return dir === "h2m" ? WORDS[i].m : WORDS[i].w; }
+
+  function makeItem(i, dir){
+    var idx = scopeIdx();
+    var pool = [];
+    for(var k=0;k<idx.length;k++){
+      if(idx[k] !== i) pool.push(idx[k]);
+    }
+    if(pool.length < 3){
+      for(var m=0;m<TOTAL;m++){ if(m !== i && pool.indexOf(m) < 0) pool.push(m); }
+    }
+    shuffle(pool);
+    // 보기 글자가 겹치지 않게 고른다 (뜻이 같은 단어가 보기에 둘 나오는 것 방지)
+    var used = {};
+    used[labelOf(i, dir)] = 1;
+    var picks = [];
+    for(var q=0;q<pool.length && picks.length<3;q++){
+      var lab = labelOf(pool[q], dir);
+      if(used[lab]) continue;
+      used[lab] = 1;
+      picks.push(pool[q]);
+    }
+    for(var q2=0;q2<pool.length && picks.length<3;q2++){
+      if(picks.indexOf(pool[q2]) < 0) picks.push(pool[q2]);
+    }
+    var choices = shuffle([i, picks[0], picks[1], picks[2]]);
+    return { i:i, dir:dir, choices:choices };
+  }
+
+  function startQuiz(pool){
+    var base = (pool && pool.length) ? pool.slice() : scopeIdx();
+    if(base.length < 4) base = (function(){ var a=[]; for(var i=0;i<TOTAL;i++) a.push(i); return a; })();
+    shuffle(base);
+    base = base.slice(0, Math.min(10, base.length));
+    quiz = { items:[], pos:0, score:0, wrong:[], answered:false, picked:-1 };
+    for(var i=0;i<base.length;i++){
+      quiz.items.push(makeItem(base[i], Math.random() < 0.5 ? "h2m" : "m2h"));
+    }
+    renderQuiz();
+  }
+
+  function renderQuiz(){
+    if(!quiz){ renderQuizIntro(); return; }
+    if(quiz.pos >= quiz.items.length){ renderResult(); return; }
+
+    var it = quiz.items[quiz.pos];
+    var w = WORDS[it.i];
+    var head =
+      '<div class="quiz-top">' +
+        '<span>문제 ' + (quiz.pos + 1) + ' / ' + quiz.items.length + '</span>' +
+        '<span>정답 ' + quiz.score + '</span>' +
+      '</div>';
+
+    var promptHTML;
+    if(it.dir === "h2m"){
+      promptHTML =
+        '<div class="q-label">이 단어의 뜻은?</div>' +
+        '<div class="q-hanzi" lang="zh-CN">' + esc(w.w) + '</div>' +
+        '<button class="spk" data-speak="' + esc(w.w) + '" aria-label="발음 듣기">🔊</button>';
+    }else{
+      promptHTML =
+        '<div class="q-label">이 뜻에 맞는 중국어는?</div>' +
+        '<div class="q-ko">' + esc(w.m) + '</div>';
+    }
+
+    var chHTML = '<div class="choices">';
+    for(var c=0;c<it.choices.length;c++){
+      var ci = it.choices[c];
+      var cw = WORDS[ci];
+      var label = (it.dir === "h2m") ? cw.m : cw.w;
+      var cls = "choice";
+      if(quiz.answered){
+        if(ci === it.i) cls += " correct";
+        else if(ci === quiz.picked) cls += " wrong";
+        else cls += " dim";
+      }
+      var hanziAttr = (it.dir === "m2h") ? ' lang="zh-CN"' : "";
+      chHTML += '<button class="' + cls + '" data-choice="' + ci + '">' +
+                  '<span class="num">' + (c + 1) + '</span>' +
+                  '<span' + hanziAttr + '>' + esc(label) + '</span>' +
+                '</button>';
+    }
+    chHTML += '</div>';
+
+    var fb = "";
+    if(quiz.answered){
+      var ok = quiz.picked === it.i;
+      fb =
+        '<div class="feedback">' +
+          '<div class="fb-head ' + (ok ? "ok" : "no") + '">' + (ok ? "정답이에요! ✅" : "아쉬워요, 이렇게 기억해요 🔎") + '</div>' +
+          '<div class="fb-row">' +
+            '<span class="fb-h" lang="zh-CN">' + esc(w.w) + '</span>' +
+            '<span class="fb-p">' + esc(w.p) + '</span>' +
+            '<span class="fb-m">' + esc(w.m) + '</span>' +
+            '<button class="spk sm" data-speak="' + esc(w.w) + '" aria-label="' + esc(w.w) + ' 발음 듣기">🔊</button>' +
+          '</div>' +
+          '<div class="fb-ex" lang="zh-CN">' + esc(w.e) + '<span class="ko">' + esc(w.em) + '</span></div>' +
+          '<div class="actions" style="grid-template-columns:1fr;margin-top:12px">' +
+            '<button class="btn primary" data-act="nextq">' + (quiz.pos + 1 >= quiz.items.length ? "결과 보기" : "다음 문제 →") + '</button>' +
+          '</div>' +
+        '</div>';
+    }
+
+    quizArea.innerHTML = head +
+      '<div class="qcard">' + promptHTML + '</div>' +
+      chHTML + fb;
+  }
+
+  function renderQuizIntro(){
+    quizArea.innerHTML =
+      '<div class="quiz-intro">' +
+        '<span class="scope-tag">' + esc(scopeLabel()) + '</span>' +
+        '<h2>4지선다 퀴즈</h2>' +
+        '<p>한자→뜻, 뜻→한자 문제가 섞여서 <b>10문제</b> 나와요.<br>지금 고른 Day 범위 안에서만 출제돼요.</p>' +
+        '<button class="btn primary" data-act="quiz-new">못 외운 단어로 풀기</button>' +
+        '<button class="btn ghost" data-act="quiz-all">' + esc(scopeLabel()) + ' 전체로 풀기</button>' +
+      '</div>';
+  }
+
+  function renderResult(){
+    var n = quiz.items.length;
+    var pct = n ? Math.round(quiz.score / n * 100) : 0;
+    var msg = pct === 100 ? "완벽해요! 👏" : (pct >= 70 ? "좋아요, 조금만 더! 💪" : "괜찮아요, 다시 보면 돼요 🌱");
+
+    var wrongHTML = "";
+    if(quiz.wrong.length){
+      wrongHTML = '<div class="wrong-list"><h3>틀린 단어 ' + quiz.wrong.length + '개</h3>';
+      for(var i=0;i<quiz.wrong.length;i++){
+        var w = WORDS[quiz.wrong[i]];
+        wrongHTML += '<div class="wrong-item">' +
+          '<span class="w-h" lang="zh-CN">' + esc(w.w) + '</span>' +
+          '<span class="w-p">' + esc(w.p) + '</span>' +
+          '<span class="w-m">' + esc(w.m) + '</span>' +
+        '</div>';
+      }
+      wrongHTML += "</div>";
+    }
+
+    quizArea.innerHTML =
+      '<div class="result">' +
+        '<h2>퀴즈 결과</h2>' +
+        '<div class="score-big">' + quiz.score + ' / ' + n + '</div>' +
+        '<div class="score-sub">' + pct + '% · ' + msg + '</div>' +
+        wrongHTML +
+        (quiz.wrong.length ? '<button class="btn primary" data-act="retry-wrong">틀린 단어 다시 풀기</button>' : '') +
+        '<button class="btn ghost" data-act="quiz-new">못 외운 단어로 새 퀴즈</button>' +
+        '<button class="btn soft small" data-act="quiz-all">' + esc(scopeLabel()) + ' 전체로 풀기</button>' +
+      '</div>';
+  }
+
+  function answer(choiceIdx){
+    if(!quiz || quiz.answered) return;
+    var it = quiz.items[quiz.pos];
+    quiz.picked = choiceIdx;
+    quiz.answered = true;
+    if(choiceIdx === it.i){
+      quiz.score++;
+      known[WORDS[it.i].w] = 1;
+    }else{
+      delete known[WORDS[it.i].w];
+      quiz.wrong.push(it.i);
+    }
+    saveKnown();
+    renderProgress();
+    renderQuiz();
+  }
+
+  function nextQuestion(){
+    if(!quiz) return;
+    quiz.pos++;
+    quiz.answered = false;
+    quiz.picked = -1;
+    renderQuiz();
+  }
+
+  /* ═══════════════════════════════════════════
+     단어장
+     ═══════════════════════════════════════════ */
+  var searchEl = document.getElementById("search");
+  var listRows = document.getElementById("listRows");
+  var listCount = document.getElementById("listCount");
+  var currentFilter = "all";
+
+  function renderList(){
+    var q = String(searchEl.value || "").trim().toLowerCase();
+    var idx = scopeIdx();
+    var html = "";
+    var shown = 0;
+    for(var k=0;k<idx.length;k++){
+      var i = idx[k];
+      var w = WORDS[i];
+      var isK = !!known[w.w];
+      if(currentFilter === "new" && isK) continue;
+      if(currentFilter === "known" && !isK) continue;
+      if(q){
+        var hay = norm(w.w + " " + w.p + " " + w.m + " " + w.e + " " + w.em);
+        if(hay.indexOf(norm(q)) < 0) continue;
+      }
+      shown++;
+      html += '<li class="row' + (isK ? " done" : "") + '">' +
+        '<button class="spk sm" data-speak="' + esc(w.w) + '" aria-label="' + esc(w.w) + ' 발음 듣기">🔊</button>' +
+        '<div class="row-main">' +
+          '<div class="row-top">' +
+            '<span class="row-h" lang="zh-CN">' + esc(w.w) + '</span>' +
+            '<span class="row-p">' + esc(w.p) + '</span>' +
+            badgeList(w, true) +
+          '</div>' +
+          '<div class="row-m">' + esc(w.m) + '</div>' +
+        '</div>' +
+        '<button class="mark' + (isK ? " on" : "") + '" data-toggle="' + esc(w.w) + '" aria-label="' + esc(w.w) + ' 암기 표시" aria-pressed="' + (isK ? "true" : "false") + '">' + (isK ? "✓" : "") + '</button>' +
+      '</li>';
+    }
+    if(!shown) html = '<li class="empty">찾는 단어가 없어요.</li>';
+    listRows.innerHTML = html;
+    listCount.textContent = scopeLabel() + " · " + shown + "개 단어";
+  }
+
+  var chips = document.querySelectorAll(".chip");
+  for(var ci2=0; ci2<chips.length; ci2++){
+    (function(chip){
+      chip.addEventListener("click", function(){
+        currentFilter = chip.getAttribute("data-filter");
+        for(var j=0;j<chips.length;j++) chips[j].classList.toggle("active", chips[j] === chip);
+        renderList();
+      });
+    })(chips[ci2]);
+  }
+  searchEl.addEventListener("input", renderList);
+
+  document.getElementById("resetBtn").addEventListener("click", function(){
+    var ok = window.confirm("학습 기록을 모두 지울까요?\n외운 단어 표시가 사라져요.");
+    if(!ok) return;
+    known = {};
+    saveKnown();
+    buildDeck("new");
+    renderProgress();
+    renderList();
+    quiz = null;
+    if(state.view === "quiz") renderQuiz();
+    toast("학습 기록을 지웠어요.");
+  });
+
+  /* ── 이벤트 위임 ── */
+  document.addEventListener("click", function(e){
+    var t = e.target;
+    if(!t || !t.closest) return;
+
+    var dayBtn = t.closest("[data-day]");
+    if(dayBtn){
+      setDay(parseInt(dayBtn.getAttribute("data-day"), 10));
+      return;
+    }
+
+    var bdg = t.closest("[data-bdg]");
+    if(bdg){
+      e.stopPropagation();
+      var bw = null;
+      for(var bi=0; bi<TOTAL; bi++){
+        if(WORDS[bi].w === bdg.getAttribute("data-w")){ bw = WORDS[bi]; break; }
+      }
+      if(bw){
+        var bkind = bdg.getAttribute("data-bdg");
+        var bmsg;
+        if(bkind === "nt"){
+          bmsg = (bw.nt === bw.p)
+            ? "경성 발음 · 힘을 빼고 짧게 — " + bw.p
+            : "경성 주의 · ‘" + bw.nt + "’ 부분은 힘을 빼고 짧게 — " + bw.p;
+        }else if(bkind === "lh"){
+          bmsg = "이합사 · " + bw.lh;
+        }else if(bkind === "wr"){
+          bmsg = "쓰기 필수 한자 · " + bw.wr;
+        }else{
+          bmsg = "성조 변화 · " + bw.ts;
+        }
+        toast(bmsg);
+      }
+      return;
+    }
+
+    var spk = t.closest("[data-speak]");
+    if(spk){
+      e.stopPropagation();
+      speak(spk.getAttribute("data-speak"));
+      return;
+    }
+
+    var toggle = t.closest("[data-toggle]");
+    if(toggle){
+      var hz = toggle.getAttribute("data-toggle");
+      if(known[hz]) delete known[hz]; else known[hz] = 1;
+      saveKnown();
+      renderProgress();
+      renderList();
+      if(state.view === "card") renderCard();
+      return;
+    }
+
+    var choice = t.closest("[data-choice]");
+    if(choice){
+      answer(parseInt(choice.getAttribute("data-choice"), 10));
+      return;
+    }
+
+    var act = t.closest("[data-act]");
+    if(act){
+      var a = act.getAttribute("data-act");
+      if(a === "known") advance(true);
+      else if(a === "again") advance(false);
+      else if(a === "newdeck"){ buildDeck("new"); renderProgress(); }
+      else if(a === "alldeck"){ buildDeck("all"); renderProgress(); }
+      else if(a === "quiz"){ showView("quiz"); quiz = null; renderQuiz(); }
+      else if(a === "quiz-new"){
+        var idx2 = scopeIdx();
+        var pool = [];
+        for(var i2=0;i2<idx2.length;i2++){ if(!known[WORDS[idx2[i2]].w]) pool.push(idx2[i2]); }
+        startQuiz(pool.length >= 4 ? pool : null);
+      }
+      else if(a === "quiz-all"){ startQuiz(null); }
+      else if(a === "nextq"){ nextQuestion(); }
+      else if(a === "retry-wrong"){
+        var wr = (quiz && quiz.wrong.length) ? quiz.wrong.slice() : null;
+        startQuiz(wr);
+      }
+      return;
+    }
+
+    var flipEl = t.closest("[data-flip]");
+    if(flipEl){ flip(); return; }
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+    if(state.view !== "card") return;
+    if(e.key === " " || e.key === "Spacebar" || e.key === "Enter"){
+      e.preventDefault();
+      flip();
+    }else if(e.key === "ArrowRight"){
+      advance(true);
+    }else if(e.key === "ArrowLeft"){
+      advance(false);
+    }
+  });
+
+  /* ── 시작 ── */
+  function init(){
+    renderDays();
+    renderProgress();
+    buildDeck("new");
+    renderList();
+    if(!storageOK){
+      document.getElementById("storageNote").textContent = "지금 환경에서는 학습 기록을 저장할 수 없어요. 이번 학습만 기록됩니다.";
+    }
+  }
+  init();
+})();
+</script>
+</body>
+</html>
