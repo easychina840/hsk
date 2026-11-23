@@ -171,33 +171,34 @@
   body{font-size:16.5px;line-height:1.5}
   .app{
     max-width:560px;
-    padding:calc(env(safe-area-inset-top,0px) + 8px) 14px calc(env(safe-area-inset-bottom,0px) + 104px);
+    padding:calc(env(safe-area-inset-top,0px) + 6px) 14px calc(env(safe-area-inset-bottom,0px) + 104px);
   }
-  h1{font-size:19px}
-  .sub{font-size:12.5px;color:#5a4739;font-weight:700;margin-top:1px}
-  .dot{width:30px;height:30px;flex:0 0 30px}
-  .prog{margin-top:5px;display:flex;align-items:center;gap:8px}
+  h1{font-size:18.5px}
+  .sub{font-size:12px;color:#5a4739;font-weight:700;margin-top:0}
+  .brand{gap:8px}
+  .dot{width:26px;height:26px;flex:0 0 26px}
+  .prog{margin-top:4px;display:flex;align-items:center;gap:8px}
   .prog-bar{display:none}
-  .prog-txt{flex:1;font-size:12px;color:#5a4739;margin-top:0}
+  .prog-txt{flex:1;font-size:11.5px;color:#5a4739;margin-top:0;line-height:1.3}
   .prog-txt span:last-child{color:var(--accent);font-weight:800}
 
-  .filters{margin:7px 0 0}
-  .pill{font-size:13px;padding:7px 12px;border-width:1.5px}
+  .filters{margin:6px 0 0}
+  .pill{font-size:12.5px;padding:6px 11px;border-width:1.5px}
   .row{scrollbar-width:none}
-  .row.day{margin-top:5px}
-  .row.day .pill{font-size:11.5px;padding:5px 10px;border-radius:99px}
+  .row.day{margin-top:4px}
+  .row.day .pill{font-size:11px;padding:4px 9px;border-radius:99px}
 
-  .tabs{margin:7px 0 8px;padding:4px;border-radius:14px}
-  .tab{font-size:13px;padding:9px 2px;border-radius:11px}
+  .tabs{margin:6px 0 6px;padding:3px;border-radius:13px}
+  .tab{font-size:12.5px;padding:8px 2px;border-radius:10px}
 
-  .card{padding:10px 12px 10px;border-radius:20px}
-  .whead{margin-bottom:6px}
+  .card{padding:8px 12px 8px;border-radius:20px}
+  .whead{margin-bottom:4px}
   .lvlbadge{font-size:11.5px;padding:3px 9px}
   .widx{font-size:12px;font-weight:800}
   #pad{max-width:min(248px,58vw);border-radius:14px}
 
-  .charline{margin-top:8px;gap:8px}
-  .charline .h{font-size:34px;font-weight:700}
+  .charline{margin-top:6px;gap:7px}
+  .charline .h{font-size:32px;font-weight:700}
   .pinyin{font-size:21px}
   .strokes{
     font-size:11.5px;font-weight:800;color:#7d6a5a;background:#fdf4ec;
@@ -206,16 +207,17 @@
   .spk{width:35px;height:35px;flex-basis:35px;font-size:15px}
   .meaning{font-size:16px;color:#3b2c22;line-height:1.45;margin-top:3px;font-weight:600}
 
-  .words{margin-top:7px;gap:5px}
-  .wchip{padding:4px 9px;border-radius:10px;border-color:#eedbc9;background:#fdf5ec}
-  .wchip b{font-size:16px}
-  .wchip span{font-size:11.5px;color:#6d5a49}
+  .words{margin-top:6px;gap:6px;flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;scrollbar-width:none;padding-bottom:1px}
+  .words::-webkit-scrollbar{display:none}
+  .wchip{display:flex;align-items:baseline;gap:4px;padding:3px 9px;border-radius:10px;border-color:#eedbc9;background:#fdf5ec}
+  .wchip b{font-size:16px;display:inline;line-height:1.25}
+  .wchip span{font-size:11px;color:#6d5a49;display:inline}
 
-  .ctrls{margin-top:8px;gap:6px;grid-template-columns:1.3fr 1fr 1fr}
-  .ctrls .btn{font-size:12.5px;min-height:42px;border-radius:12px;padding:4px 2px}
-  .actions{margin-top:6px;gap:6px}
-  .actions .btn{min-height:46px;font-size:14.5px;border-radius:14px}
-  .btn.soft{min-height:42px;font-size:12.5px}
+  .ctrls{margin-top:6px;gap:6px;grid-template-columns:1.3fr 1fr 1fr}
+  .ctrls .btn{font-size:12.5px;min-height:38px;border-radius:12px;padding:3px 2px}
+  .actions{margin-top:5px;gap:6px}
+  .actions .btn{min-height:42px;font-size:14px;border-radius:14px}
+  .btn.soft{min-height:38px;font-size:12.5px}
 
   .tiny{font-size:11.5px;margin-top:9px}
   .toast{bottom:calc(env(safe-area-inset-bottom,0px) + 96px);font-size:13.5px}
