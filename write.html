@@ -1048,10 +1048,13 @@ function padSize(){
   var cap = Math.min(w, 248, Math.round(vw * 0.58));
   /* .gridwrap → .card: 카드 안에서 田자 칸이 차지하지 않는 나머지 높이를 빼고 남는 만큼만 쓴다 */
   var box = wrap && wrap.parentNode;
-  if (box && box.getBoundingClientRect && pad.getBoundingClientRect){
+  if (box && box.getBoundingClientRect){
+    /* 캔버스를 잠시 0높이로 접어 카드에서 캔버스를 뺀 나머지 높이를 정확히 잰다 */
+    var keep = pad.style.height;
+    pad.style.height = "0px";
     var rect = box.getBoundingClientRect();
-    var others = rect.height - pad.getBoundingClientRect().height;
-    var avail = vh - rect.top - others - 14;
+    pad.style.height = keep;
+    var avail = vh - rect.top - rect.height - 14;
     if (avail > 0) cap = Math.min(cap, avail);
   }
   return Math.max(140, Math.round(cap));
