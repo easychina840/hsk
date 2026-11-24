@@ -1510,7 +1510,7 @@ function renderGrid(){
   for (i = 0; i < idxs.length; i++){
     var gi = idxs[i], d = DATA[gi];
     html += '<button class="cell' + (state.known[d.c] ? " done" : "") +
-      (levelOf(gi) === "3" ? " lv3" : (levelOf(gi) === "4" ? " lv4" : "")) +
+      (levelOf(gi) === "3" ? " lv3" : (levelOf(gi) === "4" ? " lv4" : (levelOf(gi) === "5" ? " lv5" : (levelOf(gi) === "6" ? " lv6" : "")))) +
       '" data-gi="' + gi + '"><i class="ck">✓</i><b>' + d.c + "</b><span>" + d.p + "</span></button>";
   }
   el.charGrid.innerHTML = html;
