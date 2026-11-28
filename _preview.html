@@ -8,7 +8,9 @@
 <body>
 <iframe id="f" src="hsk6.html"></iframe>
 <script>
-  var l = new URLSearchParams(location.search).get('l') || '6';
-  document.getElementById('f').src = 'hsk' + l + '.html';
+  var q = new URLSearchParams(location.search);
+  var l = q.get('l') || '6';
+  var b = q.get('b') || Date.now();
+  document.getElementById('f').src = 'hsk' + l + '.html?b=' + b;
 </script>
 </body></html>
