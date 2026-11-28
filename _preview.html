@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<title>모바일 확인용</title>
+<style>
+  html,body{margin:0;background:#dfd8d0}
+  iframe{width:390px;height:664px;border:0;display:block;background:#fff}
+</style></head>
+<body>
+<iframe id="f" src="hsk6.html"></iframe>
+<script>
+  var l = new URLSearchParams(location.search).get('l') || '6';
+  document.getElementById('f').src = 'hsk' + l + '.html';
+</script>
+</body></html>
