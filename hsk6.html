@@ -141,6 +141,21 @@
   .ex-zh{font-family:var(--hanzi);font-size:19.5px;line-height:1.55}
   .ex-py{font-size:14px;color:var(--ink-soft);margin-top:4px}
   .ex-ko{font-size:16px;margin-top:7px;color:#4a3a30}
+  /* ── 예문 병음 · 예문 듣기 (2026-11-29) ── */
+  .ex-top{display:flex;align-items:flex-start;gap:8px}
+  .ex-top .ex-zh{flex:1 1 auto;min-width:0}
+  .ex-spk{margin-top:-1px}
+  .ex-extra{margin-top:12px;padding-top:12px;border-top:1px dotted var(--line)}
+  .ex-tag{display:inline-block;font-size:12px;font-weight:800;color:var(--accent-deep);background:var(--accent-soft);border-radius:99px;padding:3px 10px;margin-bottom:6px}
+  .fb-ex-wrap{display:flex;align-items:flex-start;gap:8px;margin-top:7px}
+  .fb-ex-wrap .fb-ex{flex:1 1 auto;min-width:0;margin-top:0}
+  .fb-py{font-size:14px;color:#5d4a3e;margin-top:3px;font-weight:600}
+  .fb-ko{font-size:14px;color:#3b2c23;margin-top:2px}
+  .tts-note{margin:10px 0 2px;padding:11px 13px;border-radius:14px;background:#fff6ec;border:1px solid #f0dccb;color:#5a4739;font-size:13.5px;line-height:1.55}
+  .tts-note p+p{margin-top:4px}
+  .tts-note .tts-t{color:var(--accent-deep);font-weight:800;margin-right:4px}
+  .tts-note b{color:#2b211c}
+  .tts-note .tts-sub{color:#7d6a5a;font-size:12.5px}
 
   .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
   .btn{
@@ -306,7 +321,12 @@
   .pinyin{font-size:25px}
   .meaning{font-size:25px}
   .ex-zh{font-size:21px}
-  .ex-py{font-size:15.5px;color:#5d4a3e}
+  .ex-py{font-size:17.5px;color:#3b2c23;font-weight:700;line-height:1.55;letter-spacing:.005em}
+  .spk.ex-spk{width:40px;height:40px;flex-basis:40px;font-size:17px}
+  .fb-py{font-size:15px}
+  .fb-ko{font-size:15px}
+  .tts-note{font-size:14.5px}
+  .tts-note .tts-sub{font-size:13.5px}
   .ex-ko{font-size:17.5px;color:#2f231b}
   .btn{min-height:60px;font-size:18px}
   .btn.small{min-height:48px;font-size:15px}
@@ -367,6 +387,11 @@
     </div>
   </header>
 
+    <div class="tts-note" role="note">
+      <p><b class="tts-t">🔈 발음 안내</b>기기 음성은 참고용이에요. <b>那个 · 这个</b>는 말할 때 nèige · zhèige로, <b>教 · 得</b> 같은 다음음자는 대표음으로 읽힐 수 있어요. 문맥 발음은 <b>예문 🔊</b>로 들으세요.</p>
+      <p class="tts-sub">표기는 병음·성조를 기준으로 · 一·不는 실제 발음대로(一个 yí ge) · 3성+3성은 사전 표기(你好 nǐ hǎo)</p>
+    </div>
+
   <nav class="tabs" role="tablist" aria-label="학습 모드">
     <button class="tab active" data-view="card" role="tab" aria-selected="true">🃏 플래시카드</button>
     <button class="tab" data-view="quiz" role="tab" aria-selected="false">✏️ 4지선다</button>
@@ -389,7 +414,6 @@
         <span class="lg-row"><span class="bdg lh">✂️ 이합사</span>동사+목적어 — 사이에 了·个·횟수를 넣어요</span>
         <span class="lg-row"><span class="bdg wr">✍️ 쓰기</span>공식 서사한자(직접 써야 하는 한자)가 포함된 단어</span>
       </p>
-      <p class="tiny note">기계 음성은 참고용이에요. 경성·얼화는 병음 표기를 기준으로 보세요.<br>一·不는 실제 발음대로(一个 yí ge) 적었고, 3성+3성은 사전 표기(你好 nǐ hǎo)로 두고 🔄 설명에 실제 발음을 적었어요.</p>
       <p class="tiny note">✍️ 쓰기 딱지는 공식 서사한자 누적 700자(1~2급 100 · 3급 150 · 4급 150 · 5급 150 · 6급 신규 150) 기준이에요.</p>
     </section>
 
@@ -486,7 +510,7 @@
     {no:3646,h:"本身",p:"běnshēn",m:"그 자체, 본래",ex:"游戏本身没有错，问题是使用的时间太长。",ep:"Yóuxì běnshēn méiyǒu cuò, wèntí shì shǐyòng de shíjiān tài cháng.",em:"게임 자체에는 잘못이 없고, 문제는 쓰는 시간이 너무 길다는 것이에요."},
     {no:3647,h:"本土",p:"běntǔ",m:"본토, 자국",ex:"这家工厂使用本土原料，成本比较低。",ep:"Zhè jiā gōngchǎng shǐyòng běntǔ yuánliào, chéngběn bǐjiào dī.",em:"이 공장은 자국의 원료를 써서 원가가 비교적 낮아요.",ts:"3성+3성 → 앞 음절이 2성: běntǔ → béntǔ",wr:"1~5급: 土"},
     {no:3648,h:"闭",p:"bì",m:"닫다, 문을 닫다",ex:"商店下午六点闭门，我们赶紧去吧。",ep:"Shāngdiàn xiàwǔ liù diǎn bì mén, wǒmen gǎnjǐn qù ba.",em:"가게는 오후 여섯 시에 문을 닫으니 우리 서둘러 가요.",wr:"1~5급: 闭"},
-    {no:3649,h:"避",p:"bì",m:"피하다, 모면하다",ex:"危险的地方我们要尽量避开。",ep:"Wēixiǎn de dìfang wǒmen yào jìnliàng bìkāi.",em:"위험한 곳은 우리가 되도록 피해야 해요."},
+    {no:3649,h:"避",p:"bì",m:"피하다, 모면하다",ex:"危险的地方我们要尽量避开。",ep:"Wēixiǎn de dìfang wǒmen yào jǐnliàng bìkāi.",em:"위험한 곳은 우리가 되도록 피해야 해요."},
     {no:3650,h:"逼",p:"bī",m:"강요하다, 몰아붙이다",ex:"老板逼我们周末加班，大家都很生气。",ep:"Lǎobǎn bī wǒmen zhōumò jiābān, dàjiā dōu hěn shēngqì.",em:"사장이 우리에게 주말에 야근을 하라고 강요해서 모두가 화가 났어요."},
     {no:3651,h:"编",p:"biān",m:"엮다, 짜다; (이야기를) 꾸며 만들다",ex:"他喜欢编有趣的故事，逗大家开心。",ep:"Tā xǐhuan biān yǒuqù de gùshi, dòu dàjiā kāixīn.",em:"그는 재미있는 이야기를 꾸며서 사람들을 웃기기를 좋아해요.",wr:"6급 신규: 编"},
     {no:3652,h:"遍地",p:"biàndì",m:"온 땅에, 곳곳에",ex:"秋天到了，公园里遍地是红色的叶子。",ep:"Qiūtiān dàole, gōngyuán lǐ biàndì shì hóngsè de yèzi.",em:"가을이 되어 공원 곳곳이 붉은 낙엽투성이에요.",wr:"1~5급: 地"},
@@ -708,7 +732,7 @@
     {no:3868,h:"担忧",p:"dānyōu",m:"근심하다, 걱정하다",ex:"妈妈很担忧我的身体。",ep:"Māma hěn dānyōu wǒ de shēntǐ.",em:"엄마는 내 건강을 매우 걱정해요.",wr:"6급 신규: 忧"},
     {no:3869,h:"岛",p:"dǎo",m:"섬",ex:"这个小岛上住着几十个人。",ep:"Zhè ge xiǎo dǎo shàng zhùzhe jǐ shí ge rén.",em:"이 작은 섬에는 수십 명이 살고 있어요.",wr:"6급 신규: 岛"},
     {no:3870,h:"倒闭",p:"dǎobì",m:"(회사가) 부도 나다, 문을 닫다",ex:"那家饭馆去年倒闭了。",ep:"Nà jiā fànguǎn qùnián dǎobìle.",em:"그 식당은 작년에 문을 닫았어요.",wr:"1~5급: 倒·闭"},
-    {no:3871,h:"倒车",p:"dǎochē",m:"차를 후진하다",ex:"他倒车的时候很小心。",ep:"Tā dǎochē de shíhou hěn xiǎoxīn.",em:"그는 후진할 때 매우 조심해요.",wr:"1~5급: 倒"},
+    {no:3871,h:"倒车",p:"dǎochē",m:"차를 후진하다",ex:"他倒车的时候很小心。",ep:"Tā dàochē de shíhou hěn xiǎoxīn.",em:"그는 후진할 때 매우 조심해요.",wr:"1~5급: 倒"},
     {no:3872,h:"道德",p:"dàodé",m:"도덕 (名) · 도덕적이다 (形)",ex:"做人要有道德，不能骗人。",ep:"Zuò rén yào yǒu dàodé, bù néng piàn rén.",em:"사람은 도덕이 있어야 하고 남을 속여서는 안 돼요.",wr:"6급 신규: 德"},
     {no:3873,h:"倒是",p:"dàoshì",m:"그런데 (의외로), 참",ex:"这个办法倒是可以试试。",ep:"Zhè ge bànfǎ dàoshì kěyǐ shì shì.",em:"이 방법은 참 한번 해 볼 만해요.",wr:"1~5급: 倒·是"},
     {no:3874,h:"导师",p:"dǎoshī",m:"지도교수, 멘토",ex:"我的导师对我很有耐心。",ep:"Wǒ de dǎoshī duì wǒ hěn yǒu nàixīn.",em:"나의 지도교수는 나에게 아주 인내심이 많아요.",wr:"1~5급: 导"},
@@ -815,7 +839,7 @@
     {no:3975,h:"发行",p:"fāxíng",m:"발행하다, 출시하다",ex:"这本杂志每个月发行一次。",ep:"Zhè běn zázhì měi ge yuè fāxíng yí cì.",em:"이 잡지는 매달 한 번 발행돼요.",wr:"1~5급: 发·行"},
     {no:3976,h:"发炎",p:"fā yán",m:"염증이 나다, 붓다",ex:"他的嗓子发炎了，说话都疼。",ep:"Tā de sǎngzi fā yánle, shuōhuà dōu téng.",em:"그의 목이 부어서 말할 때도 아파요.",lh:"동사+목적어 — 嗓子发了炎, 发过炎",wr:"6급 신규: 炎 · 1~5급: 发"},
     {no:3977,h:"发育",p:"fāyù",m:"발육하다, 자라다",ex:"孩子正在发育，要多吃有营养的东西。",ep:"Háizi zhèngzài fāyù, yào duō chī yǒu yíngyǎng de dōngxi.",em:"아이가 한창 자라는 때라 영양가 있는 것을 많이 먹어야 해요.",wr:"1~5급: 发·育"},
-    {no:3978,h:"肥",p:"féi",m:"기름지다, 살찌다 (形·动) · 거름 (名)",ex:"这块地很肥，适合种菜。",ep:"Zhè kuài de hěn féi, shìhé zhǒng cài.",em:"이 땅은 아주 기름져서 채소를 심기에 알맞아요."},
+    {no:3978,h:"肥",p:"féi",m:"기름지다, 살찌다 (形·动) · 거름 (名)",ex:"这块地很肥，适合种菜。",ep:"Zhè kuài dì hěn féi, shìhé zhǒng cài.",em:"이 땅은 아주 기름져서 채소를 심기에 알맞아요."},
     {no:3979,h:"肺",p:"fèi",m:"폐",ex:"医生说他的肺很健康。",ep:"Yīshēng shuō tā de fèi hěn jiànkāng.",em:"의사가 그의 폐는 아주 건강하다고 했어요.",wr:"6급 신규: 肺"},
     {no:3980,h:"肥胖",p:"féipàng",m:"비만하다, 뚱뚱하다",ex:"他吃得太多，变得很肥胖。",ep:"Tā chī de tài duō, biàn de hěn féipàng.",em:"그는 너무 많이 먹어서 매우 뚱뚱해졌어요.",wr:"1~5급: 胖"},
     {no:3981,h:"飞速",p:"fēisù",m:"빛의 속도로, 매우 빠르게",ex:"这里的科技发展飞速。",ep:"Zhèlǐ de kējì fāzhǎn fēisù.",em:"이곳의 과학 기술은 매우 빠르게 발전해요."},
@@ -840,7 +864,7 @@
     {no:4000,h:"服从",p:"fúcóng",m:"복종하다, 따르다",ex:"在队里，大家都要服从安排。",ep:"Zài duì lǐ, dàjiā dōu yào fúcóng ānpái.",em:"팀에서는 모두가 지시에 따라야 해요."},
     {no:4001,h:"辅导",p:"fǔdǎo",m:"(학습을) 지도하다, 과외 지도하다",ex:"老师每天下午辅导我们做作业。",ep:"Lǎoshī měi tiān xiàwǔ fǔdǎo wǒmen zuò zuòyè.",em:"선생님이 매일 오후 우리 숙제를 지도해 주세요.",ts:"3성+3성 → 앞 음절이 2성: fǔdǎo → fúdǎo",wr:"6급 신규: 辅 · 1~5급: 导"},
     {no:4002,h:"幅度",p:"fúdù",m:"폭, 범위, 정도",ex:"今年气温变化的幅度很大。",ep:"Jīnnián qìwēn biànhuà de fúdù hěn dà.",em:"올해 기온 변화의 폭이 매우 커요.",wr:"1~5급: 度"},
-    {no:4003,h:"覆盖",p:"fùgài",m:"덮다, 뒤덮다",ex:"大雪覆盖了整个村子。",ep:"Dà xuě fùgàile zhěnggè cūn zi.",em:"큰눈이 마을 전체를 뒤덮었어요."},
+    {no:4003,h:"覆盖",p:"fùgài",m:"덮다, 뒤덮다",ex:"大雪覆盖了整个村子。",ep:"Dà xuě fùgàile zhěnggè cūnzi.",em:"큰눈이 마을 전체를 뒤덮었어요."},
     {no:4004,h:"符号",p:"fúhào",m:"부호, 기호",ex:"这个符号是什么意思？",ep:"Zhè ge fúhào shì shénme yìsi?",em:"이 기호는 무슨 뜻이에요?"},
     {no:4005,h:"附件",p:"fùjiàn",m:"첨부 파일, 부속물",ex:"请看一下邮件里的附件。",ep:"Qǐng kàn yíxià yóujiàn lǐ de fùjiàn.",em:"메일에 있는 첨부 파일을 한번 보세요."},
     {no:4006,h:"福利",p:"fúlì",m:"복지 (名) · 복지 혜택을 주다 (动)",ex:"这家公司给员工的福利很好。",ep:"Zhè jiā gōngsī gěi yuángōng de fúlì hěn hǎo.",em:"이 회사는 직원들에게 주는 복지가 아주 좋아요.",wr:"1~5급: 利"},
@@ -976,7 +1000,7 @@
     {no:4136,h:"号召",p:"hàozhào",m:"호소하다, 불러 모으다",ex:"校长号召大家多读书。",ep:"Xiàozhǎng hàozhào dàjiā duō dúshū.",em:"교장이 모두에게 책을 많이 읽자고 호소했어요.",wr:"1~5급: 召"},
     {no:4137,h:"合并",p:"hébìng",m:"합병하다, 합치다",ex:"两个班合并成了一个班。",ep:"Liǎng ge bān hébìng chéngle yí ge bān.",em:"두 반이 하나로 합쳐졌어요.",wr:"1~5급: 合·并"},
     {no:4138,h:"合成",p:"héchéng",m:"합성하다",ex:"这张照片是电脑合成的。",ep:"Zhè zhāng zhàopiàn shì diànnǎo héchéng de.",em:"이 사진은 컴퓨터로 합성한 것이에요.",wr:"1~5급: 合·成"},
-    {no:4139,h:"嘿",p:"hēi",m:"어이, 야 (주의를 끄는 감탄사)",ex:"嘿，你的书掉在地上了。",ep:"Hēi, nǐ de shū diào zài de shàngle.",em:"어이, 네 책이 땅에 떨어졌어요."},
+    {no:4139,h:"嘿",p:"hēi",m:"어이, 야 (주의를 끄는 감탄사)",ex:"嘿，你的书掉在地上了。",ep:"Hēi, nǐ de shū diào zài dì shang le.",em:"어이, 네 책이 땅에 떨어졌어요."},
     {no:4140,h:"黑暗",p:"hēi'àn",m:"어둡다, 암흑의",ex:"外面很黑暗，你走路要小心。",ep:"Wàimiàn hěn hēi'àn, nǐ zǒulù yào xiǎoxīn.",em:"밖이 아주 어두우니 걸을 때 조심하세요."},
     {no:4141,h:"恨",p:"hèn",m:"미워하다, 원망하다",ex:"我恨他骗了我。",ep:"Wǒ hèn tā piànle wǒ.",em:"나는 그가 나를 속인 것이 미워요.",wr:"6급 신규: 恨"},
     {no:4142,h:"狠",p:"hěn",m:"독하다, 맹렬하다 (形·动·副)",ex:"他对自己很狠，每天早起跑步。",ep:"Tā duì zìjǐ hěn hěn, měi tiān zǎo qǐ pǎobù.",em:"그는 자기 자신에게 매우 엄격해서 매일 일찍 일어나 달려요."},
@@ -1105,7 +1129,7 @@
     {no:4265,h:"解答",p:"jiědá",m:"해답하다, 답을 풀어 주다",ex:"老师耐心地解答了我的问题。",ep:"Lǎoshī nàixīn de jiědále wǒ de wèntí.",em:"선생님이 인내심 있게 내 질문에 답을 풀어 주셨어요.",wr:"1~5급: 答"},
     {no:4266,h:"解读",p:"jiědú",m:"해독하다, 해석하다",ex:"他给学生们解读了这首诗。",ep:"Tā gěi xuéshēng men jiědúle zhè shǒu shī.",em:"그가 학생들에게 이 시를 해석해 주었어요."},
     {no:4267,h:"解放",p:"jiěfàng",m:"해방하다, 벗어나게 하다",ex:"新的机器解放了很多人的双手。",ep:"Xīn de jīqì jiěfàngle hěn duō rén de shuāng shǒu.",em:"새 기계가 많은 사람의 두 손을 자유롭게 했어요.",wr:"1~5급: 放"},
-    {no:4268,h:"结果",p:"jiēguǒ",m:"(열매를) 맺다; 결국 ~하게 되다",ex:"他每天练习，结果比赛得了第一。",ep:"Tā měi tiān liànxí, jiēguǒ bǐsài déle dì yī.",em:"그는 매일 연습해서 결국 시합에서 1등을 했어요.",wr:"1~5급: 结"},
+    {no:4268,h:"结果",p:"jiēguǒ",m:"(열매를) 맺다; 결국 ~하게 되다",ex:"他每天练习，结果比赛得了第一。",ep:"Tā měi tiān liànxí, jiéguǒ bǐsài déle dì yī.",em:"그는 매일 연습해서 결국 시합에서 1등을 했어요.",wr:"1~5급: 结"},
     {no:4269,h:"借鉴",p:"jièjiàn",m:"참고하다, 본받다",ex:"我们可以借鉴别人的好经验。",ep:"Wǒmen kěyǐ jièjiàn biérén de hǎo jīngyàn.",em:"우리는 남의 좋은 경험을 참고할 수 있어요.",wr:"1~5급: 借"},
     {no:4270,h:"接连",p:"jiēlián",m:"잇따르다 (动) · 연달아 (副)",ex:"这几天接连下雨，路上很湿。",ep:"Zhè jǐ tiān jiēlián xià yǔ, lùshang hěn shī.",em:"요 며칠 연달아 비가 와서 길이 아주 젖어 있어요.",wr:"1~5급: 连"},
     {no:4271,h:"节能",p:"jiénéng",m:"에너지를 절약하다",ex:"这种灯很节能，电费也少。",ep:"Zhè zhǒng dēng hěn jiénéng, diàn fèi yě shǎo.",em:"이 등은 전기를 아주 적게 써서 전기요금도 적어요.",wr:"1~5급: 节"},
@@ -1248,7 +1272,7 @@
     {no:4408,h:"扩展",p:"kuòzhǎn",m:"확장하다, 넓히다",ex:"公司打算扩展业务。",ep:"Gōngsī dǎsuàn kuòzhǎn yèwù.",em:"회사가 사업을 확장할 계획이에요."},
     {no:4409,h:"枯燥",p:"kūzào",m:"지루하다, 따분하다",ex:"这本书内容太枯燥了。",ep:"Zhè běn shū nèiróng tài kūzàole.",em:"이 책은 내용이 너무 지루해요."},
     {no:4410,h:"啦",p:"la",m:"(문말 조사) ~요, ~라니까 (가벼운 감탄·확인)",ex:"别担心，我已经到家啦。",ep:"Bié dānxīn, wǒ yǐjīng dào jiā la.",em:"걱정 마세요, 나는 이미 집에 도착했어요.",nt:"la",ntNote:"‘la’는 경성 — la. 원성조 lā로 읽지 않아요"},
-    {no:4411,h:"落",p:"là",m:"(물건을) 두고 내리다, 빠뜨리다 — 落(là)",ex:"我把雨伞落在教室了。",ep:"Wǒ bǎ yǔ sǎn là zài jiàoshìle.",em:"나는 우산을 교실에 두고 내렸어요."},
+    {no:4411,h:"落",p:"là",m:"(물건을) 두고 내리다, 빠뜨리다 — 落(là)",ex:"我把雨伞落在教室了。",ep:"Wǒ bǎ yǔ sǎn là zài jiàoshì le.",em:"나는 우산을 교실에 두고 내렸어요."},
     {no:4412,h:"赖",p:"lài",m:"~의 탓으로 돌리다, 의지하다 (形·动)",ex:"这件事不能赖别人。",ep:"Zhè jiàn shì bù néng lài biérén.",em:"이 일은 남의 탓으로 돌릴 수 없어요."},
     {no:4413,h:"来临",p:"láilín",m:"찾아오다, 다가오다",ex:"春天来临，天气变暖了。",ep:"Chūntiān láilín, tiānqì biàn nuǎnle.",em:"봄이 찾아오자 날씨가 따뜻해졌어요.",wr:"1~5급: 来"},
     {no:4414,h:"来往",p:"láiwǎng",m:"왕래하다, 교류하다",ex:"他们两家一直有来往。",ep:"Tāmen liǎng jiā yìzhí yǒu láiwǎng.",em:"그들 두 집안은 계속 왕래하고 있어요.",wr:"1~5급: 来"},
@@ -1332,7 +1356,7 @@
     {no:4492,h:"冒险",p:"màoxiǎn",m:"모험하다, 위험을 무릅쓰다",ex:"下大雨还去爬山，太冒险了。",ep:"Xià dà yǔ hái qù pá shān, tài màoxiǎnle.",em:"큰비가 오는데도 등산을 가는 것은 너무 모험이에요."},
     {no:4493,h:"贸易",p:"màoyì",m:"무역",ex:"这两个国家之间的贸易越来越多。",ep:"Zhè liǎng ge guójiā zhījiān de màoyì yuè lái yuè duō.",em:"이 두 나라 사이의 무역이 갈수록 많아져요.",wr:"6급 신규: 贸"},
     {no:4494,h:"码头",p:"mǎtóu",m:"부두, 선창",ex:"船停在码头，很多人上上下下。",ep:"Chuán tíng zài mǎtóu, hěn duō rén shàng shàngxià xià.",em:"배가 부두에 서 있고 많은 사람이 오르내려요."},
-    {no:4495,h:"蚂蚁",p:"mǎyǐ",m:"개미",ex:"地上有一群蚂蚁在搬东西。",ep:"De shàng yǒu yì qún mǎyǐ zài bān dōngxi.",em:"땅 위에 개미 떼가 물건을 나르고 있어요.",ts:"3성+3성 → 앞 음절이 2성: mǎyǐ → máyǐ"},
+    {no:4495,h:"蚂蚁",p:"mǎyǐ",m:"개미",ex:"地上有一群蚂蚁在搬东西。",ep:"Dì shang yǒu yì qún mǎyǐ zài bān dōngxi.",em:"땅 위에 개미 떼가 물건을 나르고 있어요.",ts:"3성+3성 → 앞 음절이 2성: mǎyǐ → máyǐ"},
     {no:4496,h:"煤",p:"méi",m:"석탄",ex:"以前家里冬天用煤取暖。",ep:"Yǐqián jiā lǐ dōngtiān yòng méi qǔ nuǎn.",em:"예전에는 집에서 겨울에 석탄으로 난방을 했어요."},
     {no:4497,h:"美观",p:"měiguān",m:"보기 좋다, 미관이 좋다",ex:"这个书架设计得很美观。",ep:"Zhè ge shūjià shèjì de hěn měiguān.",em:"이 책장은 디자인이 아주 보기 좋아요.",wr:"1~5급: 美·观"},
     {no:4498,h:"梅花",p:"méihuā",m:"매화",ex:"冬天到了，梅花开得很美。",ep:"Dōngtiān dàole, méihuā kāi de hěn měi.",em:"겨울이 되자 매화가 아주 곱게 피었어요."},
@@ -1489,7 +1513,7 @@
     {no:4649,h:"清洗",p:"qīngxǐ",m:"세척하다, 깨끗이 씻다",ex:"他把水果清洗了一遍。",ep:"Tā bǎ shuǐguǒ qīngxǐle yí biàn.",em:"그는 과일을 한 번 씻었어요."},
     {no:4650,h:"清晰",p:"qīngxī",m:"선명하다, 뚜렷하다",ex:"录音里的声音很清晰。",ep:"Lùyīn lǐ de shēngyīn hěn qīngxī.",em:"녹음의 소리가 아주 선명해요."},
     {no:4651,h:"倾向",p:"qīngxiàng",m:"경향 (名) · ~하는 편이다 (动)",ex:"他倾向于早起锻炼。",ep:"Tā qīngxiàng yú zǎoqǐ duànliàn.",em:"그는 일찍 일어나 운동하는 편이에요.",wr:"1~5급: 向"},
-    {no:4652,h:"情形",p:"qíngxing",m:"형편, 상황, 정황",ex:"他描述了当时的情形。",ep:"Tā miáoshùle dāngshí de qíngxing.",em:"그는 그때의 상황을 설명했어요.",nt:"xing",ntNote:"‘xing’은 경성 — qíngxing. 원성조 xíng으로 읽지 않아요",wr:"1~5급: 形"},
+    {no:4652,h:"情形",p:"qíngxing",m:"형편, 상황, 정황",ex:"他描述了当时的情形。",ep:"Tā miáoshùle dāngshí de qíngxíng.",em:"그는 그때의 상황을 설명했어요.",nt:"xing",ntNote:"‘xing’은 경성 — qíngxing. 원성조 xíng으로 읽지 않아요",wr:"1~5급: 形"},
     {no:4653,h:"清醒",p:"qīngxǐng",m:"정신이 맑다, (잠에서) 깨다 (形·动)",ex:"休息后他清醒多了。",ep:"Xiūxi hòu tā qīngxǐng duō le.",em:"쉬고 나자 그는 훨씬 정신이 맑아졌어요."},
     {no:4654,h:"勤劳",p:"qínláo",m:"근면하다, 부지런하다",ex:"农民是很勤劳的。",ep:"Nóngmín shì hěn qínláo de.",em:"농민들은 아주 부지런해요.",wr:"1~5급: 劳"},
     {no:4655,h:"亲密",p:"qīnmì",m:"친밀하다, 가깝다",ex:"她们是亲密的朋友。",ep:"Tāmen shì qīnmì de péngyou.",em:"그녀들은 친한 친구예요."},
@@ -2510,6 +2534,29 @@
     renderCard();
   }
 
+  /* ── 예문 블록: 병음 + 예문 듣기 (2026-11-29) ── */
+  function exBlock(w){
+    var h = '<div class="ex">' +
+      '<div class="ex-top">' +
+        '<div class="ex-zh" lang="zh-CN">' + esc(w.ex) + '</div>' +
+        '<button class="spk sm ex-spk" data-speak="' + esc(w.ex) + '" aria-label="예문 듣기">🔊</button>' +
+      '</div>' +
+      '<div class="ex-py">' + esc(w.ep) + '</div>' +
+      '<div class="ex-ko">' + esc(w.em) + '</div>';
+    for(var n=2; w['e'+n]; n++){
+      h += '<div class="ex-extra">' +
+        (w['n'+n] ? '<div class="ex-tag">' + esc(w['n'+n]) + '</div>' : '') +
+        '<div class="ex-top">' +
+          '<div class="ex-zh" lang="zh-CN">' + esc(w['e'+n]) + '</div>' +
+          '<button class="spk sm ex-spk" data-speak="' + esc(w['e'+n]) + '" aria-label="예문 듣기">🔊</button>' +
+        '</div>' +
+        '<div class="ex-py">' + esc(w['ep'+n]) + '</div>' +
+        '<div class="ex-ko">' + esc(w['em'+n]) + '</div>' +
+      '</div>';
+    }
+    return h + '</div>';
+  }
+
   function renderCard(){
     if(!deck.length){ buildDeck("new"); return; }
     if(pos >= deck.length){
@@ -2539,11 +2586,7 @@
             '<button class="spk" data-speak="' + esc(w.h) + '" aria-label="' + esc(w.h) + ' 발음 듣기">🔊</button>' +
           '</div>' +
           '<div class="meaning">' + esc(w.m) + '</div>' +
-          '<div class="ex">' +
-            '<div class="ex-zh" lang="zh-CN">' + esc(w.ex) + '</div>' +
-            '<div class="ex-py">' + esc(w.ep) + '</div>' +
-            '<div class="ex-ko">' + esc(w.em) + '</div>' +
-          '</div>' +
+          exBlock(w) +
         '</div>';
     }
     cardArea.innerHTML = '<div class="card" data-flip="1" role="button" tabindex="0" aria-label="카드 뒤집기">' + body + '</div>';
@@ -2669,7 +2712,12 @@
             '<button class="spk sm" data-speak="' + esc(w.h) + '" aria-label="' + esc(w.h) + ' 발음 듣기">🔊</button>' +
           '</div>' +
           badges(w) +
-          '<div class="fb-ex" lang="zh-CN">' + esc(w.ex) + '<br>' + esc(w.em) + '</div>' +
+          '<div class="fb-ex-wrap">' +
+            '<div class="fb-ex" lang="zh-CN">' + esc(w.ex) + '</div>' +
+            '<button class="spk sm" data-speak="' + esc(w.ex) + '" aria-label="예문 듣기">🔊</button>' +
+          '</div>' +
+          '<div class="fb-py">' + esc(w.ep) + '</div>' +
+          '<div class="fb-ko">' + esc(w.em) + '</div>' +
           '<div class="actions" style="grid-template-columns:1fr;margin-top:12px">' +
             '<button class="btn primary" data-act="nextq">' + (quiz.pos + 1 >= quiz.items.length ? "결과 보기" : "다음 문제 →") + '</button>' +
           '</div>' +

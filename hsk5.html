@@ -141,6 +141,21 @@
   .ex-zh{font-family:var(--hanzi);font-size:19.5px;line-height:1.55}
   .ex-py{font-size:14px;color:var(--ink-soft);margin-top:4px}
   .ex-ko{font-size:16px;margin-top:7px;color:#4a3a30}
+  /* ── 예문 병음 · 예문 듣기 (2026-11-29) ── */
+  .ex-top{display:flex;align-items:flex-start;gap:8px}
+  .ex-top .ex-zh{flex:1 1 auto;min-width:0}
+  .ex-spk{margin-top:-1px}
+  .ex-extra{margin-top:12px;padding-top:12px;border-top:1px dotted var(--line)}
+  .ex-tag{display:inline-block;font-size:12px;font-weight:800;color:var(--accent-deep);background:var(--accent-soft);border-radius:99px;padding:3px 10px;margin-bottom:6px}
+  .fb-ex-wrap{display:flex;align-items:flex-start;gap:8px;margin-top:7px}
+  .fb-ex-wrap .fb-ex{flex:1 1 auto;min-width:0;margin-top:0}
+  .fb-py{font-size:14px;color:#5d4a3e;margin-top:3px;font-weight:600}
+  .fb-ko{font-size:14px;color:#3b2c23;margin-top:2px}
+  .tts-note{margin:10px 0 2px;padding:11px 13px;border-radius:14px;background:#fff6ec;border:1px solid #f0dccb;color:#5a4739;font-size:13.5px;line-height:1.55}
+  .tts-note p+p{margin-top:4px}
+  .tts-note .tts-t{color:var(--accent-deep);font-weight:800;margin-right:4px}
+  .tts-note b{color:#2b211c}
+  .tts-note .tts-sub{color:#7d6a5a;font-size:12.5px}
 
   .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
   .btn{
@@ -306,7 +321,12 @@
   .pinyin{font-size:25px}
   .meaning{font-size:25px}
   .ex-zh{font-size:21px}
-  .ex-py{font-size:15.5px;color:#5d4a3e}
+  .ex-py{font-size:17.5px;color:#3b2c23;font-weight:700;line-height:1.55;letter-spacing:.005em}
+  .spk.ex-spk{width:40px;height:40px;flex-basis:40px;font-size:17px}
+  .fb-py{font-size:15px}
+  .fb-ko{font-size:15px}
+  .tts-note{font-size:14.5px}
+  .tts-note .tts-sub{font-size:13.5px}
   .ex-ko{font-size:17.5px;color:#2f231b}
   .btn{min-height:60px;font-size:18px}
   .btn.small{min-height:48px;font-size:15px}
@@ -367,6 +387,11 @@
     </div>
   </header>
 
+    <div class="tts-note" role="note">
+      <p><b class="tts-t">🔈 발음 안내</b>기기 음성은 참고용이에요. <b>那个 · 这个</b>는 말할 때 nèige · zhèige로, <b>教 · 得</b> 같은 다음음자는 대표음으로 읽힐 수 있어요. 문맥 발음은 <b>예문 🔊</b>로 들으세요.</p>
+      <p class="tts-sub">표기는 병음·성조를 기준으로 · 一·不는 실제 발음대로(一个 yí ge) · 3성+3성은 사전 표기(你好 nǐ hǎo)</p>
+    </div>
+
   <nav class="tabs" role="tablist" aria-label="학습 모드">
     <button class="tab active" data-view="card" role="tab" aria-selected="true">🃏 플래시카드</button>
     <button class="tab" data-view="quiz" role="tab" aria-selected="false">✏️ 4지선다</button>
@@ -389,7 +414,6 @@
         <span class="lg-row"><span class="bdg lh">✂️ 이합사</span>동사+목적어 — 사이에 了·个·횟수를 넣어요</span>
         <span class="lg-row"><span class="bdg wr">✍️ 쓰기</span>공식 서사한자(직접 써야 하는 한자)가 포함된 단어</span>
       </p>
-      <p class="tiny note">기계 음성은 참고용이에요. 경성·얼화는 병음 표기를 기준으로 보세요.<br>一·不는 실제 발음대로(一个 yí ge) 적었고, 3성+3성은 사전 표기(你好 nǐ hǎo)로 두고 🔄 설명에 실제 발음을 적었어요.</p>
       <p class="tiny note">✍️ 쓰기 딱지는 공식 서사한자 누적 550자(1~2급 100 · 3급 150 · 4급 150 · 5급 신규 150) 기준이에요.</p>
     </section>
 
@@ -1903,7 +1927,7 @@
     {no:3463,h:"占",p:"zhàn",m:"차지하다, 점유하다",ex:"这张大桌子占了房间一半的地方。",ep:"Zhè zhāng dà zhuōzi zhànle fángjiān yíbàn de dìfang.",em:"이 큰 책상이 방의 절반을 차지했어요.",wr:"5급 신규: 占"},
     {no:3464,h:"展出",p:"zhǎnchū",m:"전시하다, (작품을) 내놓다",ex:"博物馆展出了很多老照片。",ep:"Bówùguǎn zhǎnchūle hěn duō lǎo zhàopiàn.",em:"박물관이 오래된 사진을 많이 전시했어요."},
     {no:3465,h:"涨",p:"zhǎng",m:"(수위가) 오르다, 불어나다 (涨 zhǎng)",ex:"这两天水涨得很快，大家要小心。",ep:"Zhè liǎng tiān shuǐ zhǎng de hěn kuài, dàjiā yào xiǎoxīn.",em:"요즘 물이 아주 빨리 불어나니 모두 조심해야 해요."},
-    {no:3466,h:"账号",p:"zhànghào",m:"계정 (아이디)",ex:"我忘了账号，不能上网了。",ep:"Wǒ wàngle zhànghào, bù néng shàngwǎngle.",em:"나는 계정을 잊어버려서 인터넷에 접속할 수 없어요."},
+    {no:3466,h:"账号",p:"zhànghào",m:"계정 (아이디)",ex:"我忘了账号，不能上网了。",ep:"Wǒ wàngle zhànghào, bù néng shàng wǎng le.",em:"나는 계정을 잊어버려서 인터넷에 접속할 수 없어요."},
     {no:3467,h:"账户",p:"zhànghù",m:"계좌, 구좌",ex:"请把钱转到我的账户里。",ep:"Qǐng bǎ qián zhuǎn dào wǒ de zhànghù lǐ.",em:"돈을 제 계좌로 이체해 주세요."},
     {no:3468,h:"涨价",p:"zhǎng jià",m:"가격이 오르다, 값을 올리다",ex:"最近水果涨价了，我少买了一些。",ep:"Zuìjìn shuǐguǒ zhǎng jiàle, wǒ shǎo mǎile yìxiē.",em:"요즘 과일 값이 올라서 나는 조금 적게 샀어요.",lh:"동사+목적어 — 涨了价, 涨过价"},
     {no:3469,h:"掌声",p:"zhǎngshēng",m:"박수 소리",ex:"演出结束，观众给了他很多掌声。",ep:"Yǎnchū jiéshù, guānzhòng gěile tā hěn duō zhǎngshēng.",em:"공연이 끝나자 관객이 그에게 박수를 많이 보냈어요.",wr:"1~4급: 声"},
@@ -1971,7 +1995,7 @@
     {no:3531,h:"中药",p:"zhōngyào",m:"중약, 한약",ex:"奶奶生病时喜欢喝中药。",ep:"Nǎinai shēngbìng shí xǐhuan hē zhōngyào.",em:"할머니는 아플 때 한약 마시는 것을 좋아하세요.",wr:"1~4급: 中"},
     {no:3532,h:"中医",p:"zhōngyī",m:"중의, 한의학",ex:"他去看中医，病好多了。",ep:"Tā qù kàn zhōngyī, bìng hǎoduōle.",em:"그는 한의원에 가서 진찰을 받고 병이 많이 나았어요.",wr:"1~4급: 中"},
     {no:3533,h:"种植",p:"zhòngzhí",m:"재배하다, 심다",ex:"农民在山下种植了很多蔬菜。",ep:"Nóngmín zài shān xià zhòngzhíle hěn duō shūcài.",em:"농민들이 산 아래에 채소를 많이 심었어요.",wr:"1~4급: 种"},
-    {no:3534,h:"种子",p:"zhǒngzi",m:"씨앗, 종자",ex:"春天，我们把种子种在地里。",ep:"Chūntiān, wǒmen bǎ zhǒngzi zhǒng zài de lǐ.",em:"봄에 우리는 씨앗을 땅에 심어요.",nt:"zi",ntNote:"‘zi’는 경성 — zhǒngzi. 원성조 zǐ로 읽지 않아요",wr:"1~4급: 种·子"},
+    {no:3534,h:"种子",p:"zhǒngzi",m:"씨앗, 종자",ex:"春天，我们把种子种在地里。",ep:"Chūntiān, wǒmen bǎ zhǒngzi zhǒng zài dì lǐ.",em:"봄에 우리는 씨앗을 땅에 심어요.",nt:"zi",ntNote:"‘zi’는 경성 — zhǒngzi. 원성조 zǐ로 읽지 않아요",wr:"1~4급: 种·子"},
     {no:3535,h:"周年",p:"zhōunián",m:"주년",ex:"明天是他们结婚十周年。",ep:"Míngtiān shì tāmen jiéhūn shí zhōunián.",em:"내일은 그들의 결혼 10주년이에요.",wr:"1~4급: 年"},
     {no:3536,h:"煮",p:"zhǔ",m:"삶다, 끓이다",ex:"我早上煮了两个鸡蛋。",ep:"Wǒ zǎoshang zhǔle liǎng ge jīdàn.",em:"나는 아침에 달걀 두 개를 삶았어요."},
     {no:3537,h:"猪",p:"zhū",m:"돼지",ex:"爷爷家里养了三只猪。",ep:"Yéye jiā lǐ yǎngle sān zhī zhū.",em:"할아버지 집에서 돼지 세 마리를 키워요.",wr:"5급 신규: 猪"},
@@ -2310,6 +2334,29 @@
     renderCard();
   }
 
+  /* ── 예문 블록: 병음 + 예문 듣기 (2026-11-29) ── */
+  function exBlock(w){
+    var h = '<div class="ex">' +
+      '<div class="ex-top">' +
+        '<div class="ex-zh" lang="zh-CN">' + esc(w.ex) + '</div>' +
+        '<button class="spk sm ex-spk" data-speak="' + esc(w.ex) + '" aria-label="예문 듣기">🔊</button>' +
+      '</div>' +
+      '<div class="ex-py">' + esc(w.ep) + '</div>' +
+      '<div class="ex-ko">' + esc(w.em) + '</div>';
+    for(var n=2; w['e'+n]; n++){
+      h += '<div class="ex-extra">' +
+        (w['n'+n] ? '<div class="ex-tag">' + esc(w['n'+n]) + '</div>' : '') +
+        '<div class="ex-top">' +
+          '<div class="ex-zh" lang="zh-CN">' + esc(w['e'+n]) + '</div>' +
+          '<button class="spk sm ex-spk" data-speak="' + esc(w['e'+n]) + '" aria-label="예문 듣기">🔊</button>' +
+        '</div>' +
+        '<div class="ex-py">' + esc(w['ep'+n]) + '</div>' +
+        '<div class="ex-ko">' + esc(w['em'+n]) + '</div>' +
+      '</div>';
+    }
+    return h + '</div>';
+  }
+
   function renderCard(){
     if(!deck.length){ buildDeck("new"); return; }
     if(pos >= deck.length){
@@ -2339,11 +2386,7 @@
             '<button class="spk" data-speak="' + esc(w.h) + '" aria-label="' + esc(w.h) + ' 발음 듣기">🔊</button>' +
           '</div>' +
           '<div class="meaning">' + esc(w.m) + '</div>' +
-          '<div class="ex">' +
-            '<div class="ex-zh" lang="zh-CN">' + esc(w.ex) + '</div>' +
-            '<div class="ex-py">' + esc(w.ep) + '</div>' +
-            '<div class="ex-ko">' + esc(w.em) + '</div>' +
-          '</div>' +
+          exBlock(w) +
         '</div>';
     }
     cardArea.innerHTML = '<div class="card" data-flip="1" role="button" tabindex="0" aria-label="카드 뒤집기">' + body + '</div>';
@@ -2469,7 +2512,12 @@
             '<button class="spk sm" data-speak="' + esc(w.h) + '" aria-label="' + esc(w.h) + ' 발음 듣기">🔊</button>' +
           '</div>' +
           badges(w) +
-          '<div class="fb-ex" lang="zh-CN">' + esc(w.ex) + '<br>' + esc(w.em) + '</div>' +
+          '<div class="fb-ex-wrap">' +
+            '<div class="fb-ex" lang="zh-CN">' + esc(w.ex) + '</div>' +
+            '<button class="spk sm" data-speak="' + esc(w.ex) + '" aria-label="예문 듣기">🔊</button>' +
+          '</div>' +
+          '<div class="fb-py">' + esc(w.ep) + '</div>' +
+          '<div class="fb-ko">' + esc(w.em) + '</div>' +
           '<div class="actions" style="grid-template-columns:1fr;margin-top:12px">' +
             '<button class="btn primary" data-act="nextq">' + (quiz.pos + 1 >= quiz.items.length ? "결과 보기" : "다음 문제 →") + '</button>' +
           '</div>' +
