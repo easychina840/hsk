@@ -11,6 +11,7 @@
   var q = new URLSearchParams(location.search);
   var l = q.get('l') || '6';
   var b = q.get('b') || Date.now();
-  document.getElementById('f').src = 'hsk' + l + '.html?b=' + b;
+  var f = q.get('f');
+  document.getElementById('f').src = f ? (f + '?b=' + b) : ('hsk' + l + '.html?b=' + b);
 </script>
 </body></html>
