@@ -3,7 +3,7 @@
 <title>모바일 확인용</title>
 <style>
   html,body{margin:0;background:#dfd8d0}
-  iframe{width:390px;height:664px;border:0;display:block;background:#fff}
+  iframe{width:390px;border:0;display:block;background:#fff}
 </style></head>
 <body>
 <iframe id="f" src="hsk6.html"></iframe>
@@ -12,6 +12,8 @@
   var l = q.get('l') || '6';
   var b = q.get('b') || Date.now();
   var f = q.get('f');
+  var h = q.get('h') || '664';
+  document.getElementById('f').style.height = h + 'px';
   document.getElementById('f').src = f ? (f + '?b=' + b) : ('hsk' + l + '.html?b=' + b);
 </script>
 </body></html>
