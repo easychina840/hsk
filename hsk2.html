@@ -131,9 +131,14 @@
   .fb-ex-wrap .fb-ex{flex:1 1 auto;min-width:0;margin-top:0}
   .fb-py{font-size:14px;color:#5d4a3e;margin-top:3px;font-weight:600}
   .fb-ko{font-size:14px;color:#3b2c23;margin-top:2px}
-  .tts-note{margin:10px 0 2px;padding:11px 13px;border-radius:14px;background:#fff6ec;border:1px solid #f0dccb;color:#5a4739;font-size:13.5px;line-height:1.55}
+  .tts-note{margin:10px 0 2px;border-radius:14px;background:#fff6ec;border:1px solid #f0dccb;color:#5a4739;font-size:13.5px;line-height:1.55;overflow:hidden}
+  .tts-note>summary{list-style:none;cursor:pointer;padding:10px 13px;font-weight:800;color:var(--accent-deep);font-size:14px;display:flex;align-items:center;gap:6px}
+  .tts-note>summary::-webkit-details-marker{display:none}
+  .tts-note>summary::after{content:"▾";margin-left:auto;font-size:12px;color:#b39580}
+  .tts-note[open]>summary::after{content:"▴"}
+  .tts-note[open]>summary{border-bottom:1px solid #f0dccb}
+  .tts-note .tts-body{padding:9px 13px 11px}
   .tts-note p+p{margin-top:4px}
-  .tts-note .tts-t{color:var(--accent-deep);font-weight:800;margin-right:4px}
   .tts-note b{color:#2b211c}
   .tts-note .tts-sub{color:#7d6a5a;font-size:12.5px}
 
@@ -321,7 +326,11 @@
   .spk.ex-spk{width:40px;height:40px;flex-basis:40px;font-size:17px}
   .fb-py{font-size:15px}
   .fb-ko{font-size:15px}
+  .meaning{word-break:keep-all}
+  .ex-ko{word-break:keep-all}
+  .fb-ko{word-break:keep-all}
   .tts-note{font-size:14.5px}
+  .tts-note>summary{font-size:15px}
   .tts-note .tts-sub{font-size:13.5px}
   .ex-ko{font-size:17.5px;color:#2f231b}
   .btn{min-height:60px;font-size:18px}
@@ -383,10 +392,13 @@
     </div>
   </header>
 
-    <div class="tts-note" role="note">
-      <p><b class="tts-t">🔈 발음 안내</b>기기 음성은 참고용이에요. <b>那个 · 这个</b>는 말할 때 nèige · zhèige로, <b>教 · 得</b> 같은 다음음자는 대표음으로 읽힐 수 있어요. 문맥 발음은 <b>예문 🔊</b>로 들으세요.</p>
-      <p class="tts-sub">표기는 병음·성조를 기준으로 · 一·不는 실제 발음대로(一个 yí ge) · 3성+3성은 사전 표기(你好 nǐ hǎo)</p>
-    </div>
+    <details class="tts-note">
+      <summary>🔈 발음 안내 · 기기 음성 한계와 예문 듣기</summary>
+      <div class="tts-body">
+        <p>기기 음성은 참고용이에요. <b>那个 · 这个</b>는 말할 때 nèige · zhèige로, <b>教 · 得</b> 같은 다음음자는 대표음으로 읽힐 수 있어요. 문맥 발음은 <b>예문 🔊</b>로 들으세요.</p>
+        <p class="tts-sub">표기는 병음·성조를 기준으로 · 一·不는 실제 발음대로(一个 yí ge) · 3성+3성은 사전 표기(你好 nǐ hǎo)</p>
+      </div>
+    </details>
 
   <nav class="tabs" role="tablist" aria-label="학습 모드">
     <button class="tab active" data-view="card" role="tab" aria-selected="true">🃏 플래시카드</button>
